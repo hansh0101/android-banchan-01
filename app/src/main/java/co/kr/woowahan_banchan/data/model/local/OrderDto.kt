@@ -4,9 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "ORDER")
 data class OrderDto(
-    @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id : Int = 0,
+    @PrimaryKey(autoGenerate = true) val id : Long = 0,
     @ColumnInfo(name = "total_price") val totalPrice : Int,
-    @ColumnInfo(name = "time") val time : Long
+    val time : Long
 )

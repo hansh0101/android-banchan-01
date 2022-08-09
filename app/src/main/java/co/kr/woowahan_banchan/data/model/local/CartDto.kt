@@ -4,8 +4,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "CART")
 data class CartDto(
-    @ColumnInfo(name = "hash") @PrimaryKey(autoGenerate = false) val hash : String,
-    @ColumnInfo(name = "amount") val amount : Int
+    @PrimaryKey(autoGenerate = false) val hash : String,
+    val amount : Int,
+    @ColumnInfo(name = "is_selected") val isSelected: Boolean,
+    val time: Long
 )
