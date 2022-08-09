@@ -5,6 +5,8 @@ buildscript {
         hilt_version = '2.42'
         room_version = '2.4.3'
         timber_version = '5.0.1'
+        retrofit_version = '2.9.0'
+        okhttp_version = '4.10.0'
     }
 
     dependencies {
