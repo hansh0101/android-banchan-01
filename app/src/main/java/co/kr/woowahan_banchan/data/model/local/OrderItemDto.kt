@@ -1,15 +1,24 @@
 package co.kr.woowahan_banchan.data.model.local
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
+import androidx.room.ForeignKey.CASCADE
 
-@Entity
+@Entity(
+    tableName = "ORDER_ITEM",
+    foreignKeys = arrayOf(
+        ForeignKey(
+            entity = OrderDto::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("order_id"),
+            onDelete = CASCADE
+        )
+    )
+)
 data class OrderItemDto(
-    @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id : Int,
-    @ColumnInfo(name = "order_id") val orderId : Int,
-    @ColumnInfo(name = "thumbnail") val thumbnailUrl : String,
-    @ColumnInfo(name = "price") val price : Int,
-    @ColumnInfo(name = "amount") val amount : Int,
-    @ColumnInfo(name = "name") val name : String
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo(name = "order_id") val orderId: Long,
+    @ColumnInfo(name = "thumbnail_url") val thumbnailUrl: String,
+    val price: Int,
+    val amount: Int,
+    val name: String
 )
