@@ -1,12 +1,12 @@
 package co.kr.woowahan_banchan.presentation
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import co.kr.woowahan_banchan.R
+import co.kr.woowahan_banchan.databinding.ActivityMainBinding
+import co.kr.woowahan_banchan.presentation.base.BaseActivity
+import dagger.hilt.android.AndroidEntryPoint
 
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-    }
+@AndroidEntryPoint
+class MainActivity : BaseActivity<ActivityMainBinding>() {
+    override val layoutRes: Int
+        get() = R.layout.activity_main
 }
