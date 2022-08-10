@@ -13,8 +13,8 @@ interface CartDao {
     fun getItems(): Flow<List<CartDto>>
 
     @Insert(onConflict = REPLACE)
-    fun insertOrUpdateItems(items: List<CartDto>)
+    suspend fun insertOrUpdateItems(items: List<CartDto>)
 
     @Query("DELETE FROM CART WHERE hash in (:ids)")
-    fun deleteItems(ids: List<String>)
+    suspend fun deleteItems(ids: List<String>)
 }

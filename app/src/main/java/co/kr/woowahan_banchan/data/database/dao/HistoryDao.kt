@@ -13,5 +13,5 @@ interface HistoryDao {
     fun getItems(): Flow<List<HistoryDto>>
 
     @Insert(onConflict = REPLACE)
-    fun insertItem(item: HistoryDto)
+    suspend fun insertItem(item: HistoryDto)
 }
