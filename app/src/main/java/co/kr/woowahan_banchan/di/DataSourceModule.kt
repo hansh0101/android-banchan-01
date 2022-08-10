@@ -64,38 +64,38 @@ object DataSourceModule {
     @Provides
     @Singleton
     fun provideBestDataSource(
-        service : BestService,
+        service: BestService,
         @IoDispatcher coroutineDispatcher: CoroutineDispatcher
-    ) : BestDataSource = BestDataSourceImpl(service, coroutineDispatcher)
+    ): BestDataSource = BestDataSourceImpl(service, coroutineDispatcher)
 
     @Provides
     @Singleton
     fun provideDetailDataSource(
-        service : DetailService,
+        service: DetailService,
         @IoDispatcher coroutineDispatcher: CoroutineDispatcher
-    ) : DetailDataSource = DetailDataSourceImpl(service, coroutineDispatcher)
+    ): DetailDataSource = DetailDataSourceImpl(service, coroutineDispatcher)
 
 
     @Provides
     @Singleton
     fun provideMainDishDataSource(
-        service : MainDishService,
+        service: MainDishService,
         @IoDispatcher coroutineDispatcher: CoroutineDispatcher
-    ) : MainDishDataSource = MainDishDataSourceImpl(service, coroutineDispatcher)
+    ): MainDishDataSource = MainDishDataSourceImpl(service, coroutineDispatcher)
 
 
     @Provides
     @Singleton
     fun provideSideDishDataSource(
-        service : SideDishService,
+        service: SideDishService,
         @IoDispatcher coroutineDispatcher: CoroutineDispatcher
-    ) : SideDishDataSource = SideDishDataSourceImpl(service, coroutineDispatcher)
+    ): SideDishDataSource = SideDishDataSourceImpl(service, coroutineDispatcher)
 
 
     @Provides
     @Singleton
     fun provideSoupDishDataSource(
-        service : SoupDishService,
+        service: SoupDishService,
         @IoDispatcher coroutineDispatcher: CoroutineDispatcher
-    ) : SoupDishDataSource = SoupDishDataSourceImpl(service, coroutineDispatcher)
+    ): SoupDishDataSource = SoupDishDataSourceImpl(service, coroutineDispatcher)
 }
