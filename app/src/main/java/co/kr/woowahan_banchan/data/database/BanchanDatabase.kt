@@ -1,8 +1,6 @@
 package co.kr.woowahan_banchan.data.database
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import co.kr.woowahan_banchan.data.database.dao.CartDao
 import co.kr.woowahan_banchan.data.database.dao.HistoryDao
@@ -22,10 +20,4 @@ abstract class BanchanDatabase : RoomDatabase() {
     abstract fun historyDao(): HistoryDao
     abstract fun orderDao(): OrderDao
     abstract fun orderItemDao(): OrderItemDao
-
-    companion object {
-        fun getInstance(context: Context): BanchanDatabase =
-            Room.databaseBuilder(context, BanchanDatabase::class.java, "banchan.db")
-                .build()
-    }
 }

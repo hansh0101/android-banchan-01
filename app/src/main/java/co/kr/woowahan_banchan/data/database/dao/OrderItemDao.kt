@@ -12,5 +12,5 @@ interface OrderItemDao {
     fun getItems(): Flow<List<OrderItemDto>>
 
     @Insert
-    fun insertItems(items: List<OrderItemDto>)
+    suspend fun insertItems(items: List<OrderItemDto>)
 }
