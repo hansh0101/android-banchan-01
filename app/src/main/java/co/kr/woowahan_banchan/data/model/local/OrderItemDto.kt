@@ -17,6 +17,7 @@ import androidx.room.ForeignKey.CASCADE
 data class OrderItemDto(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "order_id") val orderId: Long,
+    val hash: String,
     @ColumnInfo(name = "thumbnail_url") val thumbnailUrl: String,
     val price: Int,
     val amount: Int,
