@@ -14,12 +14,12 @@ class OrderDataSourceImpl @Inject constructor(
     private val orderDao: OrderDao,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : OrderDataSource {
-    override fun getItems(): Flow<List<OrderDto>> =
-        orderDao.getItems()
-            .catch { exception ->
-                Timber.e(exception)
-                emit(listOf())
-            }.flowOn(coroutineDispatcher)
+    override suspend fun getItems(): Result<List<OrderDto>> =
+        withContext(coroutineDispatcher) {
+            runCatching {
+                orderDao.getItems()
+            }
+        }
 
     override suspend fun insertItem(item: OrderDto): Result<Long> =
         withContext(coroutineDispatcher) {
