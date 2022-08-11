@@ -8,15 +8,16 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="grayscale_black">#000000</color>
-    <color name="grayscale_black_30">#4D000000</color>
-    <color name="grayscale_default">#828282</color>
-    <color name="grayscale_line">#DDDDDD</color>
-    <color name="grayscale_surface">#F8F7F7</color>
-    <color name="grayscale_white">#FFFFFF</color>
+    <color name="grayscale_000000">#000000</color>
+    <color name="grayscale_010101">#010101</color>
+    <color name="grayscale_4d000000">#4D000000</color>
+    <color name="grayscale_828282">#828282</color>
+    <color name="grayscale_dddddd">#DDDDDD</color>
+    <color name="grayscale_f8f7f7">#F8F7F7</color>
+    <color name="grayscale_ffffff">#FFFFFF</color>
 
-    <color name="primary_accent">#F46700</color>
-    <color name="primary_main">#F9BA70</color>
-    <color name="primary_disabled">#FCDCB7</color>
-    <color name="primary_surface">#FBF5E0</color>
+    <color name="primary_f46700">#F46700</color>
+    <color name="primary_f9ba70">#F9BA70</color>
+    <color name="primary_fcdcb7">#FCDCB7</color>
+    <color name="primary_fbf5e0">#FBF5E0</color>
 </resources>
