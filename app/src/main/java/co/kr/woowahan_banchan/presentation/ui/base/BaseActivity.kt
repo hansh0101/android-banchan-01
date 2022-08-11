@@ -1,7 +1,6 @@
-package co.kr.woowahan_banchan.presentation.base
+package co.kr.woowahan_banchan.presentation.ui.base
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding

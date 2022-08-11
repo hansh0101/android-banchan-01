@@ -1,4 +1,4 @@
-package co.kr.woowahan_banchan.presentation.base
+package co.kr.woowahan_banchan.presentation.ui.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
