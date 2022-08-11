@@ -1,8 +1,8 @@
-package co.kr.woowahan_banchan.presentation
+package co.kr.woowahan_banchan.presentation.ui.main
 
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ActivityMainBinding
-import co.kr.woowahan_banchan.presentation.base.BaseActivity
+import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
