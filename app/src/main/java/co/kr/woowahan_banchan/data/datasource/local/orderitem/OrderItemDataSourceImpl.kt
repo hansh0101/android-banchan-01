@@ -9,11 +9,18 @@ import javax.inject.Inject
 class OrderItemDataSourceImpl @Inject constructor(
     private val orderItemDao: OrderItemDao,
     private val coroutineDispatcher: CoroutineDispatcher
-): OrderItemDataSource {
+) : OrderItemDataSource {
     override suspend fun getItems(orderId: Long): Result<List<OrderItemDto>> =
         withContext(coroutineDispatcher) {
             runCatching {
                 orderItemDao.getItems(orderId)
+            }
+        }
+
+    override suspend fun getItem(orderId: Long): Result<OrderItemDto> =
+        withContext(coroutineDispatcher) {
+            runCatching {
+                orderItemDao.getItem(orderId)
             }
         }
 

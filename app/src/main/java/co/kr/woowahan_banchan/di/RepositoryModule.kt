@@ -2,17 +2,21 @@ package co.kr.woowahan_banchan.di
 
 import co.kr.woowahan_banchan.data.datasource.local.cart.CartDataSource
 import co.kr.woowahan_banchan.data.datasource.local.history.HistoryDataSource
+import co.kr.woowahan_banchan.data.datasource.local.order.OrderDataSource
+import co.kr.woowahan_banchan.data.datasource.local.orderitem.OrderItemDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.best.BestDataSource
+import co.kr.woowahan_banchan.data.datasource.remote.detail.DetailDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.maindish.MainDishDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.sidedish.SideDishDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.soupdish.SoupDishDataSource
-import co.kr.woowahan_banchan.data.datasource.remote.detail.DetailDataSource
 import co.kr.woowahan_banchan.data.repository.DetailRepositoryImpl
 import co.kr.woowahan_banchan.data.repository.DishRepositoryImpl
 import co.kr.woowahan_banchan.data.repository.HistoryRepositoryImpl
+import co.kr.woowahan_banchan.data.repository.OrderHistoryRepositoryImpl
 import co.kr.woowahan_banchan.domain.repository.DetailRepository
 import co.kr.woowahan_banchan.domain.repository.DishRepository
 import co.kr.woowahan_banchan.domain.repository.HistoryRepository
+import co.kr.woowahan_banchan.domain.repository.OrderHistoryRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,11 +53,25 @@ object RepositoryModule {
         detailDataSource: DetailDataSource,
         @DefaultDispatcher coroutineDispatcher: CoroutineDispatcher
     ): HistoryRepository =
-        HistoryRepositoryImpl(historyDataSource, cartDataSource, detailDataSource, coroutineDispatcher)
+        HistoryRepositoryImpl(
+            historyDataSource,
+            cartDataSource,
+            detailDataSource,
+            coroutineDispatcher
+        )
 
     @Provides
     @Singleton
     fun provideDetailRepository(
         detailDataSource: DetailDataSource
     ): DetailRepository = DetailRepositoryImpl(detailDataSource)
+
+    @Provides
+    @Singleton
+    fun provideOrderHistoryRepository(
+        orderDataSource: OrderDataSource,
+        orderItemDataSource: OrderItemDataSource,
+        @DefaultDispatcher coroutineDispatcher: CoroutineDispatcher
+    ): OrderHistoryRepository =
+        OrderHistoryRepositoryImpl(orderDataSource, orderItemDataSource, coroutineDispatcher)
 }

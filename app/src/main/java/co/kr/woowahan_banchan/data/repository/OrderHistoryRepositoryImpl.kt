@@ -20,14 +20,14 @@ class OrderHistoryRepositoryImpl @Inject constructor(
             when (orderListResult.isSuccess) {
                 true -> {
                     orderListResult.getOrDefault(listOf()).mapNotNull {
-                        val orderItemList = orderItemDataSource.getItems(it.id).getOrNull()
+                        val orderItem = orderItemDataSource.getItem(it.id).getOrNull()
                         val orderItemCount = orderItemDataSource.getItemCount(it.id).getOrNull()
-                        if (orderItemList == null || orderItemCount == null) {
+                        if (orderItem == null || orderItemCount == null) {
                             null
                         } else {
                             it.toOrderHistory(
-                                orderItemList.first().thumbnailUrl,
-                                orderItemList.first().name,
+                                orderItem.thumbnailUrl,
+                                orderItem.name,
                                 orderItemCount
                             )
                         }
