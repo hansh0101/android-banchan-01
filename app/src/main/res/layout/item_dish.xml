@@ -27,20 +27,20 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="8dp"
-            android:background="@drawable/rectangle_radius_999"
-            android:src="@drawable/ic_cart"
+            android:background="@{dish.added? @drawable/ic_cart_btn_added : @drawable/ic_cart_btn}"
             app:layout_constraintBottom_toBottomOf="@id/iv_image"
             app:layout_constraintEnd_toEndOf="@id/iv_image" />
 
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="match_parent"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:paddingVertical="4dp"
             android:text="@{dish.title}"
             android:textColor="@color/grayscale_000000"
             android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_image" />
 
         <TextView
