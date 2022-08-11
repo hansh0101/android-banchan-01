@@ -8,6 +8,7 @@ import co.kr.woowahan_banchan.domain.repository.HistoryRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -19,7 +20,7 @@ class HistoryRepositoryImpl @Inject constructor(
 ) : HistoryRepository {
     override fun getHistories(previewMode: Boolean): Flow<List<HistoryItem>> {
         return combine(
-            historyDataSource.getItems(),
+            if (previewMode) historyDataSource.getPreviewItems() else historyDataSource.getItems(),
             cartDataSource.getItems()
         ) { historyDtoList, cartDtoList ->
             Pair(historyDtoList, cartDtoList)
@@ -42,6 +43,6 @@ class HistoryRepositoryImpl @Inject constructor(
                     }
                 }
             }
-        }
+        }.flowOn(coroutineDispatcher)
     }
 }

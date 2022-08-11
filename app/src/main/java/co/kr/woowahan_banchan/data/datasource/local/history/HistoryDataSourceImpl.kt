@@ -21,6 +21,13 @@ class HistoryDataSourceImpl @Inject constructor(
                 emit(listOf())
             }.flowOn(coroutineDispatcher)
 
+    override fun getPreviewItems(): Flow<List<HistoryDto>> =
+        historyDao.getPreviewItems()
+            .catch { exception ->
+                Timber.e(exception)
+                emit(listOf())
+            }.flowOn(coroutineDispatcher)
+
     override suspend fun insertItem(item: HistoryDto) =
         withContext(coroutineDispatcher) {
             runCatching {

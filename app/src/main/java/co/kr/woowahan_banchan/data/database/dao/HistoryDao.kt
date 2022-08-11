@@ -9,8 +9,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HistoryDao {
-    @Query("SELECT * FROM HISTORY")
+    @Query("SELECT * FROM HISTORY ORDER BY time DESC")
     fun getItems(): Flow<List<HistoryDto>>
+
+    @Query("SELECT * FROM HISTORY ORDER BY time DESC LIMIT 7")
+    fun getPreviewItems(): Flow<List<HistoryDto>>
 
     @Insert(onConflict = REPLACE)
     suspend fun insertItem(item: HistoryDto)
