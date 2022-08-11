@@ -8,8 +8,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface OrderItemDao {
-    @Query("SELECT * FROM ORDER_ITEM")
-    fun getItems(): Flow<List<OrderItemDto>>
+    @Query("SELECT * FROM ORDER_ITEM WHERE order_id LIKE (:orderId)")
+    suspend fun getItems(orderId: Int): List<OrderItemDto>
+
+    @Query("SELECT COUNT(id) FROM ORDER_ITEM WHERE order_id LIKE (:orderId)")
+    suspend fun getItemCount(orderId: Int): Int
 
     @Insert
     suspend fun insertItems(items: List<OrderItemDto>)

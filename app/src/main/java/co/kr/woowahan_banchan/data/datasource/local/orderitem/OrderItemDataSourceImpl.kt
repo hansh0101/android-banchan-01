@@ -15,12 +15,19 @@ class OrderItemDataSourceImpl @Inject constructor(
     private val orderItemDao: OrderItemDao,
     private val coroutineDispatcher: CoroutineDispatcher
 ): OrderItemDataSource {
-    override fun getItems(): Flow<List<OrderItemDto>> =
-        orderItemDao.getItems()
-            .catch { exception ->
-                Timber.e(exception)
-                emit(listOf())
-            }.flowOn(coroutineDispatcher)
+    override suspend fun getItems(orderId: Int): Result<List<OrderItemDto>> =
+        withContext(coroutineDispatcher) {
+            runCatching {
+                orderItemDao.getItems(orderId)
+            }
+        }
+
+    override suspend fun getItemCount(orderId: Int): Result<Int> =
+        withContext(coroutineDispatcher) {
+            runCatching {
+                orderItemDao.getItemCount(orderId)
+            }
+        }
 
     override suspend fun insertItems(items: List<OrderItemDto>): Result<Unit> =
         withContext(coroutineDispatcher) {
