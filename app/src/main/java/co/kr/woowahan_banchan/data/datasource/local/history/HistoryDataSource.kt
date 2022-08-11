@@ -6,5 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface HistoryDataSource {
     fun getItems(): Flow<List<HistoryDto>>
+    fun getPreviewItems(): Flow<List<HistoryDto>>
     suspend fun insertItem(item: HistoryDto): Result<Unit>
 }
