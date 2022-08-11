@@ -7,8 +7,10 @@ import co.kr.woowahan_banchan.data.datasource.remote.maindish.MainDishDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.sidedish.SideDishDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.soupdish.SoupDishDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.detail.DetailDataSource
+import co.kr.woowahan_banchan.data.repository.DetailRepositoryImpl
 import co.kr.woowahan_banchan.data.repository.DishRepositoryImpl
 import co.kr.woowahan_banchan.data.repository.HistoryRepositoryImpl
+import co.kr.woowahan_banchan.domain.repository.DetailRepository
 import co.kr.woowahan_banchan.domain.repository.DishRepository
 import co.kr.woowahan_banchan.domain.repository.HistoryRepository
 import dagger.Module
@@ -48,4 +50,10 @@ object RepositoryModule {
         @DefaultDispatcher coroutineDispatcher: CoroutineDispatcher
     ): HistoryRepository =
         HistoryRepositoryImpl(historyDataSource, cartDataSource, detailDataSource, coroutineDispatcher)
+
+    @Provides
+    @Singleton
+    fun provideDetailRepository(
+        detailDataSource: DetailDataSource
+    ): DetailRepository = DetailRepositoryImpl(detailDataSource)
 }
