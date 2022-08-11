@@ -15,14 +15,14 @@ class OrderItemDataSourceImpl @Inject constructor(
     private val orderItemDao: OrderItemDao,
     private val coroutineDispatcher: CoroutineDispatcher
 ): OrderItemDataSource {
-    override suspend fun getItems(orderId: Int): Result<List<OrderItemDto>> =
+    override suspend fun getItems(orderId: Long): Result<List<OrderItemDto>> =
         withContext(coroutineDispatcher) {
             runCatching {
                 orderItemDao.getItems(orderId)
             }
         }
 
-    override suspend fun getItemCount(orderId: Int): Result<Int> =
+    override suspend fun getItemCount(orderId: Long): Result<Int> =
         withContext(coroutineDispatcher) {
             runCatching {
                 orderItemDao.getItemCount(orderId)
