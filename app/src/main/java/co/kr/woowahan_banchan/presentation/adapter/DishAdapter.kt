@@ -44,7 +44,7 @@ class DishAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_dish, parent, false)
         val binding = ItemDishBinding.bind(view)
-        return DishLinearViewHolder(binding,moveToDetail)
+        return DishLinearViewHolder(binding, moveToDetail)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

@@ -17,13 +17,6 @@ class MainViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState>(UiState.Init)
     val uiState : StateFlow<UiState> get() = _uiState
 
-    /*fun getBestDish(complete: (List<BestItem>) -> Unit) = viewModelScope.launch {
-        val bests = getBestsUseCase()
-        bests.collect {
-            complete(it)
-        }
-    }*/
-
     fun getBests() = viewModelScope.launch {
         getBestsUseCase().collect {
             _uiState.value = UiState.Success(it)
