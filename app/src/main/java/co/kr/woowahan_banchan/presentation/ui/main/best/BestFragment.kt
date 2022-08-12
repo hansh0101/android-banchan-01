@@ -17,11 +17,11 @@ import kotlinx.coroutines.launch
 
 class BestFragment : BaseFragment<FragmentBestBinding>() {
 
-    override val layoutRes : Int
+    override val layoutRes: Int
         get() = R.layout.fragment_best
 
     private val activityViewModel by activityViewModels<MainViewModel>()
-    private val bestAdapter  = BestItemAdapter()
+    private val bestAdapter = BestItemAdapter { title, hash -> startDetailActivity(title, hash) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -29,20 +29,16 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
         initView()
     }
 
-    private fun initView(){
+    private fun initView() {
         binding.rvBests.adapter = bestAdapter
         binding.rvBests.layoutManager = LinearLayoutManager(requireContext())
-
-        /*activityViewModel.getBestDish{
-            bestAdapter.submitList(it.toMutableList())
-        }*/
 
         activityViewModel.getBests()
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                activityViewModel.uiState.collect(){ state ->
-                    when(state){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                activityViewModel.uiState.collect() { state ->
+                    when (state) {
                         is UiState.Success -> {
                             bestAdapter.submitList(state.list)
                             binding.pbLoading.visibility = View.GONE
@@ -57,5 +53,9 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
                 }
             }
         }
+    }
+
+    private fun startDetailActivity(title: String, hash: String) {
+        //startDetailActivity
     }
 }
