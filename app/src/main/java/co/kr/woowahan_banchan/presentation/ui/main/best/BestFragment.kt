@@ -3,9 +3,8 @@ package co.kr.woowahan_banchan.presentation.ui.main.best
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentBestBinding
@@ -14,7 +13,8 @@ import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.MainViewModel
 import co.kr.woowahan_banchan.presentation.viewmodel.MainViewModel.UiState
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class BestFragment : BaseFragment<FragmentBestBinding>() {
 
@@ -36,24 +36,22 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
 
         activityViewModel.getBests()
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                activityViewModel.uiState.collect() { state ->
-                    when (state) {
-                        is UiState.Success -> {
-                            bestAdapter.submitList(state.list)
-                            binding.pbLoading.visibility = View.GONE
-                        }
-                        is UiState.Error -> {
-                            binding.pbLoading.visibility = View.GONE
-                        }
-                        else -> {
-                            binding.pbLoading.visibility = View.VISIBLE
-                        }
+        activityViewModel.bestItems
+            .flowWithLifecycle(this.lifecycle)
+            .onEach {
+                when (it) {
+                    is UiState.Init -> {
+                        binding.pbLoading.visibility = View.VISIBLE
+                    }
+                    is UiState.Success -> {
+                        bestAdapter.submitList(it.data.toMutableList())
+                        binding.pbLoading.visibility = View.GONE
+                    }
+                    is UiState.Error -> {
+                        binding.pbLoading.visibility = View.GONE
                     }
                 }
-            }
-        }
+            }.launchIn(lifecycleScope)
     }
 
     private fun startDetailActivity(title: String, hash: String) {

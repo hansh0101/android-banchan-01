@@ -14,19 +14,19 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getBestsUseCase: GetBestsUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState>(UiState.Init)
-    val uiState : StateFlow<UiState> get() = _uiState
+    private val _bestItems = MutableStateFlow<UiState<List<BestItem>>>(UiState.Init)
+    val bestItems: StateFlow<UiState<List<BestItem>>> get() = _bestItems
 
     fun getBests() = viewModelScope.launch {
         getBestsUseCase().collect {
-            _uiState.value = UiState.Success(it)
+            _bestItems.value = UiState.Success(it)
         }
     }
 
-    sealed class UiState {
-        object Init : UiState()
-        data class Success(val list : List<BestItem>) :UiState()
-        data class Error(val message : String) : UiState()
+    sealed class UiState<out T> {
+        object Init : UiState<Nothing>()
+        data class Success<out T>(val data: T) : UiState<T>()
+        data class Error(val message: String?) : UiState<Nothing>()
     }
 }
 
