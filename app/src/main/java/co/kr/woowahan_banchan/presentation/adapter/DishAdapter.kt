@@ -10,15 +10,23 @@ import co.kr.woowahan_banchan.databinding.ItemDishBinding
 import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import co.kr.woowahan_banchan.util.ImageLoader
 
-class DishAdapter(private val isGrid: Boolean) : ListAdapter<Dish, RecyclerView.ViewHolder>(DishDiffCallback()) {
+class DishAdapter(
+    private val isGrid: Boolean,
+    private val moveToDetail: (String, String) -> Unit
+) : ListAdapter<Dish, RecyclerView.ViewHolder>(DishDiffCallback()) {
 
     class DishLinearViewHolder(
-        private val binding: ItemDishBinding
+        private val binding: ItemDishBinding,
+        private val moveToDetail: (String, String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Dish) {
             ImageLoader.loadImage(item.imageUrl) {
                 binding.ivImage.setImageBitmap(it)
                 binding.dish = item
+
+                binding.root.setOnClickListener {
+                    moveToDetail(item.title, item.detailHash)
+                }
             }
         }
     }
@@ -36,7 +44,7 @@ class DishAdapter(private val isGrid: Boolean) : ListAdapter<Dish, RecyclerView.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_dish, parent, false)
         val binding = ItemDishBinding.bind(view)
-        return DishLinearViewHolder(binding)
+        return DishLinearViewHolder(binding, moveToDetail)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
