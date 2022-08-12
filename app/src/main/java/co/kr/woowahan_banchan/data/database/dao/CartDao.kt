@@ -18,6 +18,6 @@ interface CartDao {
     @Query("DELETE FROM CART WHERE hash in (:ids)")
     suspend fun deleteItems(ids: List<String>)
 
-    @Query("SELECT amount FROM CART where hash LIKE (:hash)")
+    @Query("SELECT amount FROM CART WHERE hash LIKE (:hash)")
     suspend fun getAmount(hash: String): Int
 }
