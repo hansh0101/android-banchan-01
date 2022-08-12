@@ -25,12 +25,6 @@ class DishRepositoryImpl @Inject constructor(
     private val soupDishDataSource: SoupDishDataSource,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : DishRepository {
-    override suspend fun addToCart(hash: String, amount: Int, name: String) {
-        cartDataSource.insertOrUpdateItems(
-            listOf(CartDto(hash, amount, true, Date().time, name))
-        )
-    }
-
     override fun getBestDishes(): Flow<List<BestItem>> {
         return cartDataSource.getItems().map { cartDtoList ->
             val apiResult = bestDataSource.getBests()
