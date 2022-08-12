@@ -1,6 +1,8 @@
 package co.kr.woowahan_banchan.presentation.ui.main
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ActivityMainBinding
 import co.kr.woowahan_banchan.presentation.adapter.ViewPagerAdapter
@@ -23,7 +25,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        initToolbar()
         initView()
+    }
+
+    private fun initToolbar(){
+        setSupportActionBar(binding.tbToolbar)
     }
 
     private fun initView(){
@@ -34,5 +41,22 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 tab.text = tabTitleArray[position]
             }.attach()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_app_bar,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_cart -> {
+                //move to cart
+            }
+            R.id.action_history -> {
+                //move to history
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
