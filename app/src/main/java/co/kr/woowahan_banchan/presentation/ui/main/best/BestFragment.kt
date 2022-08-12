@@ -11,6 +11,7 @@ import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentBestBinding
 import co.kr.woowahan_banchan.presentation.adapter.BestItemAdapter
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
+import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.MainViewModel
 import co.kr.woowahan_banchan.presentation.viewmodel.MainViewModel.UiState
 import kotlinx.coroutines.launch
@@ -56,6 +57,6 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
     }
 
     private fun startDetailActivity(title: String, hash: String) {
-        //startDetailActivity
+        startActivity(ProductDetailActivity.getIntent(requireContext(), title, hash))
     }
 }

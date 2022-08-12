@@ -35,7 +35,7 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.fetchUiState("HBBCC")
+        viewModel.fetchUiState(intent.getStringExtra("HASH") ?: error("what?"))
         initView()
         initOnClickListener()
         observeData()
@@ -90,7 +90,7 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
     private fun showUi(dishInfo: DishInfo) {
         viewPagerAdapter.updateItems(dishInfo.thumbnailUrls)
         binding.tvTitle.text =
-            "새콤달콤 오징어무침" // TODO - 추후 이전 화면에서 받아온 title을 표시해야 함
+            intent.getStringExtra("TITLE") ?: ""
         binding.tvDescription.text = dishInfo.productDescription
         binding.tvSalePercent.isVisible = dishInfo.discount != 0
         binding.tvSalePercent.text = "${dishInfo.discount}%"
@@ -139,6 +139,7 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
                 }
             }
         }
+
     }
 
     private fun showProgressBar() {
