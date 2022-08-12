@@ -8,5 +8,6 @@ data class DishInfo(
     val deliveryInfo: String,
     val deliveryFeeInfo: String,
     val prices: List<Int>,
+    val discount: Int,
     val detailImageUrls: List<String>
 )
