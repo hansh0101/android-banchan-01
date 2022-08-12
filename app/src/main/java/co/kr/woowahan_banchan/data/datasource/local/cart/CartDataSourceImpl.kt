@@ -34,4 +34,11 @@ class CartDataSourceImpl @Inject constructor(
                 cartDao.deleteItems(ids)
             }
         }
+
+    override suspend fun getAmount(hash: String): Result<Int> =
+        withContext(coroutineDispatcher) {
+            runCatching {
+                cartDao.getAmount(hash)
+            }
+        }
 }
