@@ -11,7 +11,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="4dp"
-        android:text="풍성한 고기반찬"
         android:textColor="@color/grayscale_000000"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -28,6 +27,5 @@
         android:nestedScrollingEnabled="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/tv_name"
-        tools:layout_editor_absoluteX="-59dp"
         tools:listitem="@layout/item_dish" />
 </androidx.constraintlayout.widget.ConstraintLayout>

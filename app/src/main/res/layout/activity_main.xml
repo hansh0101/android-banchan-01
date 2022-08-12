@@ -30,7 +30,7 @@
             app:layout_constraintTop_toBottomOf="@id/layout_appbar"
             app:tabMode="scrollable"
             app:tabMinWidth="150dp"
-            app:tabSelectedTextColor="@color/primary_f9ba70"
+            app:tabTextColor="@color/grayscale_000000"
             app:tabIndicatorColor="@color/primary_f9ba70"/>
 
         <androidx.viewpager2.widget.ViewPager2
