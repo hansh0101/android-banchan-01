@@ -5,7 +5,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/grayscale_ffffff">
 
         <ImageView
             android:id="@+id/iv_thumbnail"
@@ -21,10 +22,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:textColor="@color/grayscale_000000"
-            android:textSize="14sp"
             android:ellipsize="end"
             android:lines="1"
+            android:textColor="@color/grayscale_000000"
+            android:textSize="14sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/iv_arrow"
             app:layout_constraintStart_toEndOf="@id/iv_thumbnail"
             app:layout_constraintTop_toTopOf="@id/iv_thumbnail"
@@ -47,6 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textSize="14sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/tv_title"
             app:layout_constraintTop_toBottomOf="@id/tv_price"
             tools:text="배송 준비 중" />
