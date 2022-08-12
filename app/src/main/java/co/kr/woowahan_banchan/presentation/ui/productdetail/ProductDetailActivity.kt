@@ -14,6 +14,7 @@ import co.kr.woowahan_banchan.databinding.ActivityProductDetailBinding
 import co.kr.woowahan_banchan.domain.entity.detail.DishInfo
 import co.kr.woowahan_banchan.presentation.adapter.ProductDetailViewPagerAdapter
 import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
+import co.kr.woowahan_banchan.presentation.ui.widget.CartAddDialog
 import co.kr.woowahan_banchan.presentation.viewmodel.productdetail.ProductDetailViewModel
 import co.kr.woowahan_banchan.util.ImageLoader
 import co.kr.woowahan_banchan.util.shortToast
@@ -97,7 +98,9 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
             .flowWithLifecycle(lifecycle)
             .onEach { success ->
                 when (success) {
-                    true -> shortToast("성공")
+                    true -> {
+                        CartAddDialog(this).show()
+                    }
                     false -> shortToast("실패")
                 }
             }.launchIn(lifecycleScope)
