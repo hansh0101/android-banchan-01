@@ -2,10 +2,7 @@ package co.kr.woowahan_banchan.util
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.net.HttpURLConnection
 import java.net.URL
@@ -24,18 +21,20 @@ object ImageLoader {
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
-            var urlConnection = URL(url).openConnection() as HttpURLConnection
-            when (urlConnection.responseCode) {
-                HttpURLConnection.HTTP_MOVED_PERM,
-                HttpURLConnection.HTTP_MOVED_TEMP -> {
-                    val location =
-                        URLDecoder.decode(urlConnection.getHeaderField("Location"), "UTF-8")
-                    val next = URL(URL(url), location)
-                    urlConnection = next.openConnection() as HttpURLConnection
-                }
-            }
+            var urlConnection: HttpURLConnection? = null
             runCatching {
-                val stream = urlConnection.inputStream
+                urlConnection = URL(url).openConnection() as HttpURLConnection
+                urlConnection?.let { con ->
+                    when (con.responseCode) {
+                        HttpURLConnection.HTTP_MOVED_PERM,
+                        HttpURLConnection.HTTP_MOVED_TEMP -> {
+                            val location = URLDecoder.decode(con.getHeaderField("Location"), "UTF-8")
+                            val next = URL(URL(url), location)
+                            urlConnection = next.openConnection() as HttpURLConnection
+                        }
+                    }
+                }
+                val stream = urlConnection?.inputStream
                 BitmapFactory.decodeStream(stream)
             }.onSuccess {
                 cache[url] = it
@@ -44,8 +43,9 @@ object ImageLoader {
                 Timber.e(it)
                 withContext(Dispatchers.Main) { setImage(null) }
             }.also {
-                urlConnection.disconnect()
+                urlConnection?.disconnect()
             }
+            cancel()
         }
     }
 }
