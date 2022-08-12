@@ -9,14 +9,8 @@ import co.kr.woowahan_banchan.data.datasource.remote.detail.DetailDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.maindish.MainDishDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.sidedish.SideDishDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.soupdish.SoupDishDataSource
-import co.kr.woowahan_banchan.data.repository.DetailRepositoryImpl
-import co.kr.woowahan_banchan.data.repository.DishRepositoryImpl
-import co.kr.woowahan_banchan.data.repository.HistoryRepositoryImpl
-import co.kr.woowahan_banchan.data.repository.OrderHistoryRepositoryImpl
-import co.kr.woowahan_banchan.domain.repository.DetailRepository
-import co.kr.woowahan_banchan.domain.repository.DishRepository
-import co.kr.woowahan_banchan.domain.repository.HistoryRepository
-import co.kr.woowahan_banchan.domain.repository.OrderHistoryRepository
+import co.kr.woowahan_banchan.data.repository.*
+import co.kr.woowahan_banchan.domain.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -74,4 +68,10 @@ object RepositoryModule {
         @DefaultDispatcher coroutineDispatcher: CoroutineDispatcher
     ): OrderHistoryRepository =
         OrderHistoryRepositoryImpl(orderDataSource, orderItemDataSource, coroutineDispatcher)
+
+    @Provides
+    @Singleton
+    fun provideCartRepository(
+        cartDataSource: CartDataSource
+    ): CartRepository = CartRepositoryImpl(cartDataSource)
 }
