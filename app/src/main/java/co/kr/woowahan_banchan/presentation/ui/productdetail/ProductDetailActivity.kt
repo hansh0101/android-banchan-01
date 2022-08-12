@@ -2,7 +2,6 @@ package co.kr.woowahan_banchan.presentation.ui.productdetail
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -33,9 +32,14 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
     private val viewModel by viewModels<ProductDetailViewModel>()
     private val viewPagerAdapter by lazy { ProductDetailViewPagerAdapter() }
 
+    private lateinit var hash: String
+    private lateinit var title: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.fetchUiState(intent.getStringExtra("HASH") ?: error("what?"))
+        hash = intent.getStringExtra("HASH") ?: error("Hash not delivered")
+        title = intent.getStringExtra("TITLE") ?: error("Title not delivered")
+        viewModel.fetchUiState(hash)
         initView()
         initOnClickListener()
         observeData()
@@ -53,11 +57,14 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
         binding.ivMinus.setOnClickListener {
             viewModel.updateAmount(isPlus = false)
         }
+        binding.btnOrder.setOnClickListener {
+            viewModel.addToCart(hash, title)
+        }
     }
 
     private fun observeData() {
         viewModel.dishInfo
-            .flowWithLifecycle(this.lifecycle)
+            .flowWithLifecycle(lifecycle)
             .onEach {
                 when (it) {
                     is ProductDetailViewModel.UiState.Init -> {
@@ -66,7 +73,7 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
                     is ProductDetailViewModel.UiState.Success -> {
                         Timber.tag("dishInfo").i(it.toString())
                         hideProgressBar()
-                        showUi(it.dishInfo)
+                        showUi(it.data)
                     }
                     is ProductDetailViewModel.UiState.Error -> {
                         hideProgressBar()
@@ -76,21 +83,29 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
             }.launchIn(lifecycleScope)
 
         viewModel.amount
-            .flowWithLifecycle(this.lifecycle)
+            .flowWithLifecycle(lifecycle)
             .onEach {
                 binding.tvAmountValue.text = it.toPriceFormat()
                 if (viewModel.dishInfo.value is ProductDetailViewModel.UiState.Success) {
                     val price =
-                        (viewModel.dishInfo.value as ProductDetailViewModel.UiState.Success).dishInfo.prices.last()
+                        (viewModel.dishInfo.value as ProductDetailViewModel.UiState.Success).data.prices.last()
                     showTotalPrice(it, price)
+                }
+            }.launchIn(lifecycleScope)
+
+        viewModel.isAddSuccess
+            .flowWithLifecycle(lifecycle)
+            .onEach { success ->
+                when (success) {
+                    true -> shortToast("성공")
+                    false -> shortToast("실패")
                 }
             }.launchIn(lifecycleScope)
     }
 
     private fun showUi(dishInfo: DishInfo) {
         viewPagerAdapter.updateItems(dishInfo.thumbnailUrls)
-        binding.tvTitle.text =
-            intent.getStringExtra("TITLE") ?: ""
+        binding.tvTitle.text = title
         binding.tvDescription.text = dishInfo.productDescription
         binding.tvSalePercent.isVisible = dishInfo.discount != 0
         binding.tvSalePercent.text = "${dishInfo.discount}%"
@@ -139,7 +154,6 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
                 }
             }
         }
-
     }
 
     private fun showProgressBar() {
