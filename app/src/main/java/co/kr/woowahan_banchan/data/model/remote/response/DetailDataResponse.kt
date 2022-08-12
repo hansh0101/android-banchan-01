@@ -3,6 +3,7 @@ package co.kr.woowahan_banchan.data.model.remote.response
 import co.kr.woowahan_banchan.domain.entity.detail.DishInfo
 import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import com.google.gson.annotations.SerializedName
+import kotlin.math.roundToInt
 
 data class DetailDataResponse(
     @SerializedName("top_image") val topImageUrl: String,
@@ -37,6 +38,7 @@ data class DetailDataResponse(
             prices.map {
                 it.toPriceInt()
             },
+            if (prices.size == 1) 0 else ((prices[0].toPriceInt() - prices[1].toPriceInt()).toDouble() / (prices[0].toPriceInt()).toDouble() * 100).roundToInt(),
             detailSection
         )
     }
