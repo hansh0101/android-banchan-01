@@ -122,19 +122,6 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
     private fun showTotalPrice(amount: Int, price: Int) {
         val totalPrice = amount * price
         binding.tvTotalPriceValue.text = totalPrice.toPriceFormat() + "원"
-        binding.btnOrder.text =
-            if (totalPrice >= 10000) {
-                "주문하기"
-            } else {
-                "최소주문금액을 확인해주세요"
-            }
-        binding.btnOrder.isClickable = totalPrice >= 10000
-        binding.btnOrder.backgroundTintList =
-            if (totalPrice >= 10000) {
-                ColorStateList.valueOf(getColor(R.color.primary_f9ba70))
-            } else {
-                ColorStateList.valueOf(getColor(R.color.primary_fcdcb7))
-            }
     }
 
     private fun addDetailImages(imageUrls: List<String>) {
