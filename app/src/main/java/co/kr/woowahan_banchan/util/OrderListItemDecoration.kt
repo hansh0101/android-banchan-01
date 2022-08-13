@@ -25,12 +25,12 @@ class OrderListItemDecoration(
         if (parent.layoutManager is LinearLayoutManager) {
             if (parent.getChildAdapterPosition(view) == 0) {
                 outRect.set(
-                    0, (topOffset + bottomOffset).dpToPx(), 0, bottomOffset.dpToPx()
+                    0, topOffset + bottomOffset, 0, bottomOffset
                 )
             } else if (parent.getChildAdapterPosition(view) == parent.childCount - 1) {
-                outRect.set(0, topOffset.dpToPx(), 0, (topOffset + bottomOffset).dpToPx())
+                outRect.set(0, topOffset, 0, (topOffset + bottomOffset))
             } else {
-                outRect.set(0, topOffset.dpToPx(), 0, bottomOffset.dpToPx())
+                outRect.set(0, topOffset, 0, bottomOffset)
             }
         }
     }
@@ -40,7 +40,7 @@ class OrderListItemDecoration(
         val paint = Paint().apply {
             this.color = borderColor
             this.style = Paint.Style.STROKE
-            this.strokeWidth = borderWidth.dpToPx().toFloat()
+            this.strokeWidth = borderWidth.toFloat()
         }
 
         parent.children.forEach { child ->
@@ -48,13 +48,13 @@ class OrderListItemDecoration(
                 child.left.toFloat(),
                 child.top.toFloat(),
                 child.right.toFloat(),
-                (child.top + (1).dpToPx()).toFloat(),
+                (child.top + 1).toFloat(),
                 paint
             )
 
             c.drawRect(
                 child.left.toFloat(),
-                (child.bottom - (1).dpToPx()).toFloat(),
+                (child.bottom - 1).toFloat(),
                 child.right.toFloat(),
                 child.bottom.toFloat(),
                 paint
