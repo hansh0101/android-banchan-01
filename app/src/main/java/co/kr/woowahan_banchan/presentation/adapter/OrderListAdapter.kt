@@ -13,9 +13,12 @@ import co.kr.woowahan_banchan.util.calculateDiffToMinute
 import co.kr.woowahan_banchan.util.toPriceFormat
 import java.util.*
 
-class OrderListAdapter :
+class OrderListAdapter(private val itemClick: (OrderHistory) -> Unit) :
     ListAdapter<OrderHistory, OrderListAdapter.OrderListViewHolder>(diffCallback) {
-    class OrderListViewHolder(private val binding: ItemOrderListBinding) :
+    class OrderListViewHolder(
+        private val binding: ItemOrderListBinding,
+        private val itemClick: (OrderHistory) -> Unit
+    ) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(orderHistory: OrderHistory) {
             with(orderHistory) {
@@ -28,6 +31,7 @@ class OrderListAdapter :
                 binding.tvPrice.text = this.totalPrice.toPriceFormat() + "원"
                 setDeliveryInfo(time)
             }
+            binding.root.setOnClickListener { itemClick(orderHistory) }
         }
 
         private fun setDeliveryInfo(time: Long) {
@@ -45,13 +49,13 @@ class OrderListAdapter :
         }
 
         companion object {
-            fun create(parent: ViewGroup): OrderListViewHolder {
+            fun create(parent: ViewGroup, itemClick: (OrderHistory) -> Unit): OrderListViewHolder {
                 val binding = ItemOrderListBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
-                return OrderListViewHolder(binding)
+                return OrderListViewHolder(binding, itemClick)
             }
         }
     }
@@ -67,7 +71,7 @@ class OrderListAdapter :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderListViewHolder =
-        OrderListViewHolder.create(parent)
+        OrderListViewHolder.create(parent, itemClick)
 
     override fun onBindViewHolder(holder: OrderListViewHolder, position: Int) {
         holder.onBind(currentList[position])
