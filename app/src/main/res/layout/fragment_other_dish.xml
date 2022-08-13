@@ -2,16 +2,18 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="viewModel"
-            type="co.kr.woowahan_banchan.presentation.viewmodel.main.SoupDishViewModel" />
+            type="co.kr.woowahan_banchan.presentation.viewmodel.main.OtherDishViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".presentation.ui.main.soupdish.SoupDishFragment">
+        tools:context=".presentation.ui.main.otherdish.OtherDishFragment">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -31,14 +33,15 @@
                     android:background="@color/primary_fbf5e0"
                     android:orientation="vertical"
                     android:paddingHorizontal="16dp"
-                    android:paddingVertical="53dp"
+                    android:paddingVertical="50dp"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
+                        android:id="@+id/tv_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="정성이 담긴\n뜨끈뜨끈 국물 요리"
+                        android:text="@{viewModel.titleText}"
                         android:textColor="@color/grayscale_000000"
                         android:textSize="32sp" />
                 </LinearLayout>
@@ -54,10 +57,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{@string/dish_amount(String.valueOf(viewModel.dishAmount))}"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <Spinner
                     android:id="@+id/sp_filter"
@@ -71,12 +73,11 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:listitem="@layout/item_filter" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_soupdishes"
+            android:id="@+id/rv_dishes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
