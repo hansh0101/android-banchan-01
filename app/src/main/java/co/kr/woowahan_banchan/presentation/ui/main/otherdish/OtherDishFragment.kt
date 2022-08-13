@@ -1,4 +1,4 @@
-package co.kr.woowahan_banchan.presentation.ui.main.soupdish
+package co.kr.woowahan_banchan.presentation.ui.main.otherdish
 
 import android.os.Bundle
 import android.view.View
@@ -8,7 +8,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import co.kr.woowahan_banchan.R
-import co.kr.woowahan_banchan.databinding.FragmentSoupDishBinding
+import co.kr.woowahan_banchan.databinding.FragmentOtherDishBinding
 import co.kr.woowahan_banchan.domain.repository.Source
 import co.kr.woowahan_banchan.presentation.adapter.DishAdapter
 import co.kr.woowahan_banchan.presentation.adapter.FilterSpinnerAdapter
@@ -16,19 +16,23 @@ import co.kr.woowahan_banchan.presentation.decoration.GridItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
-import co.kr.woowahan_banchan.presentation.viewmodel.main.SoupDishViewModel
+import co.kr.woowahan_banchan.presentation.viewmodel.main.OtherDishViewModel
 import co.kr.woowahan_banchan.util.dpToPx
 import co.kr.woowahan_banchan.util.shortToast
+import co.kr.woowahan_banchan.util.stringArgs
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class SoupDishFragment : BaseFragment<FragmentSoupDishBinding>() {
-    override val layoutRes: Int
-        get() = R.layout.fragment_soup_dish
+class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
 
-    private val viewModel by viewModels<SoupDishViewModel>()
+    override val layoutRes: Int
+        get() = R.layout.fragment_other_dish
+
+    private val dishType by stringArgs()
+
+    private val viewModel by viewModels<OtherDishViewModel>()
 
     private val dishAdapter by lazy {
         DishAdapter { title, hash ->
@@ -49,25 +53,38 @@ class SoupDishFragment : BaseFragment<FragmentSoupDishBinding>() {
         initView()
         observeData()
         setListener()
+        initData()
 
         binding.viewModel = viewModel
-        viewModel.getDishes(Source.SOUP)
+    }
+
+    private fun initData() {
+        when (dishType) {
+            SOUP -> {
+                viewModel.getDishes(Source.SOUP)
+                viewModel.setTitle("정성이 담긴\n뜨끈뜨끈 국물 요리")
+            }
+            SIDE -> {
+                viewModel.getDishes(Source.SIDE)
+                viewModel.setTitle("식탁을 풍성하게 하는\n정갈한 밑반찬")
+            }
+        }
     }
 
     private fun initView() {
-        binding.rvSoupdishes.adapter = dishAdapter
-        binding.rvSoupdishes.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.rvSoupdishes.addItemDecoration(
-            GridItemDecoration(30.dpToPx(),16.dpToPx())
+        binding.rvDishes.adapter = dishAdapter
+        binding.rvDishes.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.rvDishes.addItemDecoration(
+            GridItemDecoration(30.dpToPx(), 16.dpToPx())
         )
-        binding.rvSoupdishes.itemAnimator = null
+        binding.rvDishes.itemAnimator = null
 
         binding.spFilter.adapter = filterAdapter
         filterAdapter.submitList(spinnerItems, 0)
     }
 
     private fun observeData() {
-        viewModel.soupDishes.flowWithLifecycle(viewLifecycleOwner.lifecycle)
+        viewModel.otherDishes.flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 when (it) {
                     is UiState.Init -> {
@@ -112,5 +129,18 @@ class SoupDishFragment : BaseFragment<FragmentSoupDishBinding>() {
 
     private fun startDetailActivity(title: String, hash: String) {
         startActivity(ProductDetailActivity.getIntent(requireContext(), title, hash))
+    }
+
+    companion object {
+        const val SOUP = "soup"
+        const val SIDE = "side"
+
+        fun newInstance(dishType: String): OtherDishFragment {
+            return OtherDishFragment().apply {
+                arguments = Bundle().apply {
+                    putString("dishType", dishType)
+                }
+            }
+        }
     }
 }

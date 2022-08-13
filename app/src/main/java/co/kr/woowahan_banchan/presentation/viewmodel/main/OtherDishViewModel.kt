@@ -16,11 +16,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SoupDishViewModel @Inject constructor(
+class OtherDishViewModel @Inject constructor(
     private val getDishesUseCase: GetDishesUseCase
 ) : ViewModel() {
-    private val _soupDishes = MutableStateFlow<UiState<List<Dish>>>(UiState.Init)
-    val soupDishes: StateFlow<UiState<List<Dish>>> get() = _soupDishes
+    private val _otherDishes = MutableStateFlow<UiState<List<Dish>>>(UiState.Init)
+    val otherDishes: StateFlow<UiState<List<Dish>>> get() = _otherDishes
 
     private var defaultMainDishes = listOf<Dish>()
 
@@ -28,13 +28,16 @@ class SoupDishViewModel @Inject constructor(
     val sortedDishes: LiveData<List<Dish>> get() = _sortedDishes
 
     private val _dishAmount = MutableLiveData(0)
-    val dishAmount : LiveData<Int> get() = _dishAmount
+    val dishAmount: LiveData<Int> get() = _dishAmount
+
+    private val _titleText = MutableLiveData("")
+    val titleText: LiveData<String> get() = _titleText
 
     fun getDishes(source: Source) = viewModelScope.launch {
         getDishesUseCase(source)
-            .catch { _soupDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
+            .catch { _otherDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
             .collect {
-                _soupDishes.value = UiState.Success(it)
+                _otherDishes.value = UiState.Success(it)
             }
     }
 
@@ -50,5 +53,9 @@ class SoupDishViewModel @Inject constructor(
     fun setDefaultMainDishes(list: List<Dish>) {
         defaultMainDishes = list
         _dishAmount.postValue(list.size)
+    }
+
+    fun setTitle(title: String) {
+        _titleText.value = title
     }
 }
