@@ -2,7 +2,6 @@ package co.kr.woowahan_banchan.presentation.ui.main.best
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -12,9 +11,9 @@ import co.kr.woowahan_banchan.databinding.FragmentBestBinding
 import co.kr.woowahan_banchan.presentation.adapter.BestItemAdapter
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
-import co.kr.woowahan_banchan.presentation.viewmodel.MainViewModel
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.main.BestViewModel
+import co.kr.woowahan_banchan.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -32,14 +31,17 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
+        observeData()
+
+        viewModel.getBests()
     }
 
     private fun initView() {
         binding.rvBests.adapter = bestAdapter
         binding.rvBests.layoutManager = LinearLayoutManager(requireContext())
+    }
 
-        viewModel.getBests()
-
+    private fun observeData() {
         viewModel.bestItems
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
@@ -53,6 +55,7 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
                     }
                     is UiState.Error -> {
                         binding.pbLoading.visibility = View.GONE
+                        requireContext().shortToast(it.message)
                     }
                 }
             }.launchIn(lifecycleScope)

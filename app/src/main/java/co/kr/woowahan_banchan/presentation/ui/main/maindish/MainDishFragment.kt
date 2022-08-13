@@ -57,6 +57,8 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
         initView()
         observeData()
         setListener()
+
+        viewModel.getDishes(Source.MAIN)
     }
 
     private fun initView() {
@@ -67,14 +69,10 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
         binding.rvMaindishes.itemAnimator = null
 
         binding.spFilter.adapter = filterAdapter
-        filterAdapter.submitList(
-            spinnerItems, 0
-        )
+        filterAdapter.submitList(spinnerItems, 0)
     }
 
     private fun observeData() {
-        viewModel.getDishes(Source.MAIN)
-
         viewModel.mainDishes
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
