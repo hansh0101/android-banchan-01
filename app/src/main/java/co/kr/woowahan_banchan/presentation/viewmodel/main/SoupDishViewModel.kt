@@ -16,30 +16,30 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainDishViewModel @Inject constructor(
+class SoupDishViewModel @Inject constructor(
     private val getDishesUseCase: GetDishesUseCase
 ) : ViewModel() {
-    private val _mainDishes = MutableStateFlow<UiState<List<Dish>>>(UiState.Init)
-    val mainDishes: StateFlow<UiState<List<Dish>>> get() = _mainDishes
-
-    private val _isGridMode = MutableLiveData(true)
-    val isGridMode : LiveData<Boolean> get() = _isGridMode
+    private val _soupDishes = MutableStateFlow<UiState<List<Dish>>>(UiState.Init)
+    val soupDishes: StateFlow<UiState<List<Dish>>> get() = _soupDishes
 
     private var defaultMainDishes = listOf<Dish>()
 
     private val _sortedDishes = MutableLiveData<List<Dish>>(listOf())
-    val sortedDishes :LiveData<List<Dish>> get() = _sortedDishes
+    val sortedDishes: LiveData<List<Dish>> get() = _sortedDishes
+
+    private val _dishAmount = MutableLiveData(0)
+    val dishAmount : LiveData<Int> get() = _dishAmount
 
     fun getDishes(source: Source) = viewModelScope.launch {
         getDishesUseCase(source)
-            .catch { _mainDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
+            .catch { _soupDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
             .collect {
-            _mainDishes.value = UiState.Success(it)
-        }
+                _soupDishes.value = UiState.Success(it)
+            }
     }
 
-    fun setSortedDishes(sortType : Int) {
-        when(sortType){
+    fun setSortedDishes(sortType: Int) {
+        when (sortType) {
             0 -> _sortedDishes.value = defaultMainDishes
             1 -> _sortedDishes.value = defaultMainDishes.sortedByDescending { it.sPrice }
             2 -> _sortedDishes.value = defaultMainDishes.sortedBy { it.sPrice }
@@ -47,11 +47,8 @@ class MainDishViewModel @Inject constructor(
         }
     }
 
-    fun setDefaultMainDishes(list : List<Dish>){
+    fun setDefaultMainDishes(list: List<Dish>) {
         defaultMainDishes = list
-    }
-
-    fun setGridMode(isGrid : Boolean){
-        _isGridMode.value = isGrid
+        _dishAmount.postValue(list.size)
     }
 }

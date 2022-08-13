@@ -18,7 +18,9 @@
         <ImageView
             android:id="@+id/iv_image"
             android:layout_width="160dp"
-            android:layout_height="160dp"
+            android:layout_height="0dp"
+            android:maxWidth="200dp"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,28 +35,31 @@
 
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="160dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingVertical="4dp"
             android:text="@{dish.title}"
             android:textColor="@color/grayscale_000000"
             android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_image"
             app:layout_constraintTop_toTopOf="@id/iv_image" />
 
         <TextView
             android:id="@+id/tv_description"
-            android:layout_width="160dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLines="1"
+            android:gravity="start"
+            android:maxLines="3"
             android:paddingVertical="4dp"
             android:text="@{dish.description}"
             android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/tv_title"
             app:layout_constraintTop_toBottomOf="@id/tv_title" />
 

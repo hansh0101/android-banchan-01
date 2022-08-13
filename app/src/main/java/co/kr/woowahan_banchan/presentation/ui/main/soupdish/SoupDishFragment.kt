@@ -1,4 +1,4 @@
-package co.kr.woowahan_banchan.presentation.ui.main.maindish
+package co.kr.woowahan_banchan.presentation.ui.main.soupdish
 
 import android.os.Bundle
 import android.view.View
@@ -7,18 +7,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import co.kr.woowahan_banchan.R
-import co.kr.woowahan_banchan.databinding.FragmentMainDishBinding
+import co.kr.woowahan_banchan.databinding.FragmentSoupDishBinding
 import co.kr.woowahan_banchan.domain.repository.Source
 import co.kr.woowahan_banchan.presentation.adapter.DishAdapter
 import co.kr.woowahan_banchan.presentation.adapter.FilterSpinnerAdapter
 import co.kr.woowahan_banchan.presentation.decoration.GridItemDecoration
-import co.kr.woowahan_banchan.presentation.decoration.VerticalItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
-import co.kr.woowahan_banchan.presentation.viewmodel.main.MainDishViewModel
+import co.kr.woowahan_banchan.presentation.viewmodel.main.SoupDishViewModel
 import co.kr.woowahan_banchan.util.dpToPx
 import co.kr.woowahan_banchan.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,12 +24,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
-
+class SoupDishFragment : BaseFragment<FragmentSoupDishBinding>() {
     override val layoutRes: Int
-        get() = R.layout.fragment_main_dish
+        get() = R.layout.fragment_soup_dish
 
-    private val viewModel by viewModels<MainDishViewModel>()
+    private val viewModel by viewModels<SoupDishViewModel>()
 
     private val dishAdapter by lazy {
         DishAdapter { title, hash ->
@@ -46,12 +43,6 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
 
     private val filterAdapter by lazy { FilterSpinnerAdapter(requireContext()) }
 
-    private val gridLayoutManager by lazy { GridLayoutManager(requireContext(), 2) }
-    private val linearLayoutManager by lazy { LinearLayoutManager(requireContext()) }
-
-    private val gridItemDecoration by lazy { GridItemDecoration(30.dpToPx(), 16.dpToPx()) }
-    private val verticalItemDecoration by lazy { VerticalItemDecoration(30.dpToPx(), 16.dpToPx()) }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -59,23 +50,24 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
         observeData()
         setListener()
 
-        viewModel.getDishes(Source.MAIN)
+        binding.viewModel = viewModel
+        viewModel.getDishes(Source.SOUP)
     }
 
     private fun initView() {
-        binding.viewModel = viewModel
-        binding.rvMaindishes.adapter = dishAdapter
-        binding.rvMaindishes.layoutManager = gridLayoutManager
-        binding.rvMaindishes.addItemDecoration(gridItemDecoration)
-        binding.rvMaindishes.itemAnimator = null
+        binding.rvSoupdishes.adapter = dishAdapter
+        binding.rvSoupdishes.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.rvSoupdishes.addItemDecoration(
+            GridItemDecoration(30.dpToPx(),16.dpToPx())
+        )
+        binding.rvSoupdishes.itemAnimator = null
 
         binding.spFilter.adapter = filterAdapter
         filterAdapter.submitList(spinnerItems, 0)
     }
 
     private fun observeData() {
-        viewModel.mainDishes
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+        viewModel.soupDishes.flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 when (it) {
                     is UiState.Init -> {
@@ -92,22 +84,6 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
                     }
                 }
             }.launchIn(lifecycleScope)
-
-        viewModel.isGridMode.observe(viewLifecycleOwner) {
-            if (dishAdapter.isGrid != it) {
-                if (it) {
-                    dishAdapter.isGrid = true
-                    binding.rvMaindishes.removeItemDecoration(verticalItemDecoration)
-                    binding.rvMaindishes.layoutManager = gridLayoutManager
-                    binding.rvMaindishes.addItemDecoration(gridItemDecoration)
-                } else {
-                    dishAdapter.isGrid = false
-                    binding.rvMaindishes.removeItemDecoration(gridItemDecoration)
-                    binding.rvMaindishes.layoutManager = linearLayoutManager
-                    binding.rvMaindishes.addItemDecoration(verticalItemDecoration)
-                }
-            }
-        }
 
         viewModel.sortedDishes.observe(viewLifecycleOwner) {
             dishAdapter.submitList(it.toMutableList())
