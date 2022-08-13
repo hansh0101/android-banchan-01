@@ -5,6 +5,9 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import co.kr.woowahan_banchan.presentation.ui.main.best.BestFragment
+import co.kr.woowahan_banchan.presentation.ui.main.maindish.MainDishFragment
+import co.kr.woowahan_banchan.presentation.ui.main.sidedish.SideDishFragment
+import co.kr.woowahan_banchan.presentation.ui.main.soupdish.SoupDishFragment
 
 class ViewPagerAdapter(
     fragmentManager: FragmentManager,
@@ -16,7 +19,12 @@ class ViewPagerAdapter(
     }
 
     override fun createFragment(position: Int): Fragment {
-        return BestFragment()
+        return when(position){
+            1 -> MainDishFragment()
+            2 -> SoupDishFragment()
+            3 -> SideDishFragment()
+            else -> BestFragment()
+        }
     }
 
     companion object{
