@@ -6,7 +6,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grayscale_ffffff">
+        android:background="@color/grayscale_ffffff"
+        android:padding="16dp">
 
         <ImageView
             android:id="@+id/iv_thumbnail"
