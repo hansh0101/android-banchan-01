@@ -8,6 +8,7 @@ import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +20,9 @@ class BestViewModel  @Inject constructor(
     val bestItems: StateFlow<UiState<List<BestItem>>> get() = _bestItems
 
     fun getBests() = viewModelScope.launch {
-        getBestsUseCase().collect {
+        getBestsUseCase()
+            .catch { _bestItems.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
+            .collect {
             _bestItems.value = UiState.Success(it)
         }
     }
