@@ -41,8 +41,8 @@ class MainDishViewModel @Inject constructor(
     fun setSortedDishes(sortType : Int) {
         when(sortType){
             0 -> _sortedDishes.value = defaultMainDishes
-            1 -> _sortedDishes.value = defaultMainDishes.sortedByDescending { it.nPrice }
-            2 -> _sortedDishes.value = defaultMainDishes.sortedBy { it.nPrice }
+            1 -> _sortedDishes.value = defaultMainDishes.sortedByDescending { it.sPrice }
+            2 -> _sortedDishes.value = defaultMainDishes.sortedBy { it.sPrice }
             3 -> _sortedDishes.value = defaultMainDishes.sortedByDescending { it.discount }
         }
     }
