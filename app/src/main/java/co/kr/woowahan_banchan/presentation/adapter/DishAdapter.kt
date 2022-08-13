@@ -6,17 +6,23 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import co.kr.woowahan_banchan.R
-import co.kr.woowahan_banchan.databinding.ItemDishBinding
+import co.kr.woowahan_banchan.databinding.ItemDishGridBinding
+import co.kr.woowahan_banchan.databinding.ItemDishLinearBinding
 import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import co.kr.woowahan_banchan.util.ImageLoader
 
 class DishAdapter(
-    private val isGrid: Boolean,
     private val moveToDetail: (String, String) -> Unit
 ) : ListAdapter<Dish, RecyclerView.ViewHolder>(DishDiffCallback()) {
 
-    class DishLinearViewHolder(
-        private val binding: ItemDishBinding,
+    var isGrid: Boolean = true
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
+    class DishGridViewHolder(
+        private val binding: ItemDishGridBinding,
         private val moveToDetail: (String, String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Dish) {
@@ -29,8 +35,47 @@ class DishAdapter(
                 }
             }
         }
+
+        companion object {
+            fun create(
+                parent: ViewGroup,
+                moveToDetail: (String, String) -> Unit
+            ): DishGridViewHolder {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_dish_grid, parent, false)
+                val binding = ItemDishGridBinding.bind(view)
+                return DishGridViewHolder(binding, moveToDetail)
+            }
+        }
     }
 
+    class DishLinearViewHolder(
+        private val binding: ItemDishLinearBinding,
+        private val moveToDetail: (String, String) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Dish) {
+            ImageLoader.loadImage(item.imageUrl) {
+                binding.ivImage.setImageBitmap(it)
+                binding.dish = item
+
+                binding.root.setOnClickListener {
+                    moveToDetail(item.title, item.detailHash)
+                }
+            }
+        }
+
+        companion object {
+            fun create(
+                parent: ViewGroup,
+                moveToDetail: (String, String) -> Unit
+            ): DishLinearViewHolder {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_dish_linear, parent, false)
+                val binding = ItemDishLinearBinding.bind(view)
+                return DishLinearViewHolder(binding, moveToDetail)
+            }
+        }
+    }
     class DishDiffCallback : DiffUtil.ItemCallback<Dish>() {
         override fun areItemsTheSame(oldItem: Dish, newItem: Dish): Boolean {
             return oldItem.detailHash == newItem.detailHash
@@ -41,13 +86,28 @@ class DishAdapter(
         }
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if (isGrid) GRID else LINEAR
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_dish, parent, false)
-        val binding = ItemDishBinding.bind(view)
-        return DishLinearViewHolder(binding, moveToDetail)
+        return if (viewType == GRID) DishGridViewHolder.create(parent, moveToDetail)
+        else DishLinearViewHolder.create(parent, moveToDetail)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as DishLinearViewHolder).bind(getItem(position))
+        when (holder) {
+            is DishGridViewHolder -> {
+                holder.bind(getItem(position))
+            }
+            is DishLinearViewHolder -> {
+                holder.bind(getItem(position))
+            }
+        }
+    }
+
+    companion object {
+        const val GRID = 0
+        const val LINEAR = 1
     }
 }
