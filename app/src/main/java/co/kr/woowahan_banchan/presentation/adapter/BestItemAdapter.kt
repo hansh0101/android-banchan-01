@@ -21,7 +21,7 @@ class BestItemAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: BestItem) {
             binding.tvName.text = item.name
-            val adapter = DishAdapter(true, moveToDetail)
+            val adapter = DishAdapter(moveToDetail)
             val layoutManager = LinearLayoutManager(parent.context)
             layoutManager.orientation = LinearLayoutManager.HORIZONTAL
 
