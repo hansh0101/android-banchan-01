@@ -17,6 +17,13 @@ class OrderDataSourceImpl @Inject constructor(
             }
         }
 
+    override suspend fun getTime(orderId: Long): Result<Long> =
+        withContext(coroutineDispatcher) {
+            runCatching {
+                orderDao.getTime(orderId)
+            }
+        }
+
     override suspend fun insertItem(item: OrderDto): Result<Long> =
         withContext(coroutineDispatcher) {
             runCatching {

@@ -40,6 +40,9 @@ class OrderHistoryRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getOrderTime(orderId: Long): Long =
+        orderDataSource.getTime(orderId).getOrDefault(0)
+
     override suspend fun getOrderReceipt(orderId: Long): List<OrderItem>? {
         return withContext(coroutineDispatcher) {
             val orderItemsResult = orderItemDataSource.getItems(orderId)
