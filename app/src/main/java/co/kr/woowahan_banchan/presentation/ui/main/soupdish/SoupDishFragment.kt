@@ -50,6 +50,7 @@ class SoupDishFragment : BaseFragment<FragmentSoupDishBinding>() {
         observeData()
         setListener()
 
+        binding.viewModel = viewModel
         viewModel.getDishes(Source.SOUP)
     }
 

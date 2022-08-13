@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">반찬의민족</string>
+    <string name="dish_amount">총 %1$s개 상품</string>
 </resources>

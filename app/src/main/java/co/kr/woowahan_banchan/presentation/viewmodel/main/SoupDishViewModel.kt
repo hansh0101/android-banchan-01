@@ -27,6 +27,9 @@ class SoupDishViewModel @Inject constructor(
     private val _sortedDishes = MutableLiveData<List<Dish>>(listOf())
     val sortedDishes: LiveData<List<Dish>> get() = _sortedDishes
 
+    private val _dishAmount = MutableLiveData(0)
+    val dishAmount : LiveData<Int> get() = _dishAmount
+
     fun getDishes(source: Source) = viewModelScope.launch {
         getDishesUseCase(source)
             .catch { _soupDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
@@ -46,5 +49,6 @@ class SoupDishViewModel @Inject constructor(
 
     fun setDefaultMainDishes(list: List<Dish>) {
         defaultMainDishes = list
+        _dishAmount.postValue(list.size)
     }
 }
