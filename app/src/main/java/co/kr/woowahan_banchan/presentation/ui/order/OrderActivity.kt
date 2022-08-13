@@ -28,16 +28,26 @@ class OrderActivity : BaseActivity<ActivityOrderBinding>() {
     fun setToolbar(fragmentType: FragmentType) {
         when (fragmentType) {
             FragmentType.ORDER_LIST -> {
-                binding.tbToolbar.title = "OrderList"
-                binding.tbToolbar.setNavigationIcon(R.drawable.ic_arrow_left)
-                binding.tbToolbar.setNavigationOnClickListener { finish() }
+                with(binding.tbToolbar) {
+                    this.title = "OrderList"
+                    this.setNavigationIcon(R.drawable.ic_arrow_left)
+                    this.setNavigationOnClickListener { finish() }
+                }
+            }
+            FragmentType.ORDER_DETAIL -> {
+                with(binding.tbToolbar) {
+                    this.title = ""
+                    this.setNavigationIcon(R.drawable.ic_arrow_left)
+                    this.setNavigationOnClickListener { supportFragmentManager.popBackStack() }
+                }
+
             }
         }
     }
 
     companion object {
         enum class FragmentType {
-            ORDER_LIST
+            ORDER_LIST, ORDER_DETAIL
         }
     }
 }
