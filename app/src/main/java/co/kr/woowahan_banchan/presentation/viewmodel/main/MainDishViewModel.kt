@@ -7,10 +7,11 @@ import androidx.lifecycle.viewModelScope
 import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import co.kr.woowahan_banchan.domain.repository.Source
 import co.kr.woowahan_banchan.domain.usecase.GetDishesUseCase
-import co.kr.woowahan_banchan.presentation.viewmodel.MainViewModel
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,7 +31,9 @@ class MainDishViewModel @Inject constructor(
     val sortedDishes :LiveData<List<Dish>> get() = _sortedDishes
 
     fun getDishes(source: Source) = viewModelScope.launch {
-        getDishesUseCase(source).collect {
+        getDishesUseCase(source)
+            .catch { _mainDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
+            .collect {
             _mainDishes.value = UiState.Success(it)
         }
     }
@@ -48,17 +51,7 @@ class MainDishViewModel @Inject constructor(
         defaultMainDishes = list
     }
 
-    fun setModeGrid(){
-        _isGridMode.value = true
-    }
-
-    fun setModeLinear(){
-        _isGridMode.value = false
-    }
-
-    sealed class UiState<out T> {
-        object Init : UiState<Nothing>()
-        data class Success<out T>(val data: T) : UiState<T>()
-        data class Error(val message: String?) : UiState<Nothing>()
+    fun setGridMode(isGrid : Boolean){
+        _isGridMode.value = isGrid
     }
 }

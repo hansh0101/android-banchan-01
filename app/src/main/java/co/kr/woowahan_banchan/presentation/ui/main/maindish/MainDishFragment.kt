@@ -17,8 +17,8 @@ import co.kr.woowahan_banchan.presentation.decoration.GridItemDecoration
 import co.kr.woowahan_banchan.presentation.decoration.VerticalItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.main.MainDishViewModel
-import co.kr.woowahan_banchan.presentation.viewmodel.main.MainDishViewModel.UiState
 import co.kr.woowahan_banchan.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -57,6 +57,8 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
         initView()
         observeData()
         setListener()
+
+        viewModel.getDishes(Source.MAIN)
     }
 
     private fun initView() {
@@ -67,14 +69,10 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
         binding.rvMaindishes.itemAnimator = null
 
         binding.spFilter.adapter = filterAdapter
-        filterAdapter.submitList(
-            spinnerItems, 0
-        )
+        filterAdapter.submitList(spinnerItems, 0)
     }
 
     private fun observeData() {
-        viewModel.getDishes(Source.MAIN)
-
         viewModel.mainDishes
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
