@@ -14,7 +14,7 @@ import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.order.OrderListViewModel
-import co.kr.woowahan_banchan.util.OrderListItemDecoration
+import co.kr.woowahan_banchan.presentation.decoration.OrderListItemDecoration
 import co.kr.woowahan_banchan.util.dpToPx
 import co.kr.woowahan_banchan.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +43,7 @@ class OrderListFragment : BaseFragment<FragmentOrderListBinding>() {
                 5.dpToPx(),
                 5.dpToPx(),
                 1.dpToPx(),
-                requireContext().resources.getColor(R.color.grayscale_dddddd, null)
+                requireContext().resources.getColor(R.color.grayscale_aaaaaa, null)
             )
         )
         binding.rvOrderList.adapter = orderListAdapter
