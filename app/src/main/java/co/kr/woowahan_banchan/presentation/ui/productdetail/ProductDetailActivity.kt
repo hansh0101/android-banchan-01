@@ -80,6 +80,7 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
                     is UiState.Error -> {
                         hideProgressBar()
                         shortToast(it.message)
+                        finish()
                     }
                 }
             }.launchIn(lifecycleScope)
