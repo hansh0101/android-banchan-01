@@ -30,6 +30,7 @@ class OrderActivity : BaseActivity<ActivityOrderBinding>() {
             FragmentType.ORDER_LIST -> {
                 binding.tbToolbar.title = "OrderList"
                 binding.tbToolbar.setNavigationIcon(R.drawable.ic_arrow_left)
+                binding.tbToolbar.setNavigationOnClickListener { finish() }
             }
         }
     }
