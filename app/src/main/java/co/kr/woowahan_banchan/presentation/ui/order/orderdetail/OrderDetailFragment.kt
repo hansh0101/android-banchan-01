@@ -15,13 +15,11 @@ import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.order.OrderDetailViewModel
-import co.kr.woowahan_banchan.util.ImageLoader
-import co.kr.woowahan_banchan.util.longArgs
-import co.kr.woowahan_banchan.util.shortToast
-import co.kr.woowahan_banchan.util.toPriceFormat
+import co.kr.woowahan_banchan.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.util.*
 
 @AndroidEntryPoint
 class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
@@ -60,6 +58,19 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
                     }
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
+        viewModel.orderTime
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach {
+                when (it) {
+                    is UiState.Init -> {}
+                    is UiState.Success -> {
+                        showDeliveryInfo(it.data)
+                    }
+                    is UiState.Error -> {
+                        requireContext().shortToast(it.message)
+                    }
+                }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun showUi(orderItems: List<OrderItem>) {
@@ -73,6 +84,17 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
             if (menuTotalPrice >= 40000) (menuTotalPrice).toPriceFormat() + "원"
             else (menuTotalPrice + 2500).toPriceFormat() + "원"
         if (binding.layoutMenu.childCount == 0) addMenuItemView(orderItems)
+    }
+
+    private fun showDeliveryInfo(time: Long) {
+        if (Date().time.calculateDiffToMinute(time) >= 20) {
+            binding.tvTitleOrderInfo.text = "배송이 완료되었습니다."
+            binding.layoutDeliveryWaiting.isVisible = false
+        } else {
+            binding.tvTitleOrderInfo.text = "주문이 접수되었습니다."
+            binding.tvDeliveryWaitingValue.text = "${20 - Date().time.calculateDiffToMinute(time)}분"
+            binding.layoutDeliveryWaiting.isVisible = true
+        }
     }
 
     private fun addMenuItemView(orderItems: List<OrderItem>) {
