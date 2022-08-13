@@ -43,7 +43,7 @@ class OrderListFragment : BaseFragment<FragmentOrderListBinding>() {
                 5.dpToPx(),
                 5.dpToPx(),
                 1.dpToPx(),
-                requireContext().resources.getColor(R.color.grayscale_dddddd, null)
+                requireContext().resources.getColor(R.color.grayscale_aaaaaa, null)
             )
         )
         binding.rvOrderList.adapter = orderListAdapter
