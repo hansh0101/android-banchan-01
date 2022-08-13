@@ -15,6 +15,7 @@ import co.kr.woowahan_banchan.domain.entity.detail.DishInfo
 import co.kr.woowahan_banchan.presentation.adapter.ProductDetailViewPagerAdapter
 import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddDialog
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.productdetail.ProductDetailViewModel
 import co.kr.woowahan_banchan.util.ImageLoader
 import co.kr.woowahan_banchan.util.shortToast
@@ -68,15 +69,15 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
             .flowWithLifecycle(lifecycle)
             .onEach {
                 when (it) {
-                    is ProductDetailViewModel.UiState.Init -> {
+                    is UiState.Init -> {
                         showProgressBar()
                     }
-                    is ProductDetailViewModel.UiState.Success -> {
+                    is UiState.Success -> {
                         Timber.tag("dishInfo").i(it.toString())
                         hideProgressBar()
                         showUi(it.data)
                     }
-                    is ProductDetailViewModel.UiState.Error -> {
+                    is UiState.Error -> {
                         hideProgressBar()
                         shortToast(it.message)
                     }
@@ -87,9 +88,9 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
             .flowWithLifecycle(lifecycle)
             .onEach {
                 binding.tvAmountValue.text = it.toPriceFormat()
-                if (viewModel.dishInfo.value is ProductDetailViewModel.UiState.Success) {
+                if (viewModel.dishInfo.value is UiState.Success) {
                     val price =
-                        (viewModel.dishInfo.value as ProductDetailViewModel.UiState.Success).data.prices.last()
+                        (viewModel.dishInfo.value as UiState.Success).data.prices.last()
                     showTotalPrice(it, price)
                 }
             }.launchIn(lifecycleScope)

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface OrderDao {
-    @Query("SELECT * FROM `ORDER`")
+    @Query("SELECT * FROM `ORDER` ORDER BY id DESC")
     suspend fun getItems(): List<OrderDto>
 
     @Insert

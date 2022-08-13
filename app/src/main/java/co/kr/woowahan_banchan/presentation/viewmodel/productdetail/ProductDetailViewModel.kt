@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.kr.woowahan_banchan.domain.entity.detail.DishInfo
 import co.kr.woowahan_banchan.domain.usecase.CartAddUseCase
 import co.kr.woowahan_banchan.domain.usecase.ProductDetailUseCase
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,11 +50,5 @@ class ProductDetailViewModel @Inject constructor(
                 _amount.value = amount.value - 1
             }
         }
-    }
-
-    sealed class UiState<out T> {
-        object Init : UiState<Nothing>()
-        data class Success<out T>(val data: T) : UiState<T>()
-        data class Error(val message: String?) : UiState<Nothing>()
     }
 }

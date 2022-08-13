@@ -7,7 +7,9 @@ import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ActivityOrderBinding
 import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
 import co.kr.woowahan_banchan.presentation.ui.order.orderlist.OrderListFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class OrderActivity : BaseActivity<ActivityOrderBinding>() {
     override val layoutRes: Int
         get() = R.layout.activity_order
@@ -24,7 +26,7 @@ class OrderActivity : BaseActivity<ActivityOrderBinding>() {
     }
 
     fun setToolbar(fragmentType: FragmentType) {
-        when(fragmentType) {
+        when (fragmentType) {
             FragmentType.ORDER_LIST -> {
                 binding.tbToolbar.title = "OrderList"
                 binding.tbToolbar.setNavigationIcon(R.drawable.ic_arrow_left)
