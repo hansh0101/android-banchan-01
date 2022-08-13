@@ -1,7 +1,11 @@
 package co.kr.woowahan_banchan.presentation.ui.order.orderdetail
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
@@ -28,16 +32,38 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
 
     private val viewModel by viewModels<OrderDetailViewModel>()
     private val orderId by longArgs()
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_order, menu)
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            return when (menuItem.itemId) {
+                R.id.menu_refresh -> {
+                    viewModel.fetchOrderItems(orderId)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.fetchOrderItems(orderId)
-        initView()
+        initToolbar()
         observeData()
     }
 
-    private fun initView() {
-        (requireActivity() as? OrderActivity)?.setToolbar(OrderActivity.Companion.FragmentType.ORDER_DETAIL)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().removeMenuProvider(menuProvider)
+    }
+
+    private fun initToolbar() {
+        requireActivity().title = ""
+        val menuHost = requireActivity()
+        menuHost.addMenuProvider(menuProvider)
     }
 
     private fun observeData() {

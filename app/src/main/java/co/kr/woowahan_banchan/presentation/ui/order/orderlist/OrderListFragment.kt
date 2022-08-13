@@ -13,7 +13,6 @@ import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderHistory
 import co.kr.woowahan_banchan.presentation.adapter.OrderListAdapter
 import co.kr.woowahan_banchan.presentation.decoration.OrderListItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
-import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.ui.order.orderdetail.OrderDetailFragment
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.order.OrderListViewModel
@@ -46,7 +45,7 @@ class OrderListFragment : BaseFragment<FragmentOrderListBinding>() {
     }
 
     private fun initView() {
-        (requireActivity() as? OrderActivity)?.setToolbar(OrderActivity.Companion.FragmentType.ORDER_LIST)
+        initToolbar()
         binding.rvOrderList.addItemDecoration(
             OrderListItemDecoration(
                 5.dpToPx(),
@@ -56,6 +55,10 @@ class OrderListFragment : BaseFragment<FragmentOrderListBinding>() {
             )
         )
         binding.rvOrderList.adapter = orderListAdapter
+    }
+
+    private fun initToolbar() {
+        requireActivity().title = "OrderList"
     }
 
     private fun observeData() {
