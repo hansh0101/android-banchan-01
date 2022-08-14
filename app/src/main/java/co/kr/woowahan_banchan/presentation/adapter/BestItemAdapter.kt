@@ -11,17 +11,17 @@ import co.kr.woowahan_banchan.databinding.ItemBestBinding
 import co.kr.woowahan_banchan.domain.entity.dish.BestItem
 
 class BestItemAdapter(
-    private val moveToDetail: (String, String) -> Unit
+    private val clickListener: DishAdapter.DishClickListener
 ) : ListAdapter<BestItem, BestItemAdapter.BestItemViewHolder>(BestItemDiffCallback()) {
 
     class BestItemViewHolder(
         private val binding: ItemBestBinding,
         private val parent: ViewGroup,
-        private val moveToDetail: (String, String) -> Unit
+        private val clickListener: DishAdapter.DishClickListener
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: BestItem) {
             binding.tvName.text = item.name
-            val adapter = DishAdapter(moveToDetail)
+            val adapter = DishAdapter(clickListener)
             val layoutManager = LinearLayoutManager(parent.context)
             layoutManager.orientation = LinearLayoutManager.HORIZONTAL
 
@@ -44,7 +44,7 @@ class BestItemAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BestItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_best, parent, false)
         val binding = ItemBestBinding.bind(view)
-        return BestItemViewHolder(binding, parent, moveToDetail)
+        return BestItemViewHolder(binding, parent, clickListener)
     }
 
     override fun onBindViewHolder(holder: BestItemViewHolder, position: Int) {
