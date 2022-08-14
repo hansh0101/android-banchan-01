@@ -3,6 +3,8 @@ package co.kr.woowahan_banchan.data.repository
 import co.kr.woowahan_banchan.data.datasource.local.cart.CartDataSource
 import co.kr.woowahan_banchan.data.model.local.CartDto
 import co.kr.woowahan_banchan.domain.repository.CartRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.util.*
 import javax.inject.Inject
 
@@ -14,5 +16,10 @@ class CartRepositoryImpl @Inject constructor(
         cartDataSource.insertOrUpdateItems(
             listOf(CartDto(hash, amount + originalAmount, true, Date().time, name))
         )
+    }
+
+    override fun getCartItemCount(): Flow<Int> {
+        return cartDataSource.getItems()
+            .map { it.size }
     }
 }
