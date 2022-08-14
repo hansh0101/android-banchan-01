@@ -8,9 +8,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentBestBinding
+import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import co.kr.woowahan_banchan.presentation.adapter.BestItemAdapter
+import co.kr.woowahan_banchan.presentation.adapter.DishAdapter
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
+import co.kr.woowahan_banchan.presentation.ui.widget.CartAddBottomSheet
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.main.BestViewModel
 import co.kr.woowahan_banchan.util.shortToast
@@ -25,7 +28,15 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
         get() = R.layout.fragment_best
 
     private val viewModel by viewModels<BestViewModel>()
-    private val bestAdapter = BestItemAdapter { title, hash -> startDetailActivity(title, hash) }
+    private val bestAdapter = BestItemAdapter(object : DishAdapter.DishClickListener {
+        override fun moveToDetail(title: String, hash: String) {
+            startDetailActivity(title, hash)
+        }
+
+        override fun openBottomSheet(dish: Dish) {
+            CartAddBottomSheet.newInstance(dish).show(parentFragmentManager, null)
+        }
+    })
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
