@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="co.kr.woowahan_banchan.presentation.viewmodel.bottomsheet.BottomSheetViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <TextView
+            android:id="@+id/tv_sheet_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="장바구니 담기"
+            android:textColor="@color/grayscale_000000"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/gl_top" />
+
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="취소"
+            android:textColor="@color/grayscale_000000"
+            app:layout_constraintEnd_toStartOf="@id/gl_end"
+            app:layout_constraintTop_toBottomOf="@id/gl_top" />
+
+        <ImageView
+            android:id="@+id/iv_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toEndOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/tv_sheet_title" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@{viewModel.currentDish.title}"
+            android:textColor="@color/grayscale_000000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/tv_sale_price"
+            app:layout_constraintEnd_toEndOf="@id/gl_end"
+            app:layout_constraintStart_toEndOf="@id/iv_image"
+            app:layout_constraintTop_toTopOf="@id/iv_image"
+            tools:text="새콤달콤 오징어 무침" />
+
+        <TextView
+            android:id="@+id/tv_discount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="4dp"
+            android:text='@{String.valueOf(viewModel.currentDish.discount)+"%"}'
+            android:textColor="@color/primary_f46700"
+            android:textStyle="bold"
+            android:visibility="@{(viewModel.currentDish.discount > 0)? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/iv_image"
+            app:layout_constraintStart_toStartOf="@id/tv_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            tools:text="20%" />
+
+        <TextView
+            android:id="@+id/tv_sale_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.currentDish.SPriceText}"
+            android:textColor="@color/grayscale_000000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/iv_image"
+            app:layout_constraintStart_toEndOf="@id/tv_discount"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            tools:text="6,000원" />
+
+        <TextView
+            android:id="@+id/tv_original_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/strike_through"
+            android:text="@{viewModel.currentDish.NPriceText}"
+            app:layout_constraintBottom_toBottomOf="@id/tv_sale_price"
+            app:layout_constraintStart_toEndOf="@id/tv_sale_price"
+            app:layout_constraintTop_toTopOf="@id/tv_sale_price"
+            tools:text="7,500원" />
+
+        <TextView
+            android:id="@+id/tv_total_price_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.totalPriceText}"
+            android:textColor="@color/grayscale_000000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/iv_minus"
+            app:layout_constraintStart_toEndOf="@id/gl_start"
+            app:layout_constraintTop_toTopOf="@id/iv_minus"
+            tools:text="6,000원" />
+        />
+
+        <ImageView
+            android:id="@+id/iv_minus"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/circle"
+            android:elevation="4dp"
+            android:onClick="@{()->viewModel.updateAmount(false)}"
+            android:scaleType="center"
+            android:src="@drawable/ic_minus"
+            app:layout_constraintEnd_toStartOf="@id/tv_amount_value"
+            app:layout_constraintTop_toBottomOf="@id/iv_image" />
+
+        <TextView
+            android:id="@+id/tv_amount_value"
+            android:layout_width="58dp"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(viewModel.amount)}"
+            android:textAlignment="center"
+            android:textColor="@color/grayscale_010101"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_minus"
+            app:layout_constraintEnd_toStartOf="@id/iv_plus"
+            app:layout_constraintTop_toTopOf="@id/iv_minus"
+            tools:text="1" />
+
+        <ImageView
+            android:id="@+id/iv_plus"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/circle"
+            android:elevation="4dp"
+            android:onClick="@{()-> viewModel.updateAmount(true)}"
+            android:scaleType="center"
+            android:src="@drawable/ic_plus"
+            app:layout_constraintBottom_toBottomOf="@id/iv_minus"
+            app:layout_constraintEnd_toStartOf="@id/gl_end"
+            app:layout_constraintTop_toTopOf="@id/iv_minus" />
+
+        <Button
+            android:id="@+id/btn_add_to_cart"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/primary_f9ba70"
+            android:elevation="5dp"
+            android:padding="16dp"
+            android:text='@{String.valueOf(viewModel.amount)+"개 담기"}'
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/grayscale_ffffff"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_minus"
+            tools:text="1개 담기" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
