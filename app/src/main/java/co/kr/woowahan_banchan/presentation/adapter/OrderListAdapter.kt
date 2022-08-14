@@ -35,7 +35,7 @@ class OrderListAdapter(private val itemClick: (OrderHistory) -> Unit) :
         }
 
         private fun setDeliveryInfo(time: Long) {
-            if (Date().time.calculateDiffToMinute(time) >= 31) {
+            if (Date().time.calculateDiffToMinute(time) >= 20) {
                 with(binding.tvDeliveryInfo) {
                     this.text = "배송완료"
                     this.setTextColor(resources.getColor(R.color.grayscale_000000, null))
