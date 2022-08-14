@@ -20,27 +20,20 @@ class OrderActivity : BaseActivity<ActivityOrderBinding>() {
     }
 
     private fun initView() {
+        initToolbar()
         supportFragmentManager.commit {
             add<OrderListFragment>(R.id.fcv_order)
         }
     }
 
-    fun setToolbar(fragmentType: FragmentType) {
-        when (fragmentType) {
-            FragmentType.ORDER_LIST -> {
-                with(binding.tbToolbar) {
-                    this.title = "OrderList"
-                    this.setNavigationIcon(R.drawable.ic_arrow_left)
-                    this.setNavigationOnClickListener { finish() }
-                }
-            }
-            FragmentType.ORDER_DETAIL -> {
-                with(binding.tbToolbar) {
-                    this.title = ""
-                    this.setNavigationIcon(R.drawable.ic_arrow_left)
-                    this.setNavigationOnClickListener { supportFragmentManager.popBackStack() }
-                }
-
+    private fun initToolbar() {
+        setSupportActionBar(binding.tbToolbar)
+        binding.tbToolbar.setNavigationIcon(R.drawable.ic_arrow_left)
+        binding.tbToolbar.setNavigationOnClickListener {
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                finish()
+            } else {
+                supportFragmentManager.popBackStack()
             }
         }
     }
