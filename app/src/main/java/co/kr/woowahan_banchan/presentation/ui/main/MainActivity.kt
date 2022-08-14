@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ActivityMainBinding
 import co.kr.woowahan_banchan.presentation.adapter.ViewPagerAdapter
@@ -15,6 +17,8 @@ import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
@@ -32,7 +36,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private val badge by lazy {
         BadgeDrawable.create(this).also { bd ->
-            bd.backgroundColor = resources.getColor(R.color.grayscale_000000,theme)
+            bd.backgroundColor = resources.getColor(R.color.grayscale_000000, theme)
             bd.horizontalOffset = 5.dpToPx()
             bd.verticalOffset = 5.dpToPx()
             bd.maxCharacterCount = 3
@@ -48,36 +52,37 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         viewModel.getCartItemCount()
     }
 
-    private fun initToolbar(){
+    private fun initToolbar() {
         setSupportActionBar(binding.tbToolbar)
     }
 
-    private fun initView(){
-        with(binding){
+    private fun initView() {
+        with(binding) {
             vpFragmentPager.adapter = ViewPagerAdapter(supportFragmentManager, lifecycle)
 
-            TabLayoutMediator(layoutFragmentTab,vpFragmentPager){ tab, position ->
+            TabLayoutMediator(layoutFragmentTab, vpFragmentPager) { tab, position ->
                 tab.text = tabTitleArray[position]
             }.attach()
         }
     }
 
-    private fun observeData(){
-        viewModel.cartCount.observe(this){
-            badge.number = it
-            badge.isVisible = it > 0
-        }
+    private fun observeData() {
+        viewModel.cartCount.flowWithLifecycle(this.lifecycle)
+            .onEach {
+                badge.number = it
+                badge.isVisible = it > 0
+            }.launchIn(lifecycleScope)
     }
 
     @ExperimentalBadgeUtils
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_app_bar,menu)
-        BadgeUtils.attachBadgeDrawable(badge,binding.tbToolbar,R.id.action_cart)
+        menuInflater.inflate(R.menu.menu_app_bar, menu)
+        BadgeUtils.attachBadgeDrawable(badge, binding.tbToolbar, R.id.action_cart)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.action_cart -> {
                 //move to cart
             }
