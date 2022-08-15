@@ -54,7 +54,7 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
     private val gridLayoutManager by lazy { GridLayoutManager(requireContext(), 2) }
     private val linearLayoutManager by lazy { LinearLayoutManager(requireContext()) }
 
-    private val gridItemDecoration by lazy { GridItemDecoration(30.dpToPx(), 16.dpToPx()) }
+    private val gridItemDecoration by lazy { GridItemDecoration(0, 30.dpToPx(), 16.dpToPx()) }
     private val verticalItemDecoration by lazy { VerticalItemDecoration(30.dpToPx(), 16.dpToPx()) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

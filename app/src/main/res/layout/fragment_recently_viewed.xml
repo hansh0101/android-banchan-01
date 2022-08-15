@@ -21,8 +21,10 @@
             android:id="@+id/rv_recently_viewed"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginHorizontal="8dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2" />
+            app:spanCount="2"
+            tools:listitem="@layout/item_recently_viewed" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

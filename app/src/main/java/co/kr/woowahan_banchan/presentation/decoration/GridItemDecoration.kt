@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class GridItemDecoration(
+    private val firstHeight: Int,
     private val height : Int,
     private val width : Int
 ) : RecyclerView.ItemDecoration() {
@@ -28,7 +29,7 @@ class GridItemDecoration(
         }
 
         if (position < 2) {
-            outRect.top = 0
+            outRect.top = firstHeight
         } else {
             outRect.top = height
         }
