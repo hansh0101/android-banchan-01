@@ -11,6 +11,7 @@ import co.kr.woowahan_banchan.databinding.ItemBestHeaderBinding
 import co.kr.woowahan_banchan.domain.entity.dish.BestItem
 import co.kr.woowahan_banchan.presentation.decoration.HorizontalItemDecoration
 import co.kr.woowahan_banchan.presentation.decoration.HorizontalLayoutManager
+import co.kr.woowahan_banchan.presentation.listener.TouchInterceptorListener
 import co.kr.woowahan_banchan.util.dpToPx
 
 class BestItemAdapter(
@@ -30,6 +31,7 @@ class BestItemAdapter(
             binding.rvItems.adapter = adapter
             binding.rvItems.layoutManager = layoutManager
             binding.rvItems.addItemDecoration(HorizontalItemDecoration(16.dpToPx()))
+            binding.rvItems.addOnItemTouchListener(TouchInterceptorListener(parent.context,parent))
 
             adapter.submitList(item.items.toMutableList())
         }
