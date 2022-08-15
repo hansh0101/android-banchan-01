@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/primary_fbf5e0"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="36dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle_radius_999"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="6dp"
+        android:text="기획전"
+        android:textColor="@color/grayscale_000000"
+        android:textSize="10sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="한 번 주문하면 \n두 번 반하는 반찬들"
+        android:textColor="@color/grayscale_000000"
+        android:textSize="32sp" />
+</LinearLayout>
