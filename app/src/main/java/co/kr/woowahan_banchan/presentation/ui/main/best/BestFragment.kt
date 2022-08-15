@@ -65,9 +65,7 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
                         binding.pbLoading.visibility = View.VISIBLE
                     }
                     is UiState.Success -> {
-                        bestAdapter.submitList(it.data.toMutableList().apply {
-                            add(0, BestItem("title", listOf()))
-                        })
+                        bestAdapter.submitList(it.data.toMutableList())
                         binding.pbLoading.visibility = View.GONE
                     }
                     is UiState.Error -> {
