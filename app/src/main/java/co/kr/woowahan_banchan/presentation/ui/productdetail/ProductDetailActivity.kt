@@ -42,6 +42,7 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
         hash = intent.getStringExtra("HASH") ?: error("Hash not delivered")
         title = intent.getStringExtra("TITLE") ?: error("Title not delivered")
         viewModel.fetchUiState(hash)
+        viewModel.addToHistory(hash, title)
         initView()
         initOnClickListener()
         observeData()
