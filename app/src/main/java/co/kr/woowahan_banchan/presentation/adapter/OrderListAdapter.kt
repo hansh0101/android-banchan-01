@@ -60,6 +60,13 @@ class OrderListAdapter(private val itemClick: (OrderHistory) -> Unit) :
         }
     }
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderListViewHolder =
+        OrderListViewHolder.create(parent, itemClick)
+
+    override fun onBindViewHolder(holder: OrderListViewHolder, position: Int) {
+        holder.onBind(currentList[position])
+    }
+
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<OrderHistory>() {
             override fun areItemsTheSame(oldItem: OrderHistory, newItem: OrderHistory): Boolean =
@@ -68,12 +75,5 @@ class OrderListAdapter(private val itemClick: (OrderHistory) -> Unit) :
             override fun areContentsTheSame(oldItem: OrderHistory, newItem: OrderHistory): Boolean =
                 oldItem == newItem
         }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderListViewHolder =
-        OrderListViewHolder.create(parent, itemClick)
-
-    override fun onBindViewHolder(holder: OrderListViewHolder, position: Int) {
-        holder.onBind(currentList[position])
     }
 }
