@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@mipmap/ic_launcher" />
+
+        <ImageButton
+            android:id="@+id/ib_add_btn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_image"
+            app:layout_constraintEnd_toEndOf="@id/iv_image"
+            tools:background="@drawable/ic_cart_btn" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingVertical="4dp"
+            android:textColor="@color/grayscale_000000"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/iv_image"
+            app:layout_constraintStart_toStartOf="@id/iv_image"
+            app:layout_constraintTop_toBottomOf="@id/iv_image"
+            tools:text="오리 주물럭_반조리" />
+
+        <TextView
+            android:id="@+id/tv_sale_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/grayscale_000000"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            tools:text="12,640원" />
+
+        <TextView
+            android:id="@+id/tv_original_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/strike_through"
+            android:textColor="@color/grayscale_828282"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_sale_price"
+            app:layout_constraintStart_toEndOf="@id/tv_sale_price"
+            app:layout_constraintTop_toTopOf="@id/tv_sale_price"
+            tools:text="15,800원" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/grayscale_828282"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_sale_price"
+            tools:text="1분 전" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
