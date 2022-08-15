@@ -1,6 +1,5 @@
 package co.kr.woowahan_banchan.domain.repository
 
-import androidx.room.PrimaryKey
 import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import kotlinx.coroutines.flow.Flow
 
