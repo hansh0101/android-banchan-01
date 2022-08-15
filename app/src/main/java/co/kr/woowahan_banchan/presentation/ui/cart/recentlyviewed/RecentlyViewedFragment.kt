@@ -11,6 +11,8 @@ import co.kr.woowahan_banchan.databinding.FragmentRecentlyViewedBinding
 import co.kr.woowahan_banchan.presentation.adapter.RecentlyViewedAdapter
 import co.kr.woowahan_banchan.presentation.decoration.GridItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
+import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
+import co.kr.woowahan_banchan.presentation.ui.widget.CartAddBottomSheet
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.cart.RecentlyViewedViewModel
 import co.kr.woowahan_banchan.util.dpToPx
@@ -25,7 +27,19 @@ class RecentlyViewedFragment : BaseFragment<FragmentRecentlyViewedBinding>() {
         get() = R.layout.fragment_recently_viewed
 
     private val viewModel by viewModels<RecentlyViewedViewModel>()
-    private val recentlyViewedAdapter by lazy { RecentlyViewedAdapter() }
+    private val recentlyViewedAdapter by lazy {
+        RecentlyViewedAdapter({
+            startActivity(
+                ProductDetailActivity.getIntent(
+                    requireContext(),
+                    it.title,
+                    it.detailHash
+                )
+            )
+        }, {
+            CartAddBottomSheet.newInstance(it.toDish()).show(parentFragmentManager, null)
+        })
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,7 +51,13 @@ class RecentlyViewedFragment : BaseFragment<FragmentRecentlyViewedBinding>() {
     private fun initView() {
         initToolbar()
         binding.rvRecentlyViewed.adapter = recentlyViewedAdapter
-        binding.rvRecentlyViewed.addItemDecoration(GridItemDecoration(16.dpToPx(), 32.dpToPx(), 8.dpToPx()))
+        binding.rvRecentlyViewed.addItemDecoration(
+            GridItemDecoration(
+                16.dpToPx(),
+                32.dpToPx(),
+                8.dpToPx()
+            )
+        )
     }
 
     private fun initData() {
@@ -48,7 +68,7 @@ class RecentlyViewedFragment : BaseFragment<FragmentRecentlyViewedBinding>() {
         viewModel.historyItems
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
-                when(it) {
+                when (it) {
                     is UiState.Init -> {
                         showProgressBar()
                     }

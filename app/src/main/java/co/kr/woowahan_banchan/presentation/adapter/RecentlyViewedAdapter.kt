@@ -14,9 +14,16 @@ import co.kr.woowahan_banchan.util.calculateDiff
 import co.kr.woowahan_banchan.util.toPriceFormat
 import java.util.*
 
-class RecentlyViewedAdapter :
+class RecentlyViewedAdapter(
+    private val itemClick: (HistoryItem) -> Unit,
+    private val cartClick: (HistoryItem) -> Unit
+) :
     ListAdapter<HistoryItem, RecentlyViewedAdapter.RecentlyViewedViewHolder>(diffCallback) {
-    class RecentlyViewedViewHolder(private val binding: ItemRecentlyViewedBinding) :
+    class RecentlyViewedViewHolder(
+        private val binding: ItemRecentlyViewedBinding,
+        private val itemClick: (HistoryItem) -> Unit,
+        private val cartClick: (HistoryItem) -> Unit
+    ) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(historyItem: HistoryItem) {
             with(historyItem) {
@@ -42,22 +49,28 @@ class RecentlyViewedAdapter :
                 }
                 binding.tvTime.text = Date().time.calculateDiff(this.time)
             }
+            binding.root.setOnClickListener { itemClick(historyItem) }
+            binding.ibAddBtn.setOnClickListener { cartClick(historyItem) }
         }
 
         companion object {
-            fun create(parent: ViewGroup): RecentlyViewedViewHolder {
+            fun create(
+                parent: ViewGroup,
+                itemClick: (HistoryItem) -> Unit,
+                cartClick: (HistoryItem) -> Unit
+            ): RecentlyViewedViewHolder {
                 val binding = ItemRecentlyViewedBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
-                return RecentlyViewedViewHolder(binding)
+                return RecentlyViewedViewHolder(binding, itemClick, cartClick)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentlyViewedViewHolder =
-        RecentlyViewedViewHolder.create(parent)
+        RecentlyViewedViewHolder.create(parent, itemClick, cartClick)
 
     override fun onBindViewHolder(holder: RecentlyViewedViewHolder, position: Int) =
         holder.onBind(currentList[position])
