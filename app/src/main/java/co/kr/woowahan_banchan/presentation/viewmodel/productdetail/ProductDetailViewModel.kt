@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.kr.woowahan_banchan.domain.entity.detail.DishInfo
 import co.kr.woowahan_banchan.domain.usecase.CartAddUseCase
+import co.kr.woowahan_banchan.domain.usecase.HistoryAddUseCase
 import co.kr.woowahan_banchan.domain.usecase.ProductDetailUseCase
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,12 +13,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
     private val productDetailUseCase: ProductDetailUseCase,
-    private val cartAddUseCase: CartAddUseCase
+    private val cartAddUseCase: CartAddUseCase,
+    private val historyAddUseCase: HistoryAddUseCase
 ) : ViewModel() {
     private val _dishInfo = MutableStateFlow<UiState<DishInfo>>(UiState.Init)
     val dishInfo: StateFlow<UiState<DishInfo>> get() = _dishInfo
@@ -31,6 +34,13 @@ class ProductDetailViewModel @Inject constructor(
             productDetailUseCase(hash)
                 .onSuccess { _dishInfo.value = UiState.Success(it) }
                 .onFailure { _dishInfo.value = UiState.Error(it.message) }
+        }
+    }
+
+    fun addToHistory(hash: String, name: String) {
+        viewModelScope.launch {
+            historyAddUseCase(hash, name)
+                .onFailure { Timber.e(it) }
         }
     }
 

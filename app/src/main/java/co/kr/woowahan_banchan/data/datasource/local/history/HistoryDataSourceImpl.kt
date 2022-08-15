@@ -8,12 +8,13 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class HistoryDataSourceImpl @Inject constructor(
     private val historyDao: HistoryDao,
     private val coroutineDispatcher: CoroutineDispatcher
-): HistoryDataSource {
+) : HistoryDataSource {
     override fun getItems(): Flow<List<HistoryDto>> =
         historyDao.getItems()
             .catch { exception ->
@@ -28,10 +29,12 @@ class HistoryDataSourceImpl @Inject constructor(
                 emit(listOf())
             }.flowOn(coroutineDispatcher)
 
-    override suspend fun insertItem(item: HistoryDto) =
+    override suspend fun insertItem(hash: String, name: String) =
         withContext(coroutineDispatcher) {
             runCatching {
-                historyDao.insertItem(item)
+                historyDao.insertItem(
+                    HistoryDto(hash, Date().time, name)
+                )
             }
         }
 }
