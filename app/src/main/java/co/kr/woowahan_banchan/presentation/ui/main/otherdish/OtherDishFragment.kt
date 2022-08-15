@@ -80,7 +80,7 @@ class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
         binding.rvDishes.adapter = dishAdapter
         binding.rvDishes.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.rvDishes.addItemDecoration(
-            GridItemDecoration(30.dpToPx(), 16.dpToPx())
+            GridItemDecoration(0, 30.dpToPx(), 16.dpToPx())
         )
         binding.rvDishes.itemAnimator = null
 
