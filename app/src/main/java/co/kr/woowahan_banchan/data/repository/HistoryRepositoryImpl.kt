@@ -3,6 +3,7 @@ package co.kr.woowahan_banchan.data.repository
 import co.kr.woowahan_banchan.data.datasource.local.cart.CartDataSource
 import co.kr.woowahan_banchan.data.datasource.local.history.HistoryDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.detail.DetailDataSource
+import co.kr.woowahan_banchan.data.model.local.HistoryDto
 import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import co.kr.woowahan_banchan.domain.repository.HistoryRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -18,6 +19,10 @@ class HistoryRepositoryImpl @Inject constructor(
     private val detailDataSource: DetailDataSource,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : HistoryRepository {
+    override suspend fun addToHistory(hash: String, name: String) {
+        historyDataSource.insertItem(hash, name)
+    }
+
     override fun getHistories(previewMode: Boolean): Flow<List<HistoryItem>> {
         return combine(
             if (previewMode) historyDataSource.getPreviewItems() else historyDataSource.getItems(),
