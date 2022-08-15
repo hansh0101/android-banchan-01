@@ -10,6 +10,7 @@ import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ActivityMainBinding
 import co.kr.woowahan_banchan.presentation.adapter.ViewPagerAdapter
 import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
+import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.MainViewModel
 import co.kr.woowahan_banchan.util.dpToPx
 import com.google.android.material.badge.BadgeDrawable
@@ -87,7 +88,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 //move to cart
             }
             R.id.action_history -> {
-                //move to history
+                startActivity(OrderActivity.getIntent(this))
             }
         }
         return super.onOptionsItemSelected(item)

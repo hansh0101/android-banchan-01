@@ -1,5 +1,7 @@
 package co.kr.woowahan_banchan.presentation.ui.order
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
@@ -39,8 +41,7 @@ class OrderActivity : BaseActivity<ActivityOrderBinding>() {
     }
 
     companion object {
-        enum class FragmentType {
-            ORDER_LIST, ORDER_DETAIL
-        }
+        fun getIntent(context: Context): Intent =
+            Intent(context, OrderActivity::class.java)
     }
 }
