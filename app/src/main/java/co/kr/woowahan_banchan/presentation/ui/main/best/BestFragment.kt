@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentBestBinding
+import co.kr.woowahan_banchan.domain.entity.dish.BestItem
 import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import co.kr.woowahan_banchan.presentation.adapter.BestItemAdapter
 import co.kr.woowahan_banchan.presentation.adapter.DishAdapter
@@ -61,7 +62,9 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
                         binding.pbLoading.visibility = View.VISIBLE
                     }
                     is UiState.Success -> {
-                        bestAdapter.submitList(it.data.toMutableList())
+                        bestAdapter.submitList(it.data.toMutableList().apply {
+                            add(0, BestItem("title", listOf()))
+                        })
                         binding.pbLoading.visibility = View.GONE
                     }
                     is UiState.Error -> {

@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ItemBestBinding
+import co.kr.woowahan_banchan.databinding.ItemBestHeaderBinding
 import co.kr.woowahan_banchan.domain.entity.dish.BestItem
 
 class BestItemAdapter(
     private val clickListener: DishAdapter.DishClickListener
-) : ListAdapter<BestItem, BestItemAdapter.BestItemViewHolder>(BestItemDiffCallback()) {
+) : ListAdapter<BestItem, RecyclerView.ViewHolder>(BestItemDiffCallback()) {
 
     class BestItemViewHolder(
         private val binding: ItemBestBinding,
@@ -29,6 +30,29 @@ class BestItemAdapter(
             binding.rvItems.layoutManager = layoutManager
             adapter.submitList(item.items.toMutableList())
         }
+
+        companion object {
+            fun create(
+                parent: ViewGroup,
+                clickListener: DishAdapter.DishClickListener
+            ): BestItemViewHolder {
+                val view =
+                    LayoutInflater.from(parent.context).inflate(R.layout.item_best, parent, false)
+                val binding = ItemBestBinding.bind(view)
+                return BestItemViewHolder(binding, parent, clickListener)
+            }
+        }
+    }
+
+    class HeaderViewHolder(binding: ItemBestHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
+        companion object {
+            fun create(parent: ViewGroup): HeaderViewHolder {
+                val view =
+                    LayoutInflater.from(parent.context).inflate(R.layout.item_best_header, parent, false)
+                val binding = ItemBestHeaderBinding.bind(view)
+                return HeaderViewHolder(binding)
+            }
+        }
     }
 
     class BestItemDiffCallback : DiffUtil.ItemCallback<BestItem>() {
@@ -41,13 +65,24 @@ class BestItemAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BestItemViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_best, parent, false)
-        val binding = ItemBestBinding.bind(view)
-        return BestItemViewHolder(binding, parent, clickListener)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            HEADER -> HeaderViewHolder.create(parent)
+            else -> BestItemViewHolder.create(parent, clickListener)
+        }
     }
 
-    override fun onBindViewHolder(holder: BestItemViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is BestItemViewHolder) {
+            holder.bind(getItem(position))
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    companion object {
+        const val HEADER = 0
     }
 }
