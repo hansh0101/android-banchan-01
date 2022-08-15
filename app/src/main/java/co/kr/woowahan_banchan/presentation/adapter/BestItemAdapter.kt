@@ -3,13 +3,15 @@ package co.kr.woowahan_banchan.presentation.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ItemBestBinding
 import co.kr.woowahan_banchan.databinding.ItemBestHeaderBinding
 import co.kr.woowahan_banchan.domain.entity.dish.BestItem
+import co.kr.woowahan_banchan.presentation.decoration.HorizontalItemDecoration
+import co.kr.woowahan_banchan.presentation.decoration.HorizontalLayoutManager
+import co.kr.woowahan_banchan.util.dpToPx
 
 class BestItemAdapter(
     private val clickListener: DishAdapter.DishClickListener
@@ -23,11 +25,12 @@ class BestItemAdapter(
         fun bind(item: BestItem) {
             binding.tvName.text = item.name
             val adapter = DishAdapter(clickListener)
-            val layoutManager = LinearLayoutManager(parent.context)
-            layoutManager.orientation = LinearLayoutManager.HORIZONTAL
+            val layoutManager = HorizontalLayoutManager(context = parent.context, ratio = 0.6f)
 
             binding.rvItems.adapter = adapter
             binding.rvItems.layoutManager = layoutManager
+            binding.rvItems.addItemDecoration(HorizontalItemDecoration(16.dpToPx()))
+
             adapter.submitList(item.items.toMutableList())
         }
 
@@ -47,8 +50,8 @@ class BestItemAdapter(
     class HeaderViewHolder(binding: ItemBestHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         companion object {
             fun create(parent: ViewGroup): HeaderViewHolder {
-                val view =
-                    LayoutInflater.from(parent.context).inflate(R.layout.item_best_header, parent, false)
+                val view = LayoutInflater.from(parent.context)
+                        .inflate(R.layout.item_best_header, parent, false)
                 val binding = ItemBestHeaderBinding.bind(view)
                 return HeaderViewHolder(binding)
             }

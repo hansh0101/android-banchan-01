@@ -12,11 +12,13 @@ import co.kr.woowahan_banchan.domain.entity.dish.BestItem
 import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import co.kr.woowahan_banchan.presentation.adapter.BestItemAdapter
 import co.kr.woowahan_banchan.presentation.adapter.DishAdapter
+import co.kr.woowahan_banchan.presentation.decoration.VerticalItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddBottomSheet
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.main.BestViewModel
+import co.kr.woowahan_banchan.util.dpToPx
 import co.kr.woowahan_banchan.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -51,6 +53,7 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
     private fun initView() {
         binding.rvBests.adapter = bestAdapter
         binding.rvBests.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvBests.addItemDecoration(VerticalItemDecoration(24.dpToPx(),0.dpToPx()))
     }
 
     private fun observeData() {
