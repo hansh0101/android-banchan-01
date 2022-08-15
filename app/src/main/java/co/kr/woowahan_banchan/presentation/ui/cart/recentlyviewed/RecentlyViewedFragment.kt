@@ -9,9 +9,11 @@ import androidx.lifecycle.lifecycleScope
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentRecentlyViewedBinding
 import co.kr.woowahan_banchan.presentation.adapter.RecentlyViewedAdapter
+import co.kr.woowahan_banchan.presentation.decoration.GridItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.cart.RecentlyViewedViewModel
+import co.kr.woowahan_banchan.util.dpToPx
 import co.kr.woowahan_banchan.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -35,6 +37,7 @@ class RecentlyViewedFragment : BaseFragment<FragmentRecentlyViewedBinding>() {
     private fun initView() {
         initToolbar()
         binding.rvRecentlyViewed.adapter = recentlyViewedAdapter
+        binding.rvRecentlyViewed.addItemDecoration(GridItemDecoration(16.dpToPx(), 32.dpToPx(), 8.dpToPx()))
     }
 
     private fun initData() {
