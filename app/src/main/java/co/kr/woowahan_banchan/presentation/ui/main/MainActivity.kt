@@ -10,6 +10,7 @@ import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ActivityMainBinding
 import co.kr.woowahan_banchan.presentation.adapter.ViewPagerAdapter
 import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
+import co.kr.woowahan_banchan.presentation.ui.cart.CartActivity
 import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.MainViewModel
 import co.kr.woowahan_banchan.util.dpToPx
@@ -85,7 +86,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_cart -> {
-                //move to cart
+                startActivity(CartActivity.getIntent(this))
             }
             R.id.action_history -> {
                 startActivity(OrderActivity.getIntent(this))
