@@ -8,8 +8,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentBestBinding
-import co.kr.woowahan_banchan.domain.entity.dish.BestItem
 import co.kr.woowahan_banchan.domain.entity.dish.Dish
+import co.kr.woowahan_banchan.domain.entity.dish.SelectedDish
 import co.kr.woowahan_banchan.presentation.adapter.BestItemAdapter
 import co.kr.woowahan_banchan.presentation.adapter.DishAdapter
 import co.kr.woowahan_banchan.presentation.decoration.VerticalItemDecoration
@@ -37,7 +37,7 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
         }
 
         override fun openBottomSheet(dish: Dish) {
-            CartAddBottomSheet.newInstance(dish).show(parentFragmentManager, null)
+            CartAddBottomSheet.newInstance(SelectedDish(dish)).show(parentFragmentManager, null)
         }
     })
 

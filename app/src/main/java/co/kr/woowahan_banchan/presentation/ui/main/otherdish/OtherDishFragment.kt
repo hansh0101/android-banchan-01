@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentOtherDishBinding
 import co.kr.woowahan_banchan.domain.entity.dish.Dish
+import co.kr.woowahan_banchan.domain.entity.dish.SelectedDish
 import co.kr.woowahan_banchan.domain.repository.Source
 import co.kr.woowahan_banchan.presentation.adapter.DishAdapter
 import co.kr.woowahan_banchan.presentation.adapter.FilterSpinnerAdapter
@@ -43,7 +44,7 @@ class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
             }
 
             override fun openBottomSheet(dish: Dish) {
-                CartAddBottomSheet.newInstance(dish).show(parentFragmentManager, null)
+                CartAddBottomSheet.newInstance(SelectedDish(dish)).show(parentFragmentManager, null)
             }
         })
     }
