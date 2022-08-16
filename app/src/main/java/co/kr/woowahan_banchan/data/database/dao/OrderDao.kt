@@ -11,6 +11,9 @@ interface OrderDao {
     @Query("SELECT * FROM `ORDER` ORDER BY id DESC")
     suspend fun getItems(): List<OrderDto>
 
+    @Query("SELECT time FROM `ORDER` ORDER BY id DESC LIMIT 1")
+    fun getLatestOrderTime(): Flow<Long>
+
     @Query("SELECT time FROM `ORDER` WHERE id LIKE (:orderId)")
     suspend fun getTime(orderId: Long): Long
 

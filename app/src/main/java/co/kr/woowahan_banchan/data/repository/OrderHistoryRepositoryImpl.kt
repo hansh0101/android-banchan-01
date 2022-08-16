@@ -6,6 +6,7 @@ import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderHistory
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderItem
 import co.kr.woowahan_banchan.domain.repository.OrderHistoryRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -39,6 +40,9 @@ class OrderHistoryRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override fun getLatestOrderTime(): Flow<Long> =
+        orderDataSource.getLatestOrderTime()
 
     override suspend fun getOrderTime(orderId: Long): Long =
         orderDataSource.getTime(orderId).getOrDefault(0)
