@@ -3,6 +3,7 @@ package co.kr.woowahan_banchan.presentation.ui.cart
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import co.kr.woowahan_banchan.R
@@ -30,14 +31,19 @@ class CartActivity : BaseActivity<ActivityCartBinding>() {
 
     private fun initToolbar() {
         setSupportActionBar(binding.tbToolbar)
-        binding.tbToolbar.setNavigationIcon(R.drawable.ic_arrow_left)
-        binding.tbToolbar.setNavigationOnClickListener {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_left)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home){
             if (supportFragmentManager.backStackEntryCount == 0) {
                 finish()
             } else {
                 supportFragmentManager.popBackStack()
             }
         }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {
