@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import co.kr.woowahan_banchan.R
@@ -52,6 +53,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         observeData()
 
         viewModel.getCartItemCount()
+        viewModel.fetchLatestOrderTime()
     }
 
     private fun initToolbar() {
@@ -74,6 +76,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 badge.number = it
                 badge.isVisible = it > 0
             }.launchIn(lifecycleScope)
+
+        viewModel.isOrderCompleted
+            .flowWithLifecycle(this.lifecycle)
+            .onEach {
+                invalidateOptionsMenu()
+            }.launchIn(lifecycleScope)
     }
 
     @ExperimentalBadgeUtils
@@ -93,5 +101,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (viewModel.isOrderCompleted.value) {
+            menu?.let {
+                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user)
+            }
+        } else {
+            menu?.let {
+                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user_badge)
+            }
+        }
+        return super.onPrepareOptionsMenu(menu)
     }
 }
