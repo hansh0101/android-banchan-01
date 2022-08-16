@@ -1,10 +1,17 @@
 package co.kr.woowahan_banchan.presentation.ui.main
 
+import android.animation.ObjectAnimator
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.animation.AnticipateOvershootInterpolator
 import androidx.activity.viewModels
+import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat.animate
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import co.kr.woowahan_banchan.R
@@ -20,8 +27,10 @@ import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
@@ -48,12 +57,41 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        installSplashScreen()
+        exitSplashScreen()
+
         initToolbar()
         initView()
         observeData()
 
         viewModel.getCartItemCount()
         viewModel.fetchLatestOrderTime()
+    }
+
+    private fun exitSplashScreen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            splashScreen.setOnExitAnimationListener { splashScreenView ->
+                lifecycleScope.launch {
+                    splashScreenView.iconView?.let {
+                        animate(it).scaleX(0.7f).scaleY(0.7f).setDuration(300L).start()
+                        delay(300)
+                        animate(it).scaleX(2f).scaleY(2f).setDuration(300L).start()
+                        delay(300)
+                    }
+                }
+                ObjectAnimator.ofFloat(
+                    splashScreenView.iconView,
+                    View.TRANSLATION_X,
+                    0f,
+                    -splashScreenView.width.toFloat()
+                ).apply {
+                    duration = 1000L
+                    interpolator = AnticipateOvershootInterpolator()
+                    doOnEnd { splashScreenView.remove() }
+                }.start()
+            }
+        }
     }
 
     private fun initToolbar() {
