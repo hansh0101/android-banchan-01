@@ -8,7 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import co.kr.woowahan_banchan.databinding.DialogCartAddBottomBinding
-import co.kr.woowahan_banchan.domain.entity.dish.Dish
+import co.kr.woowahan_banchan.domain.entity.dish.SelectedDish
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.bottomsheet.BottomSheetViewModel
 import co.kr.woowahan_banchan.util.ImageLoader
@@ -26,7 +26,7 @@ class CartAddBottomSheet : BottomSheetDialogFragment() {
 
     private val viewModel by viewModels<BottomSheetViewModel>()
 
-    private var dish: Dish? = null
+    private var selectedDish: SelectedDish? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +49,7 @@ class CartAddBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun initViewData() {
-        dish?.let {
+        selectedDish?.let {
             ImageLoader.loadImage(it.imageUrl) { bitmap ->
                 binding.ivImage.setImageBitmap(bitmap)
             }
@@ -80,9 +80,9 @@ class CartAddBottomSheet : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(dish: Dish): CartAddBottomSheet {
+        fun newInstance(selectedDish: SelectedDish): CartAddBottomSheet {
             return CartAddBottomSheet().apply {
-                this.dish = dish
+                this.selectedDish = selectedDish
             }
         }
     }
