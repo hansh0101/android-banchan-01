@@ -1,141 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/grayscale_ffffff">
+<layout>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_start"
-        android:layout_width="wrap_content"
+    <data>
+
+        <variable
+            name="cartItem"
+            type="co.kr.woowahan_banchan.domain.entity.cart.CartItem" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="20dp" />
+        android:background="@color/grayscale_ffffff">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="20dp" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_top"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="16dp" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="20dp" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_bottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="16dp" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="16dp" />
 
-    <ImageView
-        android:id="@+id/iv_check"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:background="@drawable/ic_checkbox_checked"
-        app:layout_constraintStart_toEndOf="@id/gl_start"
-        app:layout_constraintTop_toBottomOf="@id/gl_top" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="16dp" />
 
-    <ImageView
-        android:id="@+id/iv_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="20dp"
-        android:background="@color/grayscale_000000"
-        app:layout_constraintStart_toEndOf="@id/iv_check"
-        app:layout_constraintTop_toBottomOf="@id/gl_top" />
+        <ImageView
+            android:id="@+id/iv_check"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@{cartItem.selected? @drawable/ic_checkbox_checked : @drawable/ic_checkbox_empty}"
+            app:layout_constraintStart_toEndOf="@id/gl_start"
+            app:layout_constraintTop_toBottomOf="@id/gl_top" />
 
-    <ImageView
-        android:id="@+id/iv_close"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:background="@drawable/ic_close"
-        app:layout_constraintEnd_toStartOf="@id/gl_end"
-        app:layout_constraintTop_toBottomOf="@id/gl_top" />
+        <ImageView
+            android:id="@+id/iv_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toEndOf="@id/iv_check"
+            app:layout_constraintTop_toBottomOf="@id/gl_top"
+            android:src="@mipmap/ic_launcher"/>
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="@color/grayscale_000000"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@id/iv_close"
-        app:layout_constraintStart_toEndOf="@id/iv_image"
-        app:layout_constraintTop_toBottomOf="@id/gl_top"
-        tools:text="새콤달콤 오징어무침" />
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/ic_close"
+            app:layout_constraintEnd_toStartOf="@id/gl_end"
+            app:layout_constraintTop_toBottomOf="@id/gl_top" />
 
-    <TextView
-        android:id="@+id/tv_price"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColor="@color/grayscale_000000"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/tv_title"
-        app:layout_constraintStart_toStartOf="@id/tv_title"
-        app:layout_constraintTop_toBottomOf="@id/tv_title"
-        tools:text="6,000원" />
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:padding="4dp"
+            android:text="@{cartItem.name}"
+            android:textColor="@color/grayscale_000000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/iv_close"
+            app:layout_constraintStart_toEndOf="@id/iv_image"
+            app:layout_constraintTop_toBottomOf="@id/gl_top"
+            tools:text="새콤달콤 오징어무침" />
 
-    <ImageView
-        android:id="@+id/iv_minus"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/circle"
-        android:elevation="4dp"
-        android:onClick="@{()->viewModel.updateAmount(false)}"
-        android:scaleType="center"
-        android:src="@drawable/ic_minus_12"
-        app:layout_constraintStart_toStartOf="@id/tv_title"
-        app:layout_constraintTop_toBottomOf="@id/tv_price" />
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="@{cartItem.priceText}"
+            android:textColor="@color/grayscale_000000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@id/tv_title"
+            app:layout_constraintStart_toStartOf="@id/tv_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            tools:text="6,000원" />
 
-    <TextView
-        android:id="@+id/tv_amount_value"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:text="@{String.valueOf(viewModel.amount)}"
-        android:textAlignment="center"
-        android:textColor="@color/grayscale_010101"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@id/iv_minus"
-        app:layout_constraintStart_toEndOf="@id/iv_minus"
-        app:layout_constraintTop_toTopOf="@id/iv_minus"
-        tools:text="1" />
+        <ImageView
+            android:id="@+id/iv_minus"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/circle"
+            android:elevation="4dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_minus_12"
+            app:layout_constraintStart_toStartOf="@id/tv_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_price" />
 
-    <ImageView
-        android:id="@+id/iv_plus"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:background="@drawable/circle"
-        android:elevation="4dp"
-        android:onClick="@{()-> viewModel.updateAmount(true)}"
-        android:scaleType="center"
-        android:src="@drawable/ic_plus_12"
-        app:layout_constraintBottom_toBottomOf="@id/iv_minus"
-        app:layout_constraintStart_toEndOf="@id/tv_amount_value"
-        app:layout_constraintTop_toTopOf="@id/iv_minus" />
+        <TextView
+            android:id="@+id/tv_amount_value"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(cartItem.amount)}"
+            android:textAlignment="center"
+            android:textColor="@color/grayscale_010101"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_minus"
+            app:layout_constraintStart_toEndOf="@id/iv_minus"
+            app:layout_constraintTop_toTopOf="@id/iv_minus"
+            tools:text="1" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@id/gl_bottom"
-        app:layout_constraintEnd_toStartOf="@id/gl_end"
-        app:layout_constraintTop_toBottomOf="@id/iv_minus"
-        android:textSize="14sp"
-        android:textColor="@color/grayscale_000000"
-        android:textStyle=""
-        tools:text="6,000원" />
+        <ImageView
+            android:id="@+id/iv_plus"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/circle"
+            android:elevation="4dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_plus_12"
+            app:layout_constraintBottom_toBottomOf="@id/iv_minus"
+            app:layout_constraintStart_toEndOf="@id/tv_amount_value"
+            app:layout_constraintTop_toTopOf="@id/iv_minus" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@{cartItem.totalPriceText}"
+            android:textColor="@color/grayscale_000000"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@id/gl_bottom"
+            app:layout_constraintEnd_toStartOf="@id/gl_end"
+            app:layout_constraintTop_toBottomOf="@id/iv_minus"
+            tools:text="6,000원" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
