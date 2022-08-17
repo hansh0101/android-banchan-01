@@ -56,10 +56,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         installSplashScreen()
         exitSplashScreen()
+
+        super.onCreate(savedInstanceState)
 
         initToolbar()
         initView()
