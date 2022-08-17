@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DeleteCartItemsUseCase @Inject constructor(
     private val cartRepository: CartRepository
 ) {
-    suspend operator fun invoke(deleteIds : List<String>) {
-        return cartRepository.deleteCartItems(deleteIds)
+    suspend operator fun invoke(deleteIds: List<String>): Result<Unit> {
+        return runCatching { cartRepository.deleteCartItems(deleteIds) }
     }
 }

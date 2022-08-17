@@ -26,7 +26,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun updateCartItems(updateItems: List<CartItem>) {
         cartDataSource.insertOrUpdateItems(
-            updateItems.map { CartDto(it.hash,it.amount,it.isSelected,Date().time,it.name) }
+            updateItems.map { CartDto(it.hash, it.amount, it.isSelected, Date().time, it.name) }
         )
     }
 
