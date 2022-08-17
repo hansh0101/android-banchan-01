@@ -28,7 +28,8 @@
             android:exported="false" />
         <activity
             android:name="co.kr.woowahan_banchan.presentation.ui.main.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
