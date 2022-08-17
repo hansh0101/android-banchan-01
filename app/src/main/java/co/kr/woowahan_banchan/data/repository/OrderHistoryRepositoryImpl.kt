@@ -2,12 +2,16 @@ package co.kr.woowahan_banchan.data.repository
 
 import co.kr.woowahan_banchan.data.datasource.local.order.OrderDataSource
 import co.kr.woowahan_banchan.data.datasource.local.orderitem.OrderItemDataSource
+import co.kr.woowahan_banchan.data.model.local.OrderDto
+import co.kr.woowahan_banchan.data.model.local.OrderItemDto
+import co.kr.woowahan_banchan.domain.entity.cart.CartItem
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderHistory
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderItem
 import co.kr.woowahan_banchan.domain.repository.OrderHistoryRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import java.util.*
 import javax.inject.Inject
 
 class OrderHistoryRepositoryImpl @Inject constructor(
@@ -61,5 +65,25 @@ class OrderHistoryRepositoryImpl @Inject constructor(
                 }
             }
         }
+    }
+
+    override suspend fun insertOrderItems(orderItems: List<CartItem>): Long {
+        val orderId = orderDataSource.insertItem(
+            OrderDto(totalPrice = orderItems.sumOf { it.price }, time = Date().time)
+        ).getOrThrow()
+
+        orderItemDataSource.insertItems(
+            orderItems.map {
+                OrderItemDto(
+                    orderId = orderId,
+                    hash = it.hash,
+                    thumbnailUrl = it.imageUrl,
+                    price = it.price,
+                    amount = it.amount,
+                    name = it.name
+                )
+            }
+        )
+        return orderId
     }
 }
