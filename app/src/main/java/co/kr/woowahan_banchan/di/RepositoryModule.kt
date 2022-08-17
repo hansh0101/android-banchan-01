@@ -72,6 +72,8 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideCartRepository(
-        cartDataSource: CartDataSource
-    ): CartRepository = CartRepositoryImpl(cartDataSource)
+        cartDataSource: CartDataSource,
+        detailDataSource: DetailDataSource,
+        @DefaultDispatcher coroutineDispatcher: CoroutineDispatcher
+    ): CartRepository = CartRepositoryImpl(cartDataSource, detailDataSource, coroutineDispatcher)
 }
