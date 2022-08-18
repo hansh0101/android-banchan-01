@@ -9,7 +9,6 @@ import androidx.fragment.app.commit
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ActivityCartBinding
 import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
-import co.kr.woowahan_banchan.presentation.ui.cart.recentlyviewed.RecentlyViewedFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +24,7 @@ class CartActivity : BaseActivity<ActivityCartBinding>() {
     private fun initView() {
         initToolbar()
         supportFragmentManager.commit {
-            add<RecentlyViewedFragment>(R.id.fcv_cart)
+            add<CartFragment>(R.id.fcv_cart)
         }
     }
 

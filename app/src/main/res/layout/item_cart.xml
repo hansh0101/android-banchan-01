@@ -13,7 +13,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grayscale_ffffff">
+        android:background="@{cartItem.selected? @color/grayscale_ffffff : @color/grayscale_f8f7f7}">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_start"
@@ -56,9 +56,9 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginStart="16dp"
+            android:src="@mipmap/ic_launcher"
             app:layout_constraintStart_toEndOf="@id/iv_check"
-            app:layout_constraintTop_toBottomOf="@id/gl_top"
-            android:src="@mipmap/ic_launcher"/>
+            app:layout_constraintTop_toBottomOf="@id/gl_top" />
 
         <ImageView
             android:id="@+id/iv_close"

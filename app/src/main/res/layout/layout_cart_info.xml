@@ -104,13 +104,13 @@
         app:layout_constraintTop_toTopOf="@id/tv_total_price_label"
         tools:text="21,140원" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_order"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="40dp"
-        android:backgroundTint="@color/primary_f9ba70"
+        android:background="@drawable/selector_btn_bg"
         android:elevation="5dp"
         android:padding="16dp"
         android:textAppearance="?attr/textAppearanceBody1"
