@@ -3,7 +3,7 @@ package co.kr.woowahan_banchan.domain.entity.cart
 data class CartItem(
     val hash : String,
     val name : String,
-    val isSelected: Boolean,
+    var isSelected: Boolean,
     var amount : Int,
     val imageUrl : String,
     val price : Int
