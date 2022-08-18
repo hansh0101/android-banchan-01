@@ -16,13 +16,15 @@ import java.util.*
 
 class RecentlyViewedAdapter(
     private val itemClick: (HistoryItem) -> Unit,
-    private val cartClick: (HistoryItem) -> Unit
+    private val cartClick: (HistoryItem) -> Unit,
+    private val isPreview : Boolean = false
 ) :
     ListAdapter<HistoryItem, RecentlyViewedAdapter.RecentlyViewedViewHolder>(diffCallback) {
     class RecentlyViewedViewHolder(
         private val binding: ItemRecentlyViewedBinding,
         private val itemClick: (HistoryItem) -> Unit,
-        private val cartClick: (HistoryItem) -> Unit
+        private val cartClick: (HistoryItem) -> Unit,
+        private val isPreview: Boolean
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(historyItem: HistoryItem) {
@@ -32,6 +34,9 @@ class RecentlyViewedAdapter(
                         binding.ivImage.setImageBitmap(it)
                     }
                 }
+
+                binding.ibAddBtn.isVisible = !isPreview
+
                 binding.ibAddBtn.setBackgroundResource(
                     if (this.isAdded) {
                         R.drawable.ic_cart_btn_added
@@ -57,20 +62,21 @@ class RecentlyViewedAdapter(
             fun create(
                 parent: ViewGroup,
                 itemClick: (HistoryItem) -> Unit,
-                cartClick: (HistoryItem) -> Unit
+                cartClick: (HistoryItem) -> Unit,
+                isPreview: Boolean
             ): RecentlyViewedViewHolder {
                 val binding = ItemRecentlyViewedBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
-                return RecentlyViewedViewHolder(binding, itemClick, cartClick)
+                return RecentlyViewedViewHolder(binding, itemClick, cartClick, isPreview)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentlyViewedViewHolder =
-        RecentlyViewedViewHolder.create(parent, itemClick, cartClick)
+        RecentlyViewedViewHolder.create(parent, itemClick, cartClick, isPreview)
 
     override fun onBindViewHolder(holder: RecentlyViewedViewHolder, position: Int) =
         holder.onBind(currentList[position])

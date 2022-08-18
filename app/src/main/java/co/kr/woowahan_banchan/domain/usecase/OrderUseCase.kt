@@ -19,7 +19,8 @@ class OrderUseCase @Inject constructor(
                 when {
                     temp == null -> deleteItem.add(oldItem.hash)
                     temp.isSelected -> orderItems.add(temp)
-                    else -> updateItem.add(temp)
+                    oldItem.amount != temp.amount ||
+                            oldItem.isSelected != temp.isSelected -> updateItem.add(temp)
                 }
             }
             val orderId = orderHistoryRepository.insertOrderItems(orderItems)

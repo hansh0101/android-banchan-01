@@ -13,9 +13,10 @@ class UpdateCartItemsUseCase @Inject constructor(
             val deleteItem = mutableListOf<String>()
             oldItems.forEach { oldItem ->
                 val temp = cartItems.find{it.hash == oldItem.hash}
-                when (temp) {
-                    null -> deleteItem.add(oldItem.hash)
-                    else -> updateItem.add(temp)
+                when {
+                    temp == null -> deleteItem.add(oldItem.hash)
+                    oldItem.amount != temp.amount ||
+                    oldItem.isSelected != temp.isSelected -> updateItem.add(temp)
                 }
             }
             cartRepository.updateCartItems(updateItem)

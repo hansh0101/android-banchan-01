@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.WindowManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.DialogCartAddBinding
+import co.kr.woowahan_banchan.presentation.ui.cart.CartActivity
 import co.kr.woowahan_banchan.util.shortToast
 
 class CartAddDialog(context: Context) : Dialog(context) {
@@ -19,7 +20,10 @@ class CartAddDialog(context: Context) : Dialog(context) {
             false
         )
         binding.tvPositive.setOnClickListener { dismiss() }
-        binding.tvNegative.setOnClickListener { context.shortToast("장바구니 화면 이동 구현 요망") }
+        binding.tvNegative.setOnClickListener {
+            context.startActivity(CartActivity.getIntent(context))
+            dismiss()
+        }
         this.setContentView(binding.root)
 
         window?.setLayout(

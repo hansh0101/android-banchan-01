@@ -29,7 +29,8 @@ class CartAdapter(
         },
         {
             //do nothing
-        }
+        },
+        true
     )
 
     fun updateCartItems(list: List<CartItem>) {
