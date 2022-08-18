@@ -58,6 +58,16 @@ class CartAdapter(
         notifyDataSetChanged()
     }
 
+    fun deleteSelectedItems() {
+        val iterator = cartItems.iterator()
+        while (iterator.hasNext()) {
+            if (iterator.next().isSelected){
+                iterator.remove()
+            }
+        }
+        notifyDataSetChanged()
+    }
+
     interface OnCartClickListener {
         fun onHistoryItemClick(historyItem: HistoryItem)
         fun onOrderBtnClick(cartItems: List<CartItem>)

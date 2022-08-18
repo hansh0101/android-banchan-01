@@ -33,12 +33,16 @@
             android:layout_marginStart="8dp"
             android:textColor="@color/grayscale_000000"
             android:text='@{viewModel.isSelectedAll? "선택 해제" : "전체 선택"}'/>
+
         <TextView
+            android:id="@+id/tv_selected_item_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/grayscale_000000"
             app:layout_constraintTop_toTopOf="@id/iv_check_all"
             app:layout_constraintBottom_toBottomOf="@id/iv_check_all"
             app:layout_constraintEnd_toEndOf="parent"
+            android:text="선택 삭제"
             android:layout_marginEnd="16dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
