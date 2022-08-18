@@ -154,6 +154,11 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
             viewModel.setSelectedAll(!viewModel.isSelectedAll.value)
             cartAdapter.setAllItemsSelected(viewModel.isSelectedAll.value)
         }
+
+        binding.tvSelectedItemDelete.setOnClickListener {
+            cartAdapter.deleteSelectedItems()
+            viewModel.setSelectedAll(cartAdapter.getCartItems())
+        }
     }
 
     private fun startDetailActivity(title: String, hash: String) {

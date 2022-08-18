@@ -58,6 +58,11 @@ class CartAdapter(
         notifyDataSetChanged()
     }
 
+    fun deleteSelectedItems() {
+        cartItems.removeIf { it.isSelected }
+        notifyDataSetChanged()
+    }
+
     interface OnCartClickListener {
         fun onHistoryItemClick(historyItem: HistoryItem)
         fun onOrderBtnClick(cartItems: List<CartItem>)
