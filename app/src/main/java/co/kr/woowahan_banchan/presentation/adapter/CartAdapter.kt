@@ -13,6 +13,7 @@ import co.kr.woowahan_banchan.domain.entity.cart.CartItem
 import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import co.kr.woowahan_banchan.presentation.decoration.HorizontalItemDecoration
 import co.kr.woowahan_banchan.presentation.decoration.HorizontalLayoutManager
+import co.kr.woowahan_banchan.presentation.ui.widget.NumberPickerDialog
 import co.kr.woowahan_banchan.util.ImageLoader
 import co.kr.woowahan_banchan.util.dpToPx
 import co.kr.woowahan_banchan.util.toPriceFormat
@@ -44,7 +45,7 @@ class CartAdapter(
         }
     }
 
-    fun getCartItems() : List<CartItem> = cartItems
+    fun getCartItems(): List<CartItem> = cartItems
 
     fun updateHistoryItems(list: List<HistoryItem>) {
         historyAdapter.submitList(list.toMutableList())
@@ -84,7 +85,8 @@ class CartAdapter(
     class CartItemViewHolder(
         private val binding: ItemCartBinding,
         private val clickListener: OnCartClickListener,
-        private val adapter: CartAdapter
+        private val adapter: CartAdapter,
+        private val parent: ViewGroup
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: CartItem) {
@@ -114,6 +116,14 @@ class CartAdapter(
                     adapter.notifyItemChanged(adapter.cartItems.size)
                 }
             }
+
+            binding.tvAmountValue.setOnClickListener {
+                NumberPickerDialog(parent.context, item.amount) { amount ->
+                    item.amount = amount
+                    adapter.notifyItemChanged(adapterPosition)
+                    adapter.notifyItemChanged(adapter.cartItems.size)
+                }.show()
+            }
         }
 
         companion object {
@@ -125,7 +135,7 @@ class CartAdapter(
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_cart, parent, false)
                 val binding = ItemCartBinding.bind(view)
-                return CartItemViewHolder(binding, clickListener, cartAdapter)
+                return CartItemViewHolder(binding, clickListener, cartAdapter, parent)
             }
         }
     }
