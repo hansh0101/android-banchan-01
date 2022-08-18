@@ -1,6 +1,11 @@
 package co.kr.woowahan_banchan.presentation.ui.cart
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context.ALARM_SERVICE
+import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.View
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
@@ -13,6 +18,7 @@ import co.kr.woowahan_banchan.domain.entity.cart.CartItem
 import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import co.kr.woowahan_banchan.presentation.adapter.CartAdapter
 import co.kr.woowahan_banchan.presentation.decoration.VerticalItemDecoration
+import co.kr.woowahan_banchan.presentation.notification.AlarmReceiver
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.cart.recentlyviewed.RecentlyViewedFragment
 import co.kr.woowahan_banchan.presentation.ui.order.orderdetail.OrderDetailFragment
@@ -24,6 +30,7 @@ import co.kr.woowahan_banchan.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.util.*
 
 @AndroidEntryPoint
 class CartFragment : BaseFragment<FragmentCartBinding>() {
@@ -116,6 +123,20 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
             .onEach {
                 when (it) {
                     is UiState.Success -> {
+                        val alarmManager = requireContext().getSystemService(ALARM_SERVICE) as AlarmManager
+                        val intent = Intent(AlarmReceiver.getIntent(requireContext()))
+                        val pendingIntent = PendingIntent.getBroadcast(
+                            requireContext(),
+                            AlarmReceiver.NOTIFICATION_ID,
+                            intent,
+                            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                        alarmManager.set(
+                            AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                            SystemClock.elapsedRealtime() + 1000 * 60 * 20,
+                            pendingIntent
+                        )
+
                         parentFragmentManager.commit {
                             replace(R.id.fcv_cart, OrderDetailFragment.newInstance(it.data))
                         }
