@@ -59,12 +59,7 @@ class CartAdapter(
     }
 
     fun deleteSelectedItems() {
-        val iterator = cartItems.iterator()
-        while (iterator.hasNext()) {
-            if (iterator.next().isSelected){
-                iterator.remove()
-            }
-        }
+        cartItems.removeIf { it.isSelected }
         notifyDataSetChanged()
     }
 
