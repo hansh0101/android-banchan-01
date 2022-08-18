@@ -21,6 +21,7 @@ class OrderDetailViewModel @Inject constructor(
     val orderItems: StateFlow<UiState<List<OrderItem>>> get() = _orderItems
     private val _orderTime = MutableStateFlow<UiState<Long>>(UiState.Init)
     val orderTime: StateFlow<UiState<Long>> get() = _orderTime
+    var time: Long = 0L
 
     fun fetchOrderItems(orderId: Long) {
         viewModelScope.launch {
@@ -31,11 +32,13 @@ class OrderDetailViewModel @Inject constructor(
         viewModelScope.launch {
             orderTimeUseCase(orderId)
                 .onSuccess {
-                    if (it != 0L) _orderTime.value = UiState.Success(it)
-                    else _orderTime.value = UiState.Error("주문 시간을 조회하는데 실패했습니다")
+                    if (it != 0L) {
+                        _orderTime.value = UiState.Success(it)
+                        time = it
+                    } else _orderTime.value = UiState.Error("주문 시간을 조회하는데 실패했습니다")
                 }
                 .onFailure {
-                    _orderTime.value = UiState.Error(it.message)
+                    _orderTime.emit(UiState.Error(it.message))
                 }
         }
     }

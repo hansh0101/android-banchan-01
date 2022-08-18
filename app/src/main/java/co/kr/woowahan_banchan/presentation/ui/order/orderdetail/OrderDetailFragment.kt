@@ -15,7 +15,6 @@ import co.kr.woowahan_banchan.databinding.FragmentOrderDetailBinding
 import co.kr.woowahan_banchan.databinding.ItemOrderDetailBinding
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderItem
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
-import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.order.OrderDetailViewModel
@@ -40,7 +39,9 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
             return when (menuItem.itemId) {
                 R.id.menu_refresh -> {
-                    viewModel.fetchOrderItems(orderId)
+                    if (viewModel.time != 0L) {
+                        showDeliveryInfo(viewModel.time)
+                    }
                     true
                 }
                 else -> false
