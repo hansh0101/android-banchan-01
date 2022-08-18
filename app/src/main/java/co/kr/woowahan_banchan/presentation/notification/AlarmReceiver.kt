@@ -10,11 +10,9 @@ import android.graphics.Color
 import androidx.core.app.NotificationCompat
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
-import timber.log.Timber
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
-        Timber.d("Received intent : $intent")
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -25,15 +23,17 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun createNotificationChannel(notificationManager: NotificationManager) {
         val notificationChannel = NotificationChannel(
             PRIMARY_CHANNEL_ID,
-            "Stand up notification",
+            "DELIVERY_FINISH",
             NotificationManager.IMPORTANCE_HIGH
         )
         with(notificationChannel) {
             enableLights(true)
             lightColor = Color.RED
             enableVibration(true)
-            description = "AlarmManager Tests"
+            description = "ALARM_DELIVERY"
             notificationManager.createNotificationChannel(this)
+
+
         }
     }
 
