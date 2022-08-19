@@ -70,12 +70,17 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
 
     private fun initView() {
         binding.viewModel = viewModel
-        binding.rvMaindishes.adapter = dishAdapter
-        binding.rvMaindishes.layoutManager = gridLayoutManager
-        binding.rvMaindishes.addItemDecoration(gridItemDecoration)
-        binding.rvMaindishes.itemAnimator = null
-
-        binding.spFilter.adapter = filterAdapter
+        with(binding.rvMaindishes) {
+            adapter = dishAdapter
+            layoutManager = gridLayoutManager
+            addItemDecoration(gridItemDecoration)
+            itemAnimator = null
+        }
+        with(binding.spFilter) {
+            adapter = filterAdapter
+            setDropDownStartEvent { setBackgroundResource(R.drawable.bg_spinner_openned) }
+            setDropDownEndEvent { setBackgroundResource(R.drawable.bg_spinner_default) }
+        }
         filterAdapter.submitList(spinnerItems, 0)
     }
 

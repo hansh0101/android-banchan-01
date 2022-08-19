@@ -78,14 +78,17 @@ class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
     }
 
     private fun initView() {
-        binding.rvDishes.adapter = dishAdapter
-        binding.rvDishes.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.rvDishes.addItemDecoration(
-            GridItemDecoration(0, 30.dpToPx(), 16.dpToPx())
-        )
-        binding.rvDishes.itemAnimator = null
-
-        binding.spFilter.adapter = filterAdapter
+        with(binding.rvDishes) {
+            adapter = dishAdapter
+            layoutManager = GridLayoutManager(requireContext(), 2)
+            addItemDecoration(GridItemDecoration(0, 30.dpToPx(), 16.dpToPx()))
+            itemAnimator = null
+        }
+        with(binding.spFilter) {
+            adapter = filterAdapter
+            setDropDownStartEvent { setBackgroundResource(R.drawable.bg_spinner_openned) }
+            setDropDownEndEvent { setBackgroundResource(R.drawable.bg_spinner_default) }
+        }
         filterAdapter.submitList(spinnerItems, 0)
     }
 
