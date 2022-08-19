@@ -73,7 +73,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:selected="@{!viewModel.isGridMode}" />
 
-                <Spinner
+                <co.kr.woowahan_banchan.presentation.ui.widget.FilterSpinner
                     android:id="@+id/sp_filter"
                     android:layout_width="110dp"
                     android:layout_height="wrap_content"
