@@ -2,17 +2,18 @@ package co.kr.woowahan_banchan.presentation.viewmodel.cart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import co.kr.woowahan_banchan.domain.entity.cart.CartItem
 import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import co.kr.woowahan_banchan.domain.usecase.GetCartItemsUseCase
 import co.kr.woowahan_banchan.domain.usecase.OrderUseCase
 import co.kr.woowahan_banchan.domain.usecase.RecentlyViewedUseCase
-import co.kr.woowahan_banchan.domain.usecase.UpdateCartItemsUseCase
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
+import co.kr.woowahan_banchan.presentation.worker.CartUpdateWorker
+import co.kr.woowahan_banchan.util.listToString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -23,8 +24,7 @@ import javax.inject.Inject
 class CartViewModel @Inject constructor(
     private val getCartItemsUseCase: GetCartItemsUseCase,
     private val recentlyViewedUseCase: RecentlyViewedUseCase,
-    private val orderUseCase: OrderUseCase,
-    private val updateCartItemsUseCase: UpdateCartItemsUseCase
+    private val orderUseCase: OrderUseCase
 ) : ViewModel() {
 
     private val _cartItems = MutableStateFlow<UiState<List<CartItem>>>(UiState.Init)
@@ -91,10 +91,14 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    fun updateCartItems(cartList: List<CartItem>) {
-        CoroutineScope(Dispatchers.Main).launch {
-            updateCartItemsUseCase(originalCart, cartList)
-            this.cancel()
-        }
+    fun updateCartItems(cartList: List<CartItem>, workManager: WorkManager){
+        val inputData = Data.Builder()
+            .putString("original_list", listToString(originalCart))
+            .putString("update_list", listToString(cartList))
+            .build()
+        val workRequest = OneTimeWorkRequestBuilder<CartUpdateWorker>()
+            .setInputData(inputData)
+            .build()
+        workManager.enqueue(workRequest)
     }
 }

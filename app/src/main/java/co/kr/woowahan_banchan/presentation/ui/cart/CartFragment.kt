@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentCartBinding
 import co.kr.woowahan_banchan.presentation.adapter.CartAdapter
@@ -54,6 +55,10 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
                 }
             }
         )
+    }
+
+    private val workManager by lazy {
+        WorkManager.getInstance(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -162,7 +167,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
 
     override fun onStop() {
         if (!viewModel.isOrdered) {
-            viewModel.updateCartItems(cartAdapter.getCartItems())
+            viewModel.updateCartItems(cartAdapter.getCartItems(),workManager)
         }
         super.onStop()
     }
