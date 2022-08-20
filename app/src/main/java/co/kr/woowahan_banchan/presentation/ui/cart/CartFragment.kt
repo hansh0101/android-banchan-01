@@ -14,8 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentCartBinding
-import co.kr.woowahan_banchan.domain.entity.cart.CartItem
-import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import co.kr.woowahan_banchan.presentation.adapter.CartAdapter
 import co.kr.woowahan_banchan.presentation.decoration.VerticalItemDecoration
 import co.kr.woowahan_banchan.presentation.notification.AlarmReceiver
@@ -30,7 +28,6 @@ import co.kr.woowahan_banchan.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.util.*
 
 @AndroidEntryPoint
 class CartFragment : BaseFragment<FragmentCartBinding>() {
@@ -40,9 +37,29 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
     private val viewModel by viewModels<CartViewModel>()
 
     private val cartAdapter by lazy {
-        CartAdapter(object : CartAdapter.OnCartClickListener {
-            override fun onHistoryItemClick(historyItem: HistoryItem) {
-                startDetailActivity(historyItem.title, historyItem.detailHash)
+        CartAdapter(
+            onHistoryItemClick = { title, hash ->
+                startDetailActivity(title, hash)
+            },
+            onOrderBtnClick = { cartItems ->
+                viewModel.orderStart(cartItems)
+            },
+            onCheckBtnClick = { cartItems ->
+                viewModel.setSelectedAll(cartItems)
+            },
+            onFullRecentlyBtnClick = {
+                parentFragmentManager.commit {
+                    replace(R.id.fcv_cart, RecentlyViewedFragment())
+                    addToBackStack("cart")
+                }
+            }
+        )
+    }
+
+    /*
+    object : CartAdapter.OnCartClickListener {
+            override fun onHistoryItemClick(title: String, hash: String) {
+                startDetailActivity(title, hash)
             }
 
             override fun onOrderBtnClick(cartItems: List<CartItem>) {
@@ -59,8 +76,8 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
                     addToBackStack("cart")
                 }
             }
-        })
-    }
+        }
+     */
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

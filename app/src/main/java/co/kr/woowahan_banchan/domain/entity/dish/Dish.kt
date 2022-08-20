@@ -22,4 +22,6 @@ data class Dish(
 
     val sPriceText: String
         get() = "${String.format("%,2d", sPrice)}원"
+
+    fun toSelectedDish() : SelectedDish = SelectedDish(this)
 }

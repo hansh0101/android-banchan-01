@@ -30,9 +30,9 @@ class MainDishViewModel @Inject constructor(
     private val _sortedDishes = MutableLiveData<List<Dish>>(listOf())
     val sortedDishes: LiveData<List<Dish>> get() = _sortedDishes
 
-    fun getDishes(source: Source) {
+    fun getDishes() {
         viewModelScope.launch {
-            getDishesUseCase(source)
+            getDishesUseCase(Source.MAIN)
                 .catch { _mainDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
                 .collect {
                     _mainDishes.value = UiState.Success(it)

@@ -8,10 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentBestBinding
-import co.kr.woowahan_banchan.domain.entity.dish.Dish
-import co.kr.woowahan_banchan.domain.entity.dish.SelectedDish
 import co.kr.woowahan_banchan.presentation.adapter.BestItemAdapter
-import co.kr.woowahan_banchan.presentation.adapter.DishAdapter
 import co.kr.woowahan_banchan.presentation.decoration.VerticalItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
@@ -31,15 +28,14 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
         get() = R.layout.fragment_best
 
     private val viewModel by viewModels<BestViewModel>()
-    private val bestAdapter = BestItemAdapter(object : DishAdapter.DishClickListener {
-        override fun moveToDetail(title: String, hash: String) {
+    private val bestAdapter = BestItemAdapter(
+        moveToDetail = { title, hash ->
             startDetailActivity(title, hash)
+        },
+        openBottomSheet = {
+            CartAddBottomSheet.newInstance(it.toSelectedDish()).show(parentFragmentManager, null)
         }
-
-        override fun openBottomSheet(dish: Dish) {
-            CartAddBottomSheet.newInstance(SelectedDish(dish)).show(parentFragmentManager, null)
-        }
-    })
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

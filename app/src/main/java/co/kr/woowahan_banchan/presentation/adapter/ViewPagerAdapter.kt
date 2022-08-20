@@ -7,6 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import co.kr.woowahan_banchan.presentation.ui.main.best.BestFragment
 import co.kr.woowahan_banchan.presentation.ui.main.maindish.MainDishFragment
 import co.kr.woowahan_banchan.presentation.ui.main.otherdish.OtherDishFragment
+import co.kr.woowahan_banchan.presentation.viewmodel.main.DishType
 
 class ViewPagerAdapter(
     fragmentManager: FragmentManager,
@@ -20,8 +21,8 @@ class ViewPagerAdapter(
     override fun createFragment(position: Int): Fragment {
         return when(position){
             1 -> MainDishFragment()
-            2 -> OtherDishFragment.newInstance(OtherDishFragment.SOUP)
-            3 -> OtherDishFragment.newInstance(OtherDishFragment.SIDE)
+            2 -> OtherDishFragment.newInstance(DishType.SOUP.name)
+            3 -> OtherDishFragment.newInstance(DishType.SIDE.name)
             else -> BestFragment()
         }
     }

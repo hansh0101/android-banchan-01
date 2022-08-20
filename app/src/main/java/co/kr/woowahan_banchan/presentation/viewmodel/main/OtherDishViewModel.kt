@@ -33,7 +33,8 @@ class OtherDishViewModel @Inject constructor(
     private val _titleText = MutableLiveData("")
     val titleText: LiveData<String> get() = _titleText
 
-    fun getDishes(source: Source) {
+    fun getDishes(dishType: String) {
+        val source = if (dishType == DishType.SOUP.name) Source.SOUP else Source.SIDE
         viewModelScope.launch {
             getDishesUseCase(source)
                 .catch { _otherDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
@@ -60,4 +61,8 @@ class OtherDishViewModel @Inject constructor(
     fun setTitle(title: String) {
         _titleText.value = title
     }
+}
+
+enum class DishType {
+    MAIN, SOUP, SIDE
 }
