@@ -56,29 +56,6 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
         )
     }
 
-    /*
-    object : CartAdapter.OnCartClickListener {
-            override fun onHistoryItemClick(title: String, hash: String) {
-                startDetailActivity(title, hash)
-            }
-
-            override fun onOrderBtnClick(cartItems: List<CartItem>) {
-                viewModel.orderStart(cartItems)
-            }
-
-            override fun onCheckBtnClick(cartItems: List<CartItem>) {
-                viewModel.setSelectedAll(cartItems)
-            }
-
-            override fun onFullRecentlyBtnClick() {
-                parentFragmentManager.commit {
-                    replace(R.id.fcv_cart, RecentlyViewedFragment())
-                    addToBackStack("cart")
-                }
-            }
-        }
-     */
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -140,7 +117,8 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
             .onEach {
                 when (it) {
                     is UiState.Success -> {
-                        val alarmManager = requireContext().getSystemService(ALARM_SERVICE) as AlarmManager
+                        val alarmManager =
+                            requireContext().getSystemService(ALARM_SERVICE) as AlarmManager
                         val intent = Intent(AlarmReceiver.getIntent(requireContext()))
                         val pendingIntent = PendingIntent.getBroadcast(
                             requireContext(),
