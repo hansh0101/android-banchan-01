@@ -17,9 +17,9 @@ class CartRepositoryImpl @Inject constructor(
     private val detailDataSource: DetailDataSource,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : CartRepository {
-    override suspend fun addToCart(hash: String, amount: Int, name: String) {
+    override suspend fun addToCart(hash: String, amount: Int, name: String): Result<Unit> {
         val originalAmount = cartDataSource.getAmount(hash).getOrDefault(0)
-        cartDataSource.insertOrUpdateItems(
+        return cartDataSource.insertOrUpdateItems(
             listOf(CartDto(hash, amount + originalAmount, true, Date().time, name))
         )
     }
