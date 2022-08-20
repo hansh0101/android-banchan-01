@@ -12,7 +12,8 @@ import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import co.kr.woowahan_banchan.util.ImageLoader
 
 class DishAdapter(
-    private val clickListener: DishClickListener
+    private val moveToDetail: (String, String) -> Unit,
+    private val openBottomSheet: (Dish) -> Unit
 ) : ListAdapter<Dish, RecyclerView.ViewHolder>(DishDiffCallback()) {
 
     var isGrid: Boolean = true
@@ -21,14 +22,10 @@ class DishAdapter(
             notifyDataSetChanged()
         }
 
-    interface DishClickListener {
-        fun moveToDetail(title: String, hash: String)
-        fun openBottomSheet(dish : Dish)
-    }
-
     class DishGridViewHolder(
         private val binding: ItemDishGridBinding,
-        private val clickListener: DishClickListener
+        private val moveToDetail: (String, String) -> Unit,
+        private val openBottomSheet: (Dish) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Dish) {
             ImageLoader.loadImage(item.imageUrl) {
@@ -36,10 +33,10 @@ class DishAdapter(
                 binding.dish = item
 
                 binding.root.setOnClickListener {
-                    clickListener.moveToDetail(item.title, item.detailHash)
+                    moveToDetail(item.title, item.detailHash)
                 }
                 binding.ibAddBtn.setOnClickListener {
-                    clickListener.openBottomSheet(item)
+                    openBottomSheet(item)
                 }
             }
         }
@@ -47,19 +44,20 @@ class DishAdapter(
         companion object {
             fun create(
                 parent: ViewGroup,
-                clickListener: DishClickListener
+                moveToDetail: (String, String) -> Unit,
+                openBottomSheet: (Dish) -> Unit
             ): DishGridViewHolder {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_dish_grid, parent, false)
                 val binding = ItemDishGridBinding.bind(view)
-                return DishGridViewHolder(binding, clickListener)
+                return DishGridViewHolder(binding, moveToDetail, openBottomSheet)
             }
         }
     }
 
     class DishLinearViewHolder(
         private val binding: ItemDishLinearBinding,
-        private val clickListener: DishClickListener
+        private val moveToDetail: (String, String) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Dish) {
             ImageLoader.loadImage(item.imageUrl) {
@@ -67,7 +65,7 @@ class DishAdapter(
                 binding.dish = item
 
                 binding.root.setOnClickListener {
-                    clickListener.moveToDetail(item.title, item.detailHash)
+                    moveToDetail(item.title, item.detailHash)
                 }
             }
         }
@@ -75,12 +73,12 @@ class DishAdapter(
         companion object {
             fun create(
                 parent: ViewGroup,
-                listener: DishClickListener
+                moveToDetail: (String, String) -> Unit,
             ): DishLinearViewHolder {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_dish_linear, parent, false)
                 val binding = ItemDishLinearBinding.bind(view)
-                return DishLinearViewHolder(binding, listener)
+                return DishLinearViewHolder(binding, moveToDetail)
             }
         }
     }
@@ -100,8 +98,12 @@ class DishAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == GRID) DishGridViewHolder.create(parent, clickListener)
-        else DishLinearViewHolder.create(parent, clickListener)
+        return if (viewType == GRID) DishGridViewHolder.create(
+            parent,
+            moveToDetail,
+            openBottomSheet
+        )
+        else DishLinearViewHolder.create(parent, moveToDetail)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

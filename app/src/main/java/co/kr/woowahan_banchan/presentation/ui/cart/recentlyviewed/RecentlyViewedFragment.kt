@@ -8,7 +8,6 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentRecentlyViewedBinding
-import co.kr.woowahan_banchan.domain.entity.dish.SelectedDish
 import co.kr.woowahan_banchan.presentation.adapter.RecentlyViewedAdapter
 import co.kr.woowahan_banchan.presentation.decoration.GridItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
@@ -38,7 +37,7 @@ class RecentlyViewedFragment : BaseFragment<FragmentRecentlyViewedBinding>() {
                 )
             )
         }, {
-            CartAddBottomSheet.newInstance(SelectedDish(it)).show(parentFragmentManager, null)
+            CartAddBottomSheet.newInstance(it.toSelectedDish()).show(parentFragmentManager, null)
         })
     }
 

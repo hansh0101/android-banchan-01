@@ -19,14 +19,17 @@ import co.kr.woowahan_banchan.util.dpToPx
 import co.kr.woowahan_banchan.util.toPriceFormat
 
 class CartAdapter(
-    private val cartClickListener: OnCartClickListener
+    private val onHistoryItemClick: (String, String) -> Unit,
+    private val onOrderBtnClick: (List<CartItem>) -> Unit,
+    private val onFullRecentlyBtnClick: () -> Unit,
+    private val onCheckBtnClick: (List<CartItem>) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val cartItems = mutableListOf<CartItem>()
 
     private val historyAdapter = RecentlyViewedAdapter(
         {
-            cartClickListener.onHistoryItemClick(it)
+            onHistoryItemClick(it.title, it.detailHash)
         },
         {
             //do nothing
@@ -63,13 +66,6 @@ class CartAdapter(
         notifyDataSetChanged()
     }
 
-    interface OnCartClickListener {
-        fun onHistoryItemClick(historyItem: HistoryItem)
-        fun onOrderBtnClick(cartItems: List<CartItem>)
-        fun onFullRecentlyBtnClick()
-        fun onCheckBtnClick(cartItems: List<CartItem>)
-    }
-
     class CartItemDiffUtil(
         private val oldItems: List<CartItem>,
         private val newItems: List<CartItem>
@@ -89,7 +85,7 @@ class CartAdapter(
 
     class CartItemViewHolder(
         private val binding: ItemCartBinding,
-        private val clickListener: OnCartClickListener,
+        private val onCheckBtnClick: (List<CartItem>) -> Unit,
         private val adapter: CartAdapter,
         private val parent: ViewGroup
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -103,7 +99,7 @@ class CartAdapter(
                 item.isSelected = !item.isSelected
                 adapter.notifyItemChanged(adapterPosition)
                 adapter.notifyItemChanged(adapter.cartItems.size)
-                clickListener.onCheckBtnClick(adapter.cartItems)
+                onCheckBtnClick(adapter.cartItems)
             }
             binding.ivClose.setOnClickListener {
                 adapter.cartItems.remove(item)
@@ -134,20 +130,20 @@ class CartAdapter(
         companion object {
             fun create(
                 parent: ViewGroup,
-                clickListener: OnCartClickListener,
+                onCheckBtnClick: (List<CartItem>) -> Unit,
                 cartAdapter: CartAdapter
             ): CartItemViewHolder {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_cart, parent, false)
                 val binding = ItemCartBinding.bind(view)
-                return CartItemViewHolder(binding, clickListener, cartAdapter, parent)
+                return CartItemViewHolder(binding, onCheckBtnClick, cartAdapter, parent)
             }
         }
     }
 
     class CartInfoViewHolder(
         private val binding: LayoutCartInfoBinding,
-        private val clickListener: OnCartClickListener
+        private val onOrderBtnClick: (List<CartItem>) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(cartItems: List<CartItem>) {
@@ -172,16 +168,19 @@ class CartAdapter(
             binding.btnOrder.isEnabled = totalPrice >= 10000
 
             binding.btnOrder.setOnClickListener {
-                clickListener.onOrderBtnClick(cartItems)
+                onOrderBtnClick(cartItems)
             }
         }
 
         companion object {
-            fun create(parent: ViewGroup, clickListener: OnCartClickListener): CartInfoViewHolder {
+            fun create(
+                parent: ViewGroup,
+                onOrderBtnClick: (List<CartItem>) -> Unit
+            ): CartInfoViewHolder {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.layout_cart_info, parent, false)
                 val binding = LayoutCartInfoBinding.bind(view)
-                return CartInfoViewHolder(binding, clickListener)
+                return CartInfoViewHolder(binding, onOrderBtnClick)
             }
         }
     }
@@ -189,7 +188,7 @@ class CartAdapter(
     class HistoryItemViewHolder(
         private val binding: LayoutCartRecentlyViewedBinding,
         private val parent: ViewGroup,
-        private val clickListener: OnCartClickListener
+        private val onFullRecentlyBtnClick: () -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(adapter: RecentlyViewedAdapter) {
@@ -199,19 +198,19 @@ class CartAdapter(
             if (binding.rvRecentlyViewed.itemDecorationCount == 0)
                 binding.rvRecentlyViewed.addItemDecoration(HorizontalItemDecoration(8.dpToPx()))
             binding.tvFullView.setOnClickListener {
-                clickListener.onFullRecentlyBtnClick()
+                onFullRecentlyBtnClick()
             }
         }
 
         companion object {
             fun create(
                 parent: ViewGroup,
-                clickListener: OnCartClickListener
+                onFullRecentlyBtnClick: () -> Unit
             ): HistoryItemViewHolder {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.layout_cart_recently_viewed, parent, false)
                 val binding = LayoutCartRecentlyViewedBinding.bind(view)
-                return HistoryItemViewHolder(binding, parent, clickListener)
+                return HistoryItemViewHolder(binding, parent, onFullRecentlyBtnClick)
             }
         }
     }
@@ -221,9 +220,9 @@ class CartAdapter(
         viewType: Int
     ): RecyclerView.ViewHolder {
         return when (viewType) {
-            FOOT -> CartInfoViewHolder.create(parent, cartClickListener)
-            TAIL -> HistoryItemViewHolder.create(parent, cartClickListener)
-            else -> CartItemViewHolder.create(parent, cartClickListener, this)
+            FOOT -> CartInfoViewHolder.create(parent, onOrderBtnClick)
+            TAIL -> HistoryItemViewHolder.create(parent, onFullRecentlyBtnClick)
+            else -> CartItemViewHolder.create(parent, onCheckBtnClick, this)
         }
     }
 

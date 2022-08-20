@@ -10,9 +10,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentMainDishBinding
-import co.kr.woowahan_banchan.domain.entity.dish.Dish
-import co.kr.woowahan_banchan.domain.entity.dish.SelectedDish
-import co.kr.woowahan_banchan.domain.repository.Source
 import co.kr.woowahan_banchan.presentation.adapter.DishAdapter
 import co.kr.woowahan_banchan.presentation.adapter.FilterSpinnerAdapter
 import co.kr.woowahan_banchan.presentation.decoration.GridItemDecoration
@@ -37,15 +34,14 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
     private val viewModel by viewModels<MainDishViewModel>()
 
     private val dishAdapter by lazy {
-        DishAdapter(object : DishAdapter.DishClickListener {
-            override fun moveToDetail(title: String, hash: String) {
+        DishAdapter(
+            moveToDetail = { title, hash ->
                 startDetailActivity(title, hash)
+            },
+            openBottomSheet = {
+                CartAddBottomSheet.newInstance(it.toSelectedDish()).show(parentFragmentManager, null)
             }
-
-            override fun openBottomSheet(dish: Dish) {
-                CartAddBottomSheet.newInstance(SelectedDish(dish)).show(parentFragmentManager, null)
-            }
-        })
+        )
     }
 
     private val spinnerItems = listOf("기본 정렬순", "금액 높은순", "금액 낮은순", "할인율순")
@@ -65,7 +61,7 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
         observeData()
         setListener()
 
-        viewModel.getDishes(Source.MAIN)
+        viewModel.getDishes()
     }
 
     private fun initView() {

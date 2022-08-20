@@ -9,9 +9,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentOtherDishBinding
-import co.kr.woowahan_banchan.domain.entity.dish.Dish
-import co.kr.woowahan_banchan.domain.entity.dish.SelectedDish
-import co.kr.woowahan_banchan.domain.repository.Source
 import co.kr.woowahan_banchan.presentation.adapter.DishAdapter
 import co.kr.woowahan_banchan.presentation.adapter.FilterSpinnerAdapter
 import co.kr.woowahan_banchan.presentation.decoration.GridItemDecoration
@@ -19,6 +16,7 @@ import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddBottomSheet
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
+import co.kr.woowahan_banchan.presentation.viewmodel.main.DishType
 import co.kr.woowahan_banchan.presentation.viewmodel.main.OtherDishViewModel
 import co.kr.woowahan_banchan.util.dpToPx
 import co.kr.woowahan_banchan.util.shortToast
@@ -38,15 +36,15 @@ class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
     private val viewModel by viewModels<OtherDishViewModel>()
 
     private val dishAdapter by lazy {
-        DishAdapter(object : DishAdapter.DishClickListener {
-            override fun moveToDetail(title: String, hash: String) {
+        DishAdapter(
+            moveToDetail = { title, hash ->
                 startDetailActivity(title, hash)
+            },
+            openBottomSheet = {
+                CartAddBottomSheet.newInstance(it.toSelectedDish()).show(parentFragmentManager, null)
             }
 
-            override fun openBottomSheet(dish: Dish) {
-                CartAddBottomSheet.newInstance(SelectedDish(dish)).show(parentFragmentManager, null)
-            }
-        })
+        )
     }
 
     private val spinnerItems = listOf("기본 정렬순", "금액 높은순", "금액 낮은순", "할인율순")
@@ -66,15 +64,14 @@ class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
 
     private fun initData() {
         when (dishType) {
-            SOUP -> {
-                viewModel.getDishes(Source.SOUP)
+            DishType.SOUP.name -> {
                 viewModel.setTitle("정성이 담긴\n뜨끈뜨끈 국물 요리")
             }
-            SIDE -> {
-                viewModel.getDishes(Source.SIDE)
+            DishType.SIDE.name -> {
                 viewModel.setTitle("식탁을 풍성하게 하는\n정갈한 밑반찬")
             }
         }
+        viewModel.getDishes(dishType)
     }
 
     private fun initView() {
@@ -141,9 +138,6 @@ class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
     }
 
     companion object {
-        const val SOUP = "soup"
-        const val SIDE = "side"
-
         fun newInstance(dishType: String): OtherDishFragment {
             return OtherDishFragment().apply {
                 arguments = Bundle().apply {

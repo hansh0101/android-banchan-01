@@ -9,23 +9,26 @@ import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ItemBestBinding
 import co.kr.woowahan_banchan.databinding.ItemBestHeaderBinding
 import co.kr.woowahan_banchan.domain.entity.dish.BestItem
+import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import co.kr.woowahan_banchan.presentation.decoration.HorizontalItemDecoration
 import co.kr.woowahan_banchan.presentation.decoration.HorizontalLayoutManager
 import co.kr.woowahan_banchan.presentation.listener.TouchInterceptorListener
 import co.kr.woowahan_banchan.util.dpToPx
 
 class BestItemAdapter(
-    private val clickListener: DishAdapter.DishClickListener
+    private val moveToDetail: (String, String) -> Unit,
+    private val openBottomSheet: (Dish) -> Unit
 ) : ListAdapter<BestItem, RecyclerView.ViewHolder>(BestItemDiffCallback()) {
 
     class BestItemViewHolder(
         private val binding: ItemBestBinding,
         private val parent: ViewGroup,
-        private val clickListener: DishAdapter.DishClickListener
+        private val moveToDetail: (String, String) -> Unit,
+        private val openBottomSheet: (Dish) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: BestItem) {
             binding.tvName.text = item.name
-            val adapter = DishAdapter(clickListener)
+            val adapter = DishAdapter(moveToDetail, openBottomSheet)
             val layoutManager = HorizontalLayoutManager(context = parent.context, ratio = 0.6f)
 
             binding.rvItems.adapter = adapter
@@ -39,12 +42,13 @@ class BestItemAdapter(
         companion object {
             fun create(
                 parent: ViewGroup,
-                clickListener: DishAdapter.DishClickListener
+                moveToDetail: (String, String) -> Unit,
+                openBottomSheet: (Dish) -> Unit
             ): BestItemViewHolder {
                 val view =
                     LayoutInflater.from(parent.context).inflate(R.layout.item_best, parent, false)
                 val binding = ItemBestBinding.bind(view)
-                return BestItemViewHolder(binding, parent, clickListener)
+                return BestItemViewHolder(binding, parent, moveToDetail, openBottomSheet)
             }
         }
     }
@@ -73,7 +77,7 @@ class BestItemAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             HEADER -> HeaderViewHolder.create(parent)
-            else -> BestItemViewHolder.create(parent, clickListener)
+            else -> BestItemViewHolder.create(parent, moveToDetail, openBottomSheet)
         }
     }
 
