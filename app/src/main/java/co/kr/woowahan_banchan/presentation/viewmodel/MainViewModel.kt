@@ -25,12 +25,14 @@ class MainViewModel @Inject constructor(
     private val _isOrderCompleted = MutableStateFlow<Boolean>(true)
     val isOrderCompleted: StateFlow<Boolean> get() = _isOrderCompleted
 
-    fun getCartItemCount() = viewModelScope.launch {
-        getCartItemCountUseCase()
-            .catch { _cartCount.value = 0 }
-            .collect {
-                _cartCount.value = it
-            }
+    fun getCartItemCount() {
+        viewModelScope.launch {
+            getCartItemCountUseCase()
+                .catch { _cartCount.value = 0 }
+                .collect {
+                    _cartCount.value = it
+                }
+        }
     }
 
     fun fetchLatestOrderTime() {

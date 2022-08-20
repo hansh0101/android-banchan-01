@@ -13,17 +13,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class BestViewModel  @Inject constructor(
+class BestViewModel @Inject constructor(
     private val getBestsUseCase: GetBestsUseCase
 ) : ViewModel() {
     private val _bestItems = MutableStateFlow<UiState<List<BestItem>>>(UiState.Init)
     val bestItems: StateFlow<UiState<List<BestItem>>> get() = _bestItems
 
-    fun getBests() = viewModelScope.launch {
-        getBestsUseCase()
-            .catch { _bestItems.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
-            .collect {
-            _bestItems.value = UiState.Success(it)
+    fun getBests() {
+        viewModelScope.launch {
+            getBestsUseCase()
+                .catch { _bestItems.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
+                .collect {
+                    _bestItems.value = UiState.Success(it)
+                }
         }
     }
 }

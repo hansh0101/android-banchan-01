@@ -33,12 +33,14 @@ class OtherDishViewModel @Inject constructor(
     private val _titleText = MutableLiveData("")
     val titleText: LiveData<String> get() = _titleText
 
-    fun getDishes(source: Source) = viewModelScope.launch {
-        getDishesUseCase(source)
-            .catch { _otherDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
-            .collect {
-                _otherDishes.value = UiState.Success(it)
-            }
+    fun getDishes(source: Source) {
+        viewModelScope.launch {
+            getDishesUseCase(source)
+                .catch { _otherDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
+                .collect {
+                    _otherDishes.value = UiState.Success(it)
+                }
+        }
     }
 
     fun setSortedDishes(sortType: Int) {

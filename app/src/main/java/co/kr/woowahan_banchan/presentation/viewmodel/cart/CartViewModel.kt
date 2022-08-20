@@ -37,28 +37,32 @@ class CartViewModel @Inject constructor(
     val isSelectedAll: StateFlow<Boolean> get() = _isSelectedAll
 
     private val _orderId = MutableStateFlow<UiState<Long>>(UiState.Init)
-    val orderId : StateFlow<UiState<Long>> get() = _orderId
+    val orderId: StateFlow<UiState<Long>> get() = _orderId
 
     private val originalCart = mutableListOf<CartItem>()
     var isOrdered = false
 
-    fun getCartItems() = viewModelScope.launch {
-        getCartItemsUseCase()
-            .catch { _cartItems.value = UiState.Error("장바구니 내역을 불러오지 못함") }
-            .collect {
-                _cartItems.value = UiState.Success(it)
-                it.forEach { item ->
-                    originalCart.add(item.copy())
+    fun getCartItems() {
+        viewModelScope.launch {
+            getCartItemsUseCase()
+                .catch { _cartItems.value = UiState.Error("장바구니 내역을 불러오지 못함") }
+                .collect {
+                    _cartItems.value = UiState.Success(it)
+                    it.forEach { item ->
+                        originalCart.add(item.copy())
+                    }
                 }
-            }
+        }
     }
 
-    fun getRecentlyViewed() = viewModelScope.launch {
-        recentlyViewedUseCase(true)
-            .catch { _historyItems.value = UiState.Error("최근 방문 내역을 불러오지 못함") }
-            .collect {
-                _historyItems.value = UiState.Success(it)
-            }
+    fun getRecentlyViewed() {
+        viewModelScope.launch {
+            recentlyViewedUseCase(true)
+                .catch { _historyItems.value = UiState.Error("최근 방문 내역을 불러오지 못함") }
+                .collect {
+                    _historyItems.value = UiState.Success(it)
+                }
+        }
     }
 
     fun setSelectedAll(isSelectedAll: Boolean) {

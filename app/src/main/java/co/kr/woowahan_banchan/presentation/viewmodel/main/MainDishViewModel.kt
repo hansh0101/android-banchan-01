@@ -23,23 +23,25 @@ class MainDishViewModel @Inject constructor(
     val mainDishes: StateFlow<UiState<List<Dish>>> get() = _mainDishes
 
     private val _isGridMode = MutableLiveData(true)
-    val isGridMode : LiveData<Boolean> get() = _isGridMode
+    val isGridMode: LiveData<Boolean> get() = _isGridMode
 
     private var defaultMainDishes = listOf<Dish>()
 
     private val _sortedDishes = MutableLiveData<List<Dish>>(listOf())
-    val sortedDishes :LiveData<List<Dish>> get() = _sortedDishes
+    val sortedDishes: LiveData<List<Dish>> get() = _sortedDishes
 
-    fun getDishes(source: Source) = viewModelScope.launch {
-        getDishesUseCase(source)
-            .catch { _mainDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
-            .collect {
-            _mainDishes.value = UiState.Success(it)
+    fun getDishes(source: Source) {
+        viewModelScope.launch {
+            getDishesUseCase(source)
+                .catch { _mainDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
+                .collect {
+                    _mainDishes.value = UiState.Success(it)
+                }
         }
     }
 
-    fun setSortedDishes(sortType : Int) {
-        when(sortType){
+    fun setSortedDishes(sortType: Int) {
+        when (sortType) {
             0 -> _sortedDishes.value = defaultMainDishes
             1 -> _sortedDishes.value = defaultMainDishes.sortedByDescending { it.sPrice }
             2 -> _sortedDishes.value = defaultMainDishes.sortedBy { it.sPrice }
@@ -47,11 +49,11 @@ class MainDishViewModel @Inject constructor(
         }
     }
 
-    fun setDefaultMainDishes(list : List<Dish>){
+    fun setDefaultMainDishes(list: List<Dish>) {
         defaultMainDishes = list
     }
 
-    fun setGridMode(isGrid : Boolean){
+    fun setGridMode(isGrid: Boolean) {
         _isGridMode.value = isGrid
     }
 }
