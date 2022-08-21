@@ -24,14 +24,14 @@ class CartRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun updateCartItems(updateItems: List<CartItem>) {
-        cartDataSource.insertOrUpdateItems(
+    override suspend fun updateCartItems(updateItems: List<CartItem>): Result<Unit> {
+        return cartDataSource.insertOrUpdateItems(
             updateItems.map { CartDto(it.hash, it.amount, it.isSelected, Date().time, it.name) }
         )
     }
 
-    override suspend fun deleteCartItems(ids: List<String>) {
-        cartDataSource.deleteItems(ids)
+    override suspend fun deleteCartItems(ids: List<String>): Result<Unit> {
+        return cartDataSource.deleteItems(ids)
     }
 
     override fun getCartItemCount(): Flow<Int> {
