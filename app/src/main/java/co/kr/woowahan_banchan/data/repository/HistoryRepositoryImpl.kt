@@ -19,8 +19,8 @@ class HistoryRepositoryImpl @Inject constructor(
     private val detailDataSource: DetailDataSource,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : HistoryRepository {
-    override suspend fun addToHistory(hash: String, name: String) {
-        historyDataSource.insertItem(hash, name)
+    override suspend fun addToHistory(hash: String, name: String): Result<Unit> {
+        return historyDataSource.insertItem(hash, name)
     }
 
     override fun getHistories(previewMode: Boolean): Flow<List<HistoryItem>> {
