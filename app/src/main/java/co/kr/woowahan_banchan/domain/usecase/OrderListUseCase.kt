@@ -8,7 +8,5 @@ class OrderListUseCase @Inject constructor(
     private val orderHistoryRepository: OrderHistoryRepository
 ) {
     suspend operator fun invoke(): Result<List<OrderHistory>> =
-        runCatching {
-            orderHistoryRepository.getOrderHistories()
-        }
+        orderHistoryRepository.getOrderHistories()
 }
