@@ -1,6 +1,7 @@
 package co.kr.woowahan_banchan.data.datasource.local.order
 
 import co.kr.woowahan_banchan.data.database.dao.OrderDao
+import co.kr.woowahan_banchan.data.extension.runCatchingErrorEntity
 import co.kr.woowahan_banchan.data.model.local.OrderDto
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
@@ -14,7 +15,7 @@ class OrderDataSourceImpl @Inject constructor(
 ) : OrderDataSource {
     override suspend fun getItems(): Result<List<OrderDto>> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 orderDao.getItems()
             }
         }
@@ -29,14 +30,14 @@ class OrderDataSourceImpl @Inject constructor(
 
     override suspend fun getTime(orderId: Long): Result<Long> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 orderDao.getTime(orderId)
             }
         }
 
     override suspend fun insertItem(item: OrderDto): Result<Long> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 orderDao.insertItem(item)
             }
         }
