@@ -31,14 +31,14 @@ class CartDataSourceImpl @Inject constructor(
 
     override suspend fun deleteItems(ids: List<String>): Result<Unit> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 cartDao.deleteItems(ids)
             }
         }
 
     override suspend fun getAmount(hash: String): Result<Int> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 cartDao.getAmount(hash)
             }
         }

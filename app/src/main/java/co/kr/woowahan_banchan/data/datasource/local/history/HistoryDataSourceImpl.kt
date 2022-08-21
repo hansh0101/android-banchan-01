@@ -1,6 +1,7 @@
 package co.kr.woowahan_banchan.data.datasource.local.history
 
 import co.kr.woowahan_banchan.data.database.dao.HistoryDao
+import co.kr.woowahan_banchan.data.extension.runCatchingErrorEntity
 import co.kr.woowahan_banchan.data.model.local.HistoryDto
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -29,12 +30,13 @@ class HistoryDataSourceImpl @Inject constructor(
                 emit(listOf())
             }.flowOn(coroutineDispatcher)
 
-    override suspend fun insertItem(hash: String, name: String) =
-        withContext(coroutineDispatcher) {
-            runCatching {
+    override suspend fun insertItem(hash: String, name: String): Result<Unit> {
+        return withContext(coroutineDispatcher) {
+            runCatchingErrorEntity {
                 historyDao.insertItem(
                     HistoryDto(hash, Date().time, name)
                 )
             }
         }
+    }
 }
