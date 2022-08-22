@@ -49,7 +49,8 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
     private fun initView() {
         binding.rvBests.adapter = bestAdapter
         binding.rvBests.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvBests.addItemDecoration(VerticalItemDecoration(24.dpToPx(),0.dpToPx()))
+        if (binding.rvBests.itemDecorationCount == 0)
+            binding.rvBests.addItemDecoration(VerticalItemDecoration(24.dpToPx(), 0.dpToPx()))
     }
 
     private fun observeData() {

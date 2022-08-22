@@ -8,6 +8,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.FragmentMainDishBinding
 import co.kr.woowahan_banchan.presentation.adapter.DishAdapter
@@ -39,7 +40,8 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
                 startDetailActivity(title, hash)
             },
             openBottomSheet = {
-                CartAddBottomSheet.newInstance(it.toSelectedDish()).show(parentFragmentManager, null)
+                CartAddBottomSheet.newInstance(it.toSelectedDish())
+                    .show(parentFragmentManager, null)
             }
         )
     }
@@ -118,6 +120,7 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
 
         viewModel.sortedDishes.observe(viewLifecycleOwner) {
             dishAdapter.submitList(it.toMutableList())
+            setAdapterDataObserver()
         }
     }
 
@@ -139,6 +142,24 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
 
             }
         }
+    }
+
+    private fun setAdapterDataObserver() {
+        dishAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                super.onItemRangeMoved(fromPosition, toPosition, itemCount)
+                scrollToTop()
+            }
+
+            private fun scrollToTop() {
+                dishAdapter.unregisterAdapterDataObserver(this)
+                with(binding.rvMaindishes) {
+                    post {
+                        scrollToPosition(0)
+                    }
+                }
+            }
+        })
     }
 
     private fun startDetailActivity(title: String, hash: String) {

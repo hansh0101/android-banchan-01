@@ -45,7 +45,13 @@ class MainDishViewModel @Inject constructor(
             0 -> _sortedDishes.value = defaultMainDishes
             1 -> _sortedDishes.value = defaultMainDishes.sortedByDescending { it.sPrice }
             2 -> _sortedDishes.value = defaultMainDishes.sortedBy { it.sPrice }
-            3 -> _sortedDishes.value = defaultMainDishes.sortedByDescending { it.discount }
+            3 -> _sortedDishes.value = defaultMainDishes.sortedWith { o1, o2 ->
+                if (o1.discount == o2.discount) {
+                    o1.sPrice - o2.sPrice
+                } else {
+                    o2.discount - o1.discount
+                }
+            }
         }
     }
 

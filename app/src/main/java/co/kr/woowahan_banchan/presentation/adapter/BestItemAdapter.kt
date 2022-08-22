@@ -33,8 +33,9 @@ class BestItemAdapter(
 
             binding.rvItems.adapter = adapter
             binding.rvItems.layoutManager = layoutManager
-            binding.rvItems.addItemDecoration(HorizontalItemDecoration(16.dpToPx()))
-            binding.rvItems.addOnItemTouchListener(TouchInterceptorListener(parent.context,parent))
+            if (binding.rvItems.itemDecorationCount == 0)
+                binding.rvItems.addItemDecoration(HorizontalItemDecoration(16.dpToPx()))
+            binding.rvItems.addOnItemTouchListener(TouchInterceptorListener(parent.context, parent))
 
             adapter.submitList(item.items.toMutableList())
         }
@@ -57,7 +58,7 @@ class BestItemAdapter(
         companion object {
             fun create(parent: ViewGroup): HeaderViewHolder {
                 val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_best_header, parent, false)
+                    .inflate(R.layout.item_best_header, parent, false)
                 val binding = ItemBestHeaderBinding.bind(view)
                 return HeaderViewHolder(binding)
             }
