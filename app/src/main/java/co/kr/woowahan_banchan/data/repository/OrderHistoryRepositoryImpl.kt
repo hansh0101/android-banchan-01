@@ -2,7 +2,6 @@ package co.kr.woowahan_banchan.data.repository
 
 import co.kr.woowahan_banchan.data.datasource.local.order.OrderDataSource
 import co.kr.woowahan_banchan.data.datasource.local.orderitem.OrderItemDataSource
-import co.kr.woowahan_banchan.data.extension.runCatchingErrorEntity
 import co.kr.woowahan_banchan.data.model.local.OrderDto
 import co.kr.woowahan_banchan.data.model.local.OrderItemDto
 import co.kr.woowahan_banchan.domain.entity.cart.CartItem
@@ -51,16 +50,15 @@ class OrderHistoryRepositoryImpl @Inject constructor(
 
     override suspend fun getOrderReceipt(orderId: Long): Result<List<OrderItem>> {
         return withContext(coroutineDispatcher) {
-            runCatchingErrorEntity {
-                orderItemDataSource.getItems(orderId).getOrThrow().map {
-                    it.toOrderItem()
+            orderItemDataSource.getItems(orderId)
+                .mapCatching { orderItemsDto ->
+                    orderItemsDto.map { it.toOrderItem() }
                 }
-            }
         }
     }
 
     override suspend fun insertOrderItems(orderItems: List<CartItem>): Result<Long> {
-        return runCatchingErrorEntity {
+        return runCatching {
             val orderId = orderDataSource.insertItem(
                 OrderDto(totalPrice = orderItems.sumOf { it.price }, time = Date().time)
             ).getOrThrow()

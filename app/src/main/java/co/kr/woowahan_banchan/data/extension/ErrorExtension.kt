@@ -14,6 +14,7 @@ inline fun <T, R> T.runCatchingErrorEntity(block: T.() -> R): Result<R> {
         Result.success(block())
     } catch (e: Throwable) {
         val error = when (e) {
+            is ErrorEntity -> e
             is HttpRetryException, is InterruptedIOException, is InterruptedByTimeoutException -> ErrorEntity.RetryableError
             is UnknownHostException -> ErrorEntity.ConditionalError
             is IOException -> ErrorEntity.UnknownError
