@@ -7,9 +7,6 @@ import javax.inject.Inject
 class ProductDetailUseCase @Inject constructor(
     private val detailRepository: DetailRepository
 ) {
-    suspend operator fun invoke(hash: String): Result<DishInfo> {
-        return detailRepository.getDishInfo(hash)?.let {
-            Result.success(it)
-        } ?: Result.failure(IllegalStateException("상품을 불러오지 못했습니다"))
-    }
+    suspend operator fun invoke(hash: String): Result<DishInfo> =
+        detailRepository.getDishInfo(hash)
 }

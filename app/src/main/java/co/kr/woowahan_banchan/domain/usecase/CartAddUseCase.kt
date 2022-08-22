@@ -7,7 +7,5 @@ class CartAddUseCase @Inject constructor(
     private val cartRepository: CartRepository
 ) {
     suspend operator fun invoke(hash: String, amount: Int, name: String): Result<Unit> =
-        runCatching {
-            cartRepository.addToCart(hash, amount, name)
-        }
+        cartRepository.addToCart(hash, amount, name)
 }

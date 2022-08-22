@@ -1,6 +1,7 @@
 package co.kr.woowahan_banchan.data.datasource.local.cart
 
 import co.kr.woowahan_banchan.data.database.dao.CartDao
+import co.kr.woowahan_banchan.data.extension.runCatchingErrorEntity
 import co.kr.woowahan_banchan.data.model.local.CartDto
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -23,21 +24,21 @@ class CartDataSourceImpl @Inject constructor(
 
     override suspend fun insertOrUpdateItems(items: List<CartDto>): Result<Unit> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 cartDao.insertOrUpdateItems(items)
             }
         }
 
     override suspend fun deleteItems(ids: List<String>): Result<Unit> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 cartDao.deleteItems(ids)
             }
         }
 
     override suspend fun getAmount(hash: String): Result<Int> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 cartDao.getAmount(hash)
             }
         }

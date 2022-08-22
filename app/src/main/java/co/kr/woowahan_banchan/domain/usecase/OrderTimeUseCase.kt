@@ -7,7 +7,5 @@ class OrderTimeUseCase @Inject constructor(
     private val orderHistoryRepository: OrderHistoryRepository
 ) {
     suspend operator fun invoke(orderId: Long): Result<Long> =
-        runCatching {
-            orderHistoryRepository.getOrderTime(orderId)
-        }
+        orderHistoryRepository.getOrderTime(orderId)
 }

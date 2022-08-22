@@ -1,6 +1,7 @@
 package co.kr.woowahan_banchan.data.datasource.local.orderitem
 
 import co.kr.woowahan_banchan.data.database.dao.OrderItemDao
+import co.kr.woowahan_banchan.data.extension.runCatchingErrorEntity
 import co.kr.woowahan_banchan.data.model.local.OrderItemDto
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -12,28 +13,28 @@ class OrderItemDataSourceImpl @Inject constructor(
 ) : OrderItemDataSource {
     override suspend fun getItems(orderId: Long): Result<List<OrderItemDto>> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 orderItemDao.getItems(orderId)
             }
         }
 
     override suspend fun getItem(orderId: Long): Result<OrderItemDto> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 orderItemDao.getItem(orderId)
             }
         }
 
     override suspend fun getItemCount(orderId: Long): Result<Int> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 orderItemDao.getItemCount(orderId)
             }
         }
 
     override suspend fun insertItems(items: List<OrderItemDto>): Result<Unit> =
         withContext(coroutineDispatcher) {
-            runCatching {
+            runCatchingErrorEntity {
                 orderItemDao.insertItems(items)
             }
         }

@@ -8,13 +8,10 @@ import javax.inject.Inject
 class DetailRepositoryImpl @Inject constructor(
     private val detailDataSource: DetailDataSource
 ) : DetailRepository {
-    override suspend fun getDishInfo(hash: String): DishInfo? {
-        val apiResult = detailDataSource.getDetail(hash)
-        return when (apiResult.isSuccess) {
-            true -> {
-                apiResult.getOrNull()?.data?.toDishInfo()
+    override suspend fun getDishInfo(hash: String): Result<DishInfo> {
+        return detailDataSource.getDetail(hash)
+            .mapCatching {
+                it.data.toDishInfo()
             }
-            false -> null
-        }
     }
 }

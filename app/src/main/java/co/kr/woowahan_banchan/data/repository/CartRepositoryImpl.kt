@@ -17,21 +17,21 @@ class CartRepositoryImpl @Inject constructor(
     private val detailDataSource: DetailDataSource,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : CartRepository {
-    override suspend fun addToCart(hash: String, amount: Int, name: String) {
+    override suspend fun addToCart(hash: String, amount: Int, name: String): Result<Unit> {
         val originalAmount = cartDataSource.getAmount(hash).getOrDefault(0)
-        cartDataSource.insertOrUpdateItems(
+        return cartDataSource.insertOrUpdateItems(
             listOf(CartDto(hash, amount + originalAmount, true, Date().time, name))
         )
     }
 
-    override suspend fun updateCartItems(updateItems: List<CartItem>) {
-        cartDataSource.insertOrUpdateItems(
+    override suspend fun updateCartItems(updateItems: List<CartItem>): Result<Unit> {
+        return cartDataSource.insertOrUpdateItems(
             updateItems.map { CartDto(it.hash, it.amount, it.isSelected, Date().time, it.name) }
         )
     }
 
-    override suspend fun deleteCartItems(ids: List<String>) {
-        cartDataSource.deleteItems(ids)
+    override suspend fun deleteCartItems(ids: List<String>): Result<Unit> {
+        return cartDataSource.deleteItems(ids)
     }
 
     override fun getCartItemCount(): Flow<Int> {

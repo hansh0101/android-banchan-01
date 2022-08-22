@@ -9,10 +9,9 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import co.kr.woowahan_banchan.databinding.DialogCartAddBottomBinding
 import co.kr.woowahan_banchan.domain.entity.dish.SelectedDish
-import co.kr.woowahan_banchan.presentation.viewmodel.UiState
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
 import co.kr.woowahan_banchan.presentation.viewmodel.bottomsheet.BottomSheetViewModel
 import co.kr.woowahan_banchan.util.ImageLoader
-import co.kr.woowahan_banchan.util.shortToast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -66,14 +65,16 @@ class CartAddBottomSheet : BottomSheetDialogFragment() {
     private fun observeData() {
         viewModel.isAddSuccess.flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
-                when(it){
-                    is UiState.Success -> {
+                when (it) {
+                    is UiEvents.Success -> {
                         CartAddDialog(requireContext()).show()
                         dialog?.dismiss()
                     }
-                    is UiState.Error -> {
-                        requireContext().shortToast(it.message)
-                        dialog?.dismiss()
+                    is UiEvents.Error -> {
+                        ErrorDialog(
+                            requireContext(),
+                            it.error,
+                            { binding.btnAddToCart.performClick() }).show()
                     }
                 }
             }.launchIn(lifecycleScope)

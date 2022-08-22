@@ -7,7 +7,5 @@ class HistoryAddUseCase @Inject constructor(
     private val historyRepository: HistoryRepository
 ) {
     suspend operator fun invoke(hash: String, name: String): Result<Unit> =
-        runCatching {
-            historyRepository.addToHistory(hash, name)
-        }
+        historyRepository.addToHistory(hash, name)
 }

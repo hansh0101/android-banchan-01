@@ -9,25 +9,29 @@ class OrderUseCase @Inject constructor(
     private val orderHistoryRepository: OrderHistoryRepository,
     private val cartRepository: CartRepository
 ) {
-    suspend operator fun invoke(oldItems : List<CartItem>, cartItems : List<CartItem>) : Result<Long>{
+    suspend operator fun invoke(oldItems: List<CartItem>, cartItems: List<CartItem>): Result<Long> {
         return runCatching {
             val orderItems = mutableListOf<CartItem>()
-            val updateItem = mutableListOf<CartItem>()
-            val deleteItem = mutableListOf<String>()
+            val updateItems = mutableListOf<CartItem>()
+            val deleteItems = mutableListOf<String>()
             oldItems.forEach { oldItem ->
-                val temp = cartItems.find{it.hash == oldItem.hash}
+                val findResult = cartItems.find { it.hash == oldItem.hash }
                 when {
-                    temp == null -> deleteItem.add(oldItem.hash)
-                    temp.isSelected -> orderItems.add(temp)
-                    oldItem.amount != temp.amount ||
-                            oldItem.isSelected != temp.isSelected -> updateItem.add(temp)
+                    findResult == null -> {
+                        deleteItems.add(oldItem.hash)
+                    }
+                    findResult.isSelected -> {
+                        orderItems.add(findResult)
+                    }
+                    oldItem.amount != findResult.amount || oldItem.isSelected != findResult.isSelected -> {
+                        updateItems.add(findResult)
+                    }
                 }
             }
-            val orderId = orderHistoryRepository.insertOrderItems(orderItems)
-            cartRepository.deleteCartItems(orderItems.map { it.hash })
-
-            cartRepository.updateCartItems(updateItem)
-            cartRepository.deleteCartItems(deleteItem)
+            val orderId = orderHistoryRepository.insertOrderItems(orderItems).getOrThrow()
+            cartRepository.deleteCartItems(orderItems.map { it.hash }).getOrThrow()
+            cartRepository.updateCartItems(updateItems).getOrThrow()
+            cartRepository.deleteCartItems(deleteItems).getOrThrow()
 
             orderId
         }

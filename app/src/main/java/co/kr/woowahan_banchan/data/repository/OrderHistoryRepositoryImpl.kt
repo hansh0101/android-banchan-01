@@ -19,71 +19,63 @@ class OrderHistoryRepositoryImpl @Inject constructor(
     private val orderItemDataSource: OrderItemDataSource,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : OrderHistoryRepository {
-    override suspend fun getOrderHistories(): List<OrderHistory> {
+    override suspend fun getOrderHistories(): Result<List<OrderHistory>> {
         return withContext(coroutineDispatcher) {
-            val orderListResult = orderDataSource.getItems()
-            when (orderListResult.isSuccess) {
-                true -> {
-                    orderListResult.getOrDefault(listOf()).mapNotNull {
+            orderDataSource.getItems()
+                .mapCatching { orderList ->
+                    orderList.mapNotNull {
                         val orderItem = orderItemDataSource.getItem(it.id).getOrNull()
-                        val orderItemCount = orderItemDataSource.getItemCount(it.id).getOrNull()
-                        if (orderItem == null || orderItemCount == null) {
-                            null
-                        } else {
+                        val orderItemCount =
+                            orderItemDataSource.getItemCount(it.id).getOrNull()
+                        if (orderItem != null && orderItemCount != null) {
                             it.toOrderHistory(
                                 orderItem.thumbnailUrl,
                                 orderItem.name,
                                 orderItemCount
                             )
+                        } else {
+                            null
                         }
                     }
                 }
-                false -> {
-                    listOf()
-                }
-            }
         }
     }
 
     override fun getLatestOrderTime(): Flow<Long> =
         orderDataSource.getLatestOrderTime()
 
-    override suspend fun getOrderTime(orderId: Long): Long =
-        orderDataSource.getTime(orderId).getOrDefault(0)
+    override suspend fun getOrderTime(orderId: Long): Result<Long> {
+        return orderDataSource.getTime(orderId)
+    }
 
-    override suspend fun getOrderReceipt(orderId: Long): List<OrderItem>? {
+    override suspend fun getOrderReceipt(orderId: Long): Result<List<OrderItem>> {
         return withContext(coroutineDispatcher) {
-            val orderItemsResult = orderItemDataSource.getItems(orderId)
-            when (orderItemsResult.isSuccess) {
-                true -> {
-                    orderItemsResult.getOrDefault(listOf()).map {
-                        it.toOrderItem()
-                    }
+            orderItemDataSource.getItems(orderId)
+                .mapCatching { orderItemsDto ->
+                    orderItemsDto.map { it.toOrderItem() }
                 }
-                false -> {
-                    null
-                }
-            }
         }
     }
 
-    override suspend fun insertOrderItems(orderItems: List<CartItem>): Long {
-        val orderId = orderDataSource.insertItem(
-            OrderDto(totalPrice = orderItems.sumOf { it.price }, time = Date().time)
-        ).getOrThrow()
+    override suspend fun insertOrderItems(orderItems: List<CartItem>): Result<Long> {
+        return runCatching {
+            val orderId = orderDataSource.insertItem(
+                OrderDto(totalPrice = orderItems.sumOf { it.price }, time = Date().time)
+            ).getOrThrow()
 
-        orderItemDataSource.insertItems(
-            orderItems.map {
-                OrderItemDto(
-                    orderId = orderId,
-                    hash = it.hash,
-                    thumbnailUrl = it.imageUrl,
-                    price = it.price,
-                    amount = it.amount,
-                    name = it.name
-                )
-            }
-        )
-        return orderId
+            orderItemDataSource.insertItems(
+                orderItems.map {
+                    OrderItemDto(
+                        orderId = orderId,
+                        hash = it.hash,
+                        thumbnailUrl = it.imageUrl,
+                        price = it.price,
+                        amount = it.amount,
+                        name = it.name
+                    )
+                }
+            ).getOrThrow()
+            orderId
+        }
     }
 }

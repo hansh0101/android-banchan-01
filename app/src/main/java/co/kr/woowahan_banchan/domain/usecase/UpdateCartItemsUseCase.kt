@@ -7,20 +7,23 @@ import javax.inject.Inject
 class UpdateCartItemsUseCase @Inject constructor(
     private val cartRepository: CartRepository
 ) {
-    suspend operator fun invoke(oldItems : List<CartItem>, cartItems : List<CartItem>) : Result<Unit>{
+    suspend operator fun invoke(oldItems: List<CartItem>, cartItems: List<CartItem>): Result<Unit> {
         return runCatching {
-            val updateItem = mutableListOf<CartItem>()
-            val deleteItem = mutableListOf<String>()
+            val updateItems = mutableListOf<CartItem>()
+            val deleteItems = mutableListOf<String>()
             oldItems.forEach { oldItem ->
-                val temp = cartItems.find{it.hash == oldItem.hash}
+                val findResult = cartItems.find { it.hash == oldItem.hash }
                 when {
-                    temp == null -> deleteItem.add(oldItem.hash)
-                    oldItem.amount != temp.amount ||
-                    oldItem.isSelected != temp.isSelected -> updateItem.add(temp)
+                    findResult == null -> {
+                        deleteItems.add(oldItem.hash)
+                    }
+                    oldItem.amount != findResult.amount || oldItem.isSelected != findResult.isSelected -> {
+                        updateItems.add(findResult)
+                    }
                 }
             }
-            cartRepository.updateCartItems(updateItem)
-            cartRepository.deleteCartItems(deleteItem)
+            cartRepository.updateCartItems(updateItems).getOrThrow()
+            cartRepository.deleteCartItems(deleteItems).getOrThrow()
         }
     }
 }
