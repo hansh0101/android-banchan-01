@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CartDao {
-    @Query("SELECT * FROM CART")
+    @Query("SELECT * FROM CART ORDER BY hash")
     fun getItems(): Flow<List<CartDto>>
 
     @Insert(onConflict = REPLACE)
