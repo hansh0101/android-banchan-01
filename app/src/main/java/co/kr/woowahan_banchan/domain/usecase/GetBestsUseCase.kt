@@ -9,11 +9,13 @@ import javax.inject.Inject
 class GetBestsUseCase @Inject constructor(
     private val repository: DishRepository
 ) {
-    operator fun invoke(): Flow<List<BestItem>> {
+    operator fun invoke(): Flow<Result<List<BestItem>>> {
         return repository.getBestDishes()
-            .map {
-                it.toMutableList().apply {
-                    add(0, BestItem("title", listOf()))
+            .map { result ->
+                result.mapCatching {
+                    it.toMutableList().apply {
+                        add(0, BestItem("title", listOf()))
+                    }
                 }
             }
     }

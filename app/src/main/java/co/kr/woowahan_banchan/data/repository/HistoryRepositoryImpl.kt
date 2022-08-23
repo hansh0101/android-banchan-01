@@ -6,10 +6,7 @@ import co.kr.woowahan_banchan.data.datasource.remote.detail.DetailDataSource
 import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import co.kr.woowahan_banchan.domain.repository.HistoryRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class HistoryRepositoryImpl @Inject constructor(
@@ -22,7 +19,7 @@ class HistoryRepositoryImpl @Inject constructor(
         return historyDataSource.insertItem(hash, name)
     }
 
-    override fun getHistories(previewMode: Boolean): Flow<List<HistoryItem>> {
+    override fun getHistories(previewMode: Boolean): Flow<Result<List<HistoryItem>>> {
         return combine(
             if (previewMode) historyDataSource.getPreviewItems() else historyDataSource.getItems(),
             cartDataSource.getItems()
@@ -31,11 +28,11 @@ class HistoryRepositoryImpl @Inject constructor(
         }.map { pair ->
             val historyDtoList = pair.first
             val cartDtoList = pair.second
-            historyDtoList.mapNotNull { historyDto ->
+            Result.success(historyDtoList.mapNotNull { historyDto ->
                 val apiResult = detailDataSource.getDetail(historyDto.hash)
                 when (apiResult.isSuccess) {
                     true -> {
-                        apiResult.getOrThrow().data.toHistoryItem(
+                        apiResult.getOrNull()?.data?.toHistoryItem(
                             historyDto.hash,
                             historyDto.name,
                             historyDto.time,
@@ -46,7 +43,9 @@ class HistoryRepositoryImpl @Inject constructor(
                         null
                     }
                 }
-            }
+            })
+        }.catch {
+            emit(Result.failure(it))
         }.flowOn(coroutineDispatcher)
     }
 }

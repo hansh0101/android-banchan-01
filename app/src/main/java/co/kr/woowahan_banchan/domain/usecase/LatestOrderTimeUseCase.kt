@@ -7,6 +7,6 @@ import javax.inject.Inject
 class LatestOrderTimeUseCase @Inject constructor(
     private val orderHistoryRepository: OrderHistoryRepository
 ) {
-    operator fun invoke(): Flow<Long> =
+    operator fun invoke(): Flow<Result<Long>> =
         orderHistoryRepository.getLatestOrderTime()
 }
