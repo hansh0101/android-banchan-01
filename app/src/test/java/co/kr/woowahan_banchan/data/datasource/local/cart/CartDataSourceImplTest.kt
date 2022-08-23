@@ -5,6 +5,7 @@ import co.kr.woowahan_banchan.data.model.local.CartDto
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -15,6 +16,7 @@ import org.junit.Test
 import java.io.IOException
 import java.io.InterruptedIOException
 
+@ExperimentalCoroutinesApi
 class CartDataSourceImplTest {
     private val cartDto1 = CartDto("HBDEF", 1, true, 1661219851964, "오리 주물럭_반조리")
     private val cartDto2 = CartDto("HF778", 1, true, 1661219859605, "소갈비찜")
@@ -27,7 +29,6 @@ class CartDataSourceImplTest {
     private lateinit var cartDaoWithError: FakeCartDaoWithError
     private lateinit var cartDataSourceWithError: CartDataSource
 
-    @ExperimentalCoroutinesApi
     @Before
     fun setUp() {
         cartDao = FakeCartDao(originalCartDtos)
@@ -36,21 +37,30 @@ class CartDataSourceImplTest {
         cartDataSourceWithError = CartDataSourceImpl(cartDaoWithError, UnconfinedTestDispatcher())
     }
 
-    @ExperimentalCoroutinesApi
     @Test
     fun getItems() = runTest {
         val expected = cartDao.cartDtos
         var actual: List<CartDto>? = null
         val collectJob = launch(UnconfinedTestDispatcher()) {
-            cartDataSource.getItems().collect {
-                actual = it
-            }
+            cartDataSource.getItems().collect { actual = it }
         }
         assertEquals(expected, actual)
         collectJob.cancel()
     }
 
-    @ExperimentalCoroutinesApi
+    @Test
+    fun getItemsWithError() = runTest {
+        val expected = Result.failure<List<CartDto>>(ErrorEntity.RetryableError)
+        var actual: Result<List<CartDto>>? = null
+        val collectJob = launch(UnconfinedTestDispatcher()) {
+            cartDataSourceWithError.getItems()
+                .catch { actual = Result.failure(it) }
+                .collect {}
+        }
+        assertEquals(expected, actual)
+        collectJob.cancel()
+    }
+
     @Test
     fun insertOrUpdateItems() = runTest {
         val expected = Result.success(Unit)
@@ -58,15 +68,13 @@ class CartDataSourceImplTest {
         assertEquals(expected, actual)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
     fun insertOrUpdateItemsWithError() = runTest {
-        val expected = Result.failure<Throwable>(ErrorEntity.RetryableError)
+        val expected = Result.failure<Unit>(ErrorEntity.RetryableError)
         val actual = cartDataSourceWithError.insertOrUpdateItems(listOf(updateCartDto, newCartDto))
         assertEquals(expected, actual)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
     fun deleteItems() = runTest {
         val expected = Result.success(Unit)
@@ -74,10 +82,9 @@ class CartDataSourceImplTest {
         assertEquals(expected, actual)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
     fun deleteItemsWithError() = runTest {
-        val expected = Result.failure<Throwable>(ErrorEntity.UnknownError)
+        val expected = Result.failure<Unit>(ErrorEntity.UnknownError)
         val actual = cartDataSourceWithError.deleteItems(listOf(cartDto2.hash))
         assertEquals(expected, actual)
     }
@@ -90,10 +97,9 @@ class CartDataSourceImplTest {
         assertEquals(expected, actual)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
     fun getAmountWithError() = runTest {
-        val expected = Result.failure<Throwable>(ErrorEntity.UnknownError)
+        val expected = Result.failure<Int>(ErrorEntity.UnknownError)
         val actual = cartDataSourceWithError.getAmount(cartDto1.hash)
         assertEquals(expected, actual)
     }
@@ -109,18 +115,11 @@ class FakeCartDao(
     }
 
     override suspend fun insertOrUpdateItems(items: List<CartDto>) {
-        items.forEach { item ->
-            when (val findResult = cartDtos.find { it.hash == item.hash }) {
-                null -> cartDtos.add(item)
-                else -> cartDtos[cartDtos.indexOf(findResult)] = item
-            }
-        }
+        return
     }
 
     override suspend fun deleteItems(ids: List<String>) {
-        ids.forEach { id ->
-            cartDtos.removeIf { it.hash == id }
-        }
+        return
     }
 
     override suspend fun getAmount(hash: String): Int {
@@ -133,7 +132,7 @@ class FakeCartDaoWithError(
 ) : CartDao {
     val cartDtos = initCartDtos.toMutableList()
     override fun getItems(): Flow<List<CartDto>> {
-        TODO("Not yet implemented")
+        return flow { throw InterruptedIOException() }
     }
 
     override suspend fun insertOrUpdateItems(items: List<CartDto>) {
