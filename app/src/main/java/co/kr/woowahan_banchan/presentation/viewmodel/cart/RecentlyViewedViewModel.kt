@@ -24,7 +24,9 @@ class RecentlyViewedViewModel @Inject constructor(
         viewModelScope.launch {
             recentlyViewedUseCase.invoke(previewMode = false)
                 .catch { _historyItems.value = UiState.Error(it.message) }
-                .collectLatest { _historyItems.value = UiState.Success(it) }
+                .collectLatest { result ->
+                    result.onSuccess { _historyItems.value = UiState.Success(it) }
+                }
         }
     }
 }

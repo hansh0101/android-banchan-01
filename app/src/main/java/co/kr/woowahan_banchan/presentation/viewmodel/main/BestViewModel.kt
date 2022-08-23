@@ -23,8 +23,8 @@ class BestViewModel @Inject constructor(
         viewModelScope.launch {
             getBestsUseCase()
                 .catch { _bestItems.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
-                .collect {
-                    _bestItems.value = UiState.Success(it)
+                .collect { result ->
+                    result.onSuccess { _bestItems.value = UiState.Success(it) }
                 }
         }
     }

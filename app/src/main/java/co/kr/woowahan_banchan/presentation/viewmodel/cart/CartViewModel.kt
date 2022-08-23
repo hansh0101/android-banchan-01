@@ -46,10 +46,12 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             getCartItemsUseCase()
                 .catch { _cartItems.value = UiState.Error("장바구니 내역을 불러오지 못함") }
-                .collect {
-                    _cartItems.value = UiState.Success(it)
-                    it.forEach { item ->
-                        originalCart.add(item.copy())
+                .collect { result ->
+                    result.onSuccess {
+                        _cartItems.value = UiState.Success(it)
+                        it.forEach { item ->
+                            originalCart.add(item.copy())
+                        }
                     }
                 }
         }
@@ -59,8 +61,8 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             recentlyViewedUseCase(true)
                 .catch { _historyItems.value = UiState.Error("최근 방문 내역을 불러오지 못함") }
-                .collect {
-                    _historyItems.value = UiState.Success(it)
+                .collect { result ->
+                    result.onSuccess { _historyItems.value = UiState.Success(it) }
                 }
         }
     }
@@ -91,7 +93,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    fun updateCartItems(cartList: List<CartItem>, workManager: WorkManager){
+    fun updateCartItems(cartList: List<CartItem>, workManager: WorkManager) {
         val inputData = Data.Builder()
             .putString("original_list", listToString(originalCart))
             .putString("update_list", listToString(cartList))
