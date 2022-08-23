@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewmodel"
             type="co.kr.woowahan_banchan.presentation.viewmodel.productdetail.ProductDetailViewModel" />
@@ -14,6 +15,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".presentation.ui.productdetail.ProductDetailActivity">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/layout_appbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/primary_f9ba70"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/tb_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="ORDERING" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -28,7 +44,8 @@
         <ScrollView
             android:id="@+id/sv_product_detail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/layout_appbar">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_inner"
