@@ -8,6 +8,6 @@ import javax.inject.Inject
 class RecentlyViewedUseCase @Inject constructor(
     private val historyRepository: HistoryRepository
 ) {
-    operator fun invoke(previewMode: Boolean): Flow<List<HistoryItem>> =
+    operator fun invoke(previewMode: Boolean): Flow<Result<List<HistoryItem>>> =
         historyRepository.getHistories(previewMode)
 }

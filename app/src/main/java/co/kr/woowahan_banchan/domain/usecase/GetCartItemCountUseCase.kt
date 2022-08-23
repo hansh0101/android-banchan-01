@@ -7,5 +7,5 @@ import javax.inject.Inject
 class GetCartItemCountUseCase @Inject constructor(
     private val cartRepository: CartRepository
 ) {
-    operator fun invoke(): Flow<Int> = cartRepository.getCartItemCount()
+    operator fun invoke(): Flow<Result<Int>> = cartRepository.getCartItemCount()
 }
