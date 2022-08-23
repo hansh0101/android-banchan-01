@@ -1,15 +1,19 @@
 package co.kr.woowahan_banchan.data.datasource.local.cart
 
+import co.kr.woowahan_banchan.data.database.dao.CartDao
 import co.kr.woowahan_banchan.data.model.local.CartDto
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import java.io.IOException
+import java.io.InterruptedIOException
 
 class CartDataSourceImplTest {
     private val cartDto1 = CartDto("HBDEF", 1, true, 1661219851964, "오리 주물럭_반조리")
@@ -92,5 +96,55 @@ class CartDataSourceImplTest {
         val expected = Result.failure<Throwable>(ErrorEntity.UnknownError)
         val actual = cartDataSourceWithError.getAmount(cartDto1.hash)
         assertEquals(expected, actual)
+    }
+}
+
+class FakeCartDao(
+    initCartDtos: List<CartDto> = listOf()
+) : CartDao {
+    val cartDtos = initCartDtos.toMutableList()
+
+    override fun getItems(): Flow<List<CartDto>> {
+        return flow { emit(cartDtos) }
+    }
+
+    override suspend fun insertOrUpdateItems(items: List<CartDto>) {
+        items.forEach { item ->
+            when (val findResult = cartDtos.find { it.hash == item.hash }) {
+                null -> cartDtos.add(item)
+                else -> cartDtos[cartDtos.indexOf(findResult)] = item
+            }
+        }
+    }
+
+    override suspend fun deleteItems(ids: List<String>) {
+        ids.forEach { id ->
+            cartDtos.removeIf { it.hash == id }
+        }
+    }
+
+    override suspend fun getAmount(hash: String): Int {
+        return cartDtos.find { it.hash == hash }?.amount ?: 0
+    }
+}
+
+class FakeCartDaoWithError(
+    initCartDtos: List<CartDto> = listOf()
+) : CartDao {
+    val cartDtos = initCartDtos.toMutableList()
+    override fun getItems(): Flow<List<CartDto>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun insertOrUpdateItems(items: List<CartDto>) {
+        throw InterruptedIOException()
+    }
+
+    override suspend fun deleteItems(ids: List<String>) {
+        throw IllegalStateException()
+    }
+
+    override suspend fun getAmount(hash: String): Int {
+        throw IOException()
     }
 }
