@@ -82,10 +82,10 @@ dependencies {
     // Splash Screen
     implementation 'androidx.core:core-splashscreen:1.0.0'
 
-    // work manager
+    // WorkManager
     implementation "androidx.work:work-runtime-ktx:2.7.1"
 
-    // runTest
+    // Coroutines for Test
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1"
 
     // MockWebServer
