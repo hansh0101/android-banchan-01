@@ -1,0 +1,23 @@
+{
+  "hash": "HBBCC",
+  "data": {
+    "top_image": "http://public.codesquad.kr/jk/storeapp/data/side/48_ZIP_P_5008_T.jpg",
+    "thumb_images": [
+      "http://public.codesquad.kr/jk/storeapp/data/side/48_ZIP_P_5008_T.jpg",
+      "http://public.codesquad.kr/jk/storeapp/data/side/48_ZIP_P_5008_S.jpg"
+    ],
+    "product_description": "국내산 오징어를 새콤달콤하게",
+    "point": "60원",
+    "delivery_info": "서울 경기 새벽 배송 / 전국 택배 배송",
+    "delivery_fee": "2,500원 (40,000원 이상 구매 시 무료)",
+    "prices": [
+      "7,500원",
+      "6,000원"
+    ],
+    "detail_section": [
+      "http://public.codesquad.kr/jk/storeapp/data/side/48_ZIP_P_5008_D1.jpg",
+      "http://public.codesquad.kr/jk/storeapp/data/side/48_ZIP_P_5008_D2.jpg",
+      "http://public.codesquad.kr/jk/storeapp/data/pakage_small.jpg"
+    ]
+  }
+}
