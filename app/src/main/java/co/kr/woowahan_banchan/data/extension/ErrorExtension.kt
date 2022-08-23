@@ -13,19 +13,22 @@ inline fun <T, R> T.runCatchingErrorEntity(block: T.() -> R): Result<R> {
     return try {
         Result.success(block())
     } catch (e: Throwable) {
-        val error = when (e) {
-            is ErrorEntity -> e
-            is HttpRetryException, is InterruptedIOException, is InterruptedByTimeoutException -> ErrorEntity.RetryableError
-            is UnknownHostException -> ErrorEntity.ConditionalError
-            is IOException -> ErrorEntity.UnknownError
-            is HttpException -> {
-                when (e.code()) {
-                    HttpURLConnection.HTTP_CLIENT_TIMEOUT, HttpURLConnection.HTTP_GATEWAY_TIMEOUT -> ErrorEntity.RetryableError
-                    else -> ErrorEntity.UnknownError
-                }
+        Result.failure(e.toErrorEntity())
+    }
+}
+
+fun Throwable.toErrorEntity(): ErrorEntity {
+    return when (this) {
+        is ErrorEntity -> this
+        is HttpRetryException, is InterruptedIOException, is InterruptedByTimeoutException -> ErrorEntity.RetryableError
+        is UnknownHostException -> ErrorEntity.ConditionalError
+        is IOException -> ErrorEntity.UnknownError
+        is HttpException -> {
+            when (this.code()) {
+                HttpURLConnection.HTTP_CLIENT_TIMEOUT, HttpURLConnection.HTTP_GATEWAY_TIMEOUT -> ErrorEntity.RetryableError
+                else -> ErrorEntity.UnknownError
             }
-            else -> ErrorEntity.UnknownError
         }
-        Result.failure(error)
+        else -> ErrorEntity.UnknownError
     }
 }
