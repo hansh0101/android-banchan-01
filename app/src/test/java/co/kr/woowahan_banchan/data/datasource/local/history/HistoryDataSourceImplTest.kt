@@ -136,6 +136,8 @@ class FakeHistoryDao(
 class FakeHistoryDaoWithError(
     initHistoryDtos: List<HistoryDto>
 ) : HistoryDao {
+    val orderHistoryDtos = initHistoryDtos.toMutableList()
+
     override fun getItems(): Flow<List<HistoryDto>> {
         return flow { throw InterruptedByTimeoutException().toErrorEntity() }
     }

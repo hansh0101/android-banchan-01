@@ -131,6 +131,7 @@ class FakeCartDaoWithError(
     initCartDtos: List<CartDto> = listOf()
 ) : CartDao {
     val cartDtos = initCartDtos.toMutableList()
+
     override fun getItems(): Flow<List<CartDto>> {
         return flow { throw InterruptedIOException() }
     }
