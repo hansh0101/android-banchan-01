@@ -69,16 +69,20 @@ class ProductDetailViewModel @Inject constructor(
         viewModelScope.launch {
             getCartItemCountUseCase()
                 .catch { _cartCount.value = 0 }
-                .collect {
-                    _cartCount.value = it
+                .collect { result ->
+                    result.onSuccess {
+                        _cartCount.value = it
+                    }
                 }
         }
     }
 
     fun fetchLatestOrderTime() {
         viewModelScope.launch {
-            latestOrderTimeUseCase().collect { time ->
-                _isOrderCompleted.value = Date().time.calculateDiffToMinute(time) >= 20
+            latestOrderTimeUseCase().collect { result ->
+                result.onSuccess {
+                    _isOrderCompleted.value = Date().time.calculateDiffToMinute(it) >= 20
+                }
             }
         }
     }
