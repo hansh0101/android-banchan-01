@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface HistoryRepository {
     suspend fun addToHistory(hash: String, name: String): Result<Unit>
-    fun getHistories(previewMode: Boolean): Flow<List<HistoryItem>>
+    fun getHistories(previewMode: Boolean): Flow<Result<List<HistoryItem>>>
 }

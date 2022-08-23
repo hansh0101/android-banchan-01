@@ -11,6 +11,7 @@ import co.kr.woowahan_banchan.domain.repository.DishRepository
 import co.kr.woowahan_banchan.domain.repository.Source
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -23,12 +24,11 @@ class DishRepositoryImpl @Inject constructor(
     private val soupDishDataSource: SoupDishDataSource,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : DishRepository {
-    override fun getBestDishes(): Flow<List<BestItem>> {
+    override fun getBestDishes(): Flow<Result<List<BestItem>>> {
         return cartDataSource.getItems().map { cartDtoList ->
-            val apiResult = bestDataSource.getBests()
-            when (apiResult.isSuccess) {
-                true -> {
-                    apiResult.getOrDefault(listOf()).map { bestDishes ->
+            bestDataSource.getBests()
+                .mapCatching {
+                    it.map { bestDishes ->
                         BestItem(
                             bestDishes.name,
                             bestDishes.items.map { bestDish ->
@@ -37,30 +37,24 @@ class DishRepositoryImpl @Inject constructor(
                         )
                     }
                 }
-                false -> {
-                    listOf()
-                }
-            }
+        }.catch {
+            emit(Result.failure(it))
         }.flowOn(coroutineDispatcher)
     }
 
-    override fun getDishes(source: Source): Flow<List<Dish>> {
+    override fun getDishes(source: Source): Flow<Result<List<Dish>>> {
         return cartDataSource.getItems().map { cartDtoList ->
-            val apiResult = when (source) {
+            when (source) {
                 Source.MAIN -> mainDishDataSource.getMainDishes()
                 Source.SIDE -> sideDishDataSource.getSideDishes()
                 Source.SOUP -> soupDishDataSource.getSoupDishes()
-            }
-            when (apiResult.isSuccess) {
-                true -> {
-                    apiResult.getOrDefault(listOf()).map { dish ->
-                        dish.toEntity(cartDtoList.find { it.hash == dish.detailHash } != null)
-                    }
-                }
-                false -> {
-                    listOf()
+            }.mapCatching {
+                it.map { dish ->
+                    dish.toEntity(cartDtoList.find { it.hash == dish.detailHash } != null)
                 }
             }
+        }.catch {
+            emit(Result.failure(it))
         }.flowOn(coroutineDispatcher)
     }
 }

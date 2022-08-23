@@ -7,6 +7,7 @@ import co.kr.woowahan_banchan.domain.entity.cart.CartItem
 import co.kr.woowahan_banchan.domain.repository.CartRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import java.util.*
@@ -34,17 +35,18 @@ class CartRepositoryImpl @Inject constructor(
         return cartDataSource.deleteItems(ids)
     }
 
-    override fun getCartItemCount(): Flow<Int> {
+    override fun getCartItemCount(): Flow<Result<Int>> {
         return cartDataSource.getItems()
-            .map { it.size }
+            .map { Result.success(it.size) }
+            .catch { Result.failure<Throwable>(it) }
     }
 
-    override fun getCartItems(): Flow<List<CartItem>> {
+    override fun getCartItems(): Flow<Result<List<CartItem>>> {
         return cartDataSource.getItems().map { cartItems ->
-            cartItems.mapNotNull {
+            Result.success(cartItems.mapNotNull {
                 val apiResult = detailDataSource.getDetail(it.hash)
                 if (apiResult.isSuccess) {
-                    apiResult.getOrThrow().data.toCartItem(
+                    apiResult.getOrNull()?.data?.toCartItem(
                         it.hash,
                         it.name,
                         it.isSelected,
@@ -53,7 +55,9 @@ class CartRepositoryImpl @Inject constructor(
                 } else {
                     null
                 }
-            }
+            })
+        }.catch {
+            emit(Result.failure(it))
         }.flowOn(coroutineDispatcher)
     }
 }
