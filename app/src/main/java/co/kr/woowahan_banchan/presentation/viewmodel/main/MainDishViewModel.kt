@@ -34,8 +34,8 @@ class MainDishViewModel @Inject constructor(
         viewModelScope.launch {
             getDishesUseCase(Source.MAIN)
                 .catch { _mainDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
-                .collect {
-                    _mainDishes.value = UiState.Success(it)
+                .collect { result ->
+                    result.onSuccess { _mainDishes.value = UiState.Success(it) }
                 }
         }
     }
