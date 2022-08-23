@@ -5,8 +5,8 @@ import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import kotlinx.coroutines.flow.Flow
 
 interface DishRepository {
-    fun getBestDishes(): Flow<List<BestItem>>
-    fun getDishes(source: Source): Flow<List<Dish>>
+    fun getBestDishes(): Flow<Result<List<BestItem>>>
+    fun getDishes(source: Source): Flow<Result<List<Dish>>>
 }
 
 enum class Source {
