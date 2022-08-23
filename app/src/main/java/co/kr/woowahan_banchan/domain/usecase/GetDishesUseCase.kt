@@ -9,7 +9,6 @@ import javax.inject.Inject
 class GetDishesUseCase @Inject constructor(
     private val repository: DishRepository
 ) {
-    operator fun invoke(source: Source) : Flow<List<Dish>> {
-        return repository.getDishes(source)
-    }
+    operator fun invoke(source: Source): Flow<Result<List<Dish>>> =
+        repository.getDishes(source)
 }
