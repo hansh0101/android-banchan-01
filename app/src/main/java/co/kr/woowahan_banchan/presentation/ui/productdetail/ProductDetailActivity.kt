@@ -3,9 +3,12 @@ package co.kr.woowahan_banchan.presentation.ui.productdetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -14,12 +17,18 @@ import co.kr.woowahan_banchan.databinding.ActivityProductDetailBinding
 import co.kr.woowahan_banchan.domain.entity.detail.DishInfo
 import co.kr.woowahan_banchan.presentation.adapter.ProductDetailViewPagerAdapter
 import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
+import co.kr.woowahan_banchan.presentation.ui.cart.CartActivity
+import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddDialog
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.productdetail.ProductDetailViewModel
 import co.kr.woowahan_banchan.util.ImageLoader
+import co.kr.woowahan_banchan.util.dpToPx
 import co.kr.woowahan_banchan.util.shortToast
 import co.kr.woowahan_banchan.util.toPriceFormat
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -37,15 +46,32 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
     private lateinit var hash: String
     private lateinit var title: String
 
+    private val badge by lazy {
+        BadgeDrawable.create(this).also { bd ->
+            bd.backgroundColor = resources.getColor(R.color.grayscale_000000, theme)
+            bd.horizontalOffset = 5.dpToPx()
+            bd.verticalOffset = 5.dpToPx()
+            bd.maxCharacterCount = 3
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         hash = intent.getStringExtra("HASH") ?: error("Hash not delivered")
         title = intent.getStringExtra("TITLE") ?: error("Title not delivered")
         viewModel.fetchUiState(hash)
         viewModel.addToHistory(hash, title)
+        viewModel.getCartItemCount()
+        viewModel.fetchLatestOrderTime()
+
+        initToolbar()
         initView()
         initOnClickListener()
         observeData()
+    }
+
+    private fun initToolbar() {
+        setSupportActionBar(binding.tbToolbar)
     }
 
     private fun initView() {
@@ -107,6 +133,18 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
                     false -> shortToast("실패")
                 }
             }.launchIn(lifecycleScope)
+
+        viewModel.cartCount.flowWithLifecycle(this.lifecycle)
+            .onEach {
+                badge.number = it
+                badge.isVisible = it > 0
+            }.launchIn(lifecycleScope)
+
+        viewModel.isOrderCompleted
+            .flowWithLifecycle(this.lifecycle)
+            .onEach {
+                invalidateOptionsMenu()
+            }.launchIn(lifecycleScope)
     }
 
     private fun showUi(dishInfo: DishInfo) {
@@ -157,6 +195,38 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
     private fun hideProgressBar() {
         binding.progressBar.isVisible = false
         binding.svProductDetail.isVisible = true
+    }
+
+    @ExperimentalBadgeUtils
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_app_bar, menu)
+        BadgeUtils.attachBadgeDrawable(badge, binding.tbToolbar, R.id.action_cart)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_cart -> {
+                startActivity(CartActivity.getIntent(this))
+            }
+            R.id.action_history -> {
+                startActivity(OrderActivity.getIntent(this))
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (viewModel.isOrderCompleted.value) {
+            menu?.let {
+                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user)
+            }
+        } else {
+            menu?.let {
+                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user_badge)
+            }
+        }
+        return super.onPrepareOptionsMenu(menu)
     }
 
     companion object {
