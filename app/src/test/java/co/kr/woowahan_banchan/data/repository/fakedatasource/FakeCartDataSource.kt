@@ -9,9 +9,9 @@ class FakeCartDataSource(
     private val cartDtos : MutableList<CartDto>
 ) : CartDataSource {
 
-    override fun getItems(): Flow<List<CartDto>> {
+    override fun getItems(): Flow<Result<List<CartDto>>> {
         return flow {
-            emit(cartDtos)
+            emit(Result.success(cartDtos))
         }
     }
 

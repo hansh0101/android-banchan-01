@@ -9,9 +9,9 @@ import okio.EOFException
 import okio.IOException
 
 class FakeCartDataSourceWithError : CartDataSource {
-    override fun getItems(): Flow<List<CartDto>> {
+    override fun getItems(): Flow<Result<List<CartDto>>> {
         return flow {
-            throw Exception().toErrorEntity()
+            emit(Result.failure(Exception().toErrorEntity()))
         }
     }
 

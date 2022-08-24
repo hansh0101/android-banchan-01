@@ -39,8 +39,8 @@ class CartDataSourceImplTest {
 
     @Test
     fun getItems() = runTest {
-        val expected = cartDao.cartDtos
-        var actual: List<CartDto>? = null
+        val expected = Result.success(cartDao.cartDtos)
+        var actual: Result<List<CartDto>>? = null
         val collectJob = launch(UnconfinedTestDispatcher()) {
             cartDataSource.getItems().collect { actual = it }
         }
@@ -53,9 +53,7 @@ class CartDataSourceImplTest {
         val expected = Result.failure<List<CartDto>>(ErrorEntity.RetryableError)
         var actual: Result<List<CartDto>>? = null
         val collectJob = launch(UnconfinedTestDispatcher()) {
-            cartDataSourceWithError.getItems()
-                .catch { actual = Result.failure(it) }
-                .collect {}
+            cartDataSourceWithError.getItems().collect { actual = it }
         }
         assertEquals(expected, actual)
         collectJob.cancel()
