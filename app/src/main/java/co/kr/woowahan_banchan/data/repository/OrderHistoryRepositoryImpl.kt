@@ -43,10 +43,9 @@ class OrderHistoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getLatestOrderTime(): Flow<Result<Long>> =
-        orderDataSource.getLatestOrderTime()
-            .map { Result.success(it) }
-            .catch { emit(Result.failure(it)) }
+    override fun getLatestOrderTime(): Flow<Result<Long>> {
+        return orderDataSource.getLatestOrderTime()
+    }
 
     override suspend fun getOrderTime(orderId: Long): Result<Long> {
         return orderDataSource.getTime(orderId)

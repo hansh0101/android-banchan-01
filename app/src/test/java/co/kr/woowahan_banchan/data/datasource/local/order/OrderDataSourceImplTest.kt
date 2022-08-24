@@ -5,7 +5,6 @@ import co.kr.woowahan_banchan.data.model.local.OrderDto
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -53,8 +52,9 @@ class OrderDataSourceImplTest {
     @Test
     fun getLatestOrderTime() = runTest {
         val expected =
-            orderDao.orderDtos.apply { sortWith(compareByDescending { it.time }) }.first().time
-        var actual: Long? = null
+            Result.success(orderDao.orderDtos.apply { sortWith(compareByDescending { it.time }) }
+                .first().time)
+        var actual: Result<Long>? = null
         val collectJob = launch(UnconfinedTestDispatcher()) {
             orderDataSource.getLatestOrderTime().collect { actual = it }
         }
@@ -68,8 +68,7 @@ class OrderDataSourceImplTest {
         var actual: Result<Long>? = null
         val collectJob = launch(UnconfinedTestDispatcher()) {
             orderDataSourceWithError.getLatestOrderTime()
-                .catch { actual = Result.failure(it) }
-                .collect {}
+                .collect { actual = it }
         }
         assertEquals(expected, actual)
         collectJob.cancel()

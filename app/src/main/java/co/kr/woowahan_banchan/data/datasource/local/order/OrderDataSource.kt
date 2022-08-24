@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface OrderDataSource {
     suspend fun getItems(): Result<List<OrderDto>>
-    fun getLatestOrderTime(): Flow<Long>
+    fun getLatestOrderTime(): Flow<Result<Long>>
     suspend fun getTime(orderId: Long): Result<Long>
     suspend fun insertItem(item: OrderDto): Result<Long>
 }

@@ -5,10 +5,7 @@ import co.kr.woowahan_banchan.data.extension.runCatchingErrorEntity
 import co.kr.woowahan_banchan.data.extension.toErrorEntity
 import co.kr.woowahan_banchan.data.model.local.OrderDto
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -23,11 +20,12 @@ class OrderDataSourceImpl @Inject constructor(
             }
         }
 
-    override fun getLatestOrderTime(): Flow<Long> =
+    override fun getLatestOrderTime(): Flow<Result<Long>> =
         orderDao.getLatestOrderTime()
             .filterNotNull()
+            .map { Result.success(it) }
             .catch { exception ->
-                throw exception.toErrorEntity()
+                emit(Result.failure(exception.toErrorEntity()))
             }.flowOn(coroutineDispatcher)
 
     override suspend fun getTime(orderId: Long): Result<Long> =
