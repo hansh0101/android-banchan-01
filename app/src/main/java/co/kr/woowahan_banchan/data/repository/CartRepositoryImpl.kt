@@ -37,25 +37,25 @@ class CartRepositoryImpl @Inject constructor(
 
     override fun getCartItemCount(): Flow<Result<Int>> {
         return cartDataSource.getItems()
-            .map { Result.success(it.size) }
-            .catch { emit(Result.failure(it)) }
+            .map { result ->
+                result.mapCatching { it.size }
+            }
     }
 
     override fun getCartItems(): Flow<Result<List<CartItem>>> {
-        return cartDataSource.getItems().map { cartItems ->
-            Result.success(cartItems.mapNotNull {
-                val apiResult = detailDataSource.getDetail(it.hash)
-                if (apiResult.isSuccess) {
-                    apiResult.getOrNull()?.data?.toCartItem(
-                        it.hash,
-                        it.name,
-                        it.isSelected,
-                        it.amount
-                    )
-                } else {
-                    null
+        return cartDataSource.getItems().map { result ->
+            result.mapCatching { cartItems ->
+                cartItems.mapNotNull { cartDto ->
+                    detailDataSource.getDetail(cartDto.hash).mapCatching {
+                        it.data.toCartItem(
+                            cartDto.hash,
+                            cartDto.name,
+                            cartDto.isSelected,
+                            cartDto.amount
+                        )
+                    }.getOrNull()
                 }
-            })
+            }
         }.catch {
             emit(Result.failure(it))
         }.flowOn(coroutineDispatcher)

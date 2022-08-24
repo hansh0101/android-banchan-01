@@ -25,36 +25,38 @@ class DishRepositoryImpl @Inject constructor(
     private val coroutineDispatcher: CoroutineDispatcher
 ) : DishRepository {
     override fun getBestDishes(): Flow<Result<List<BestItem>>> {
-        return cartDataSource.getItems().map { cartDtoList ->
-            bestDataSource.getBests()
-                .mapCatching {
-                    it.map { bestDishes ->
-                        BestItem(
-                            bestDishes.name,
-                            bestDishes.items.map { bestDish ->
-                                bestDish.toEntity(cartDtoList.find { it.hash == bestDish.detailHash } != null)
-                            }
-                        )
-                    }
-                }
+        return cartDataSource.getItems().map { result ->
+            result.mapCatching { cartDtoList ->
+                bestDataSource.getBests()
+                    .mapCatching {
+                        it.map { bestDishes ->
+                            BestItem(
+                                bestDishes.name,
+                                bestDishes.items.map { bestDish ->
+                                    bestDish.toEntity(cartDtoList.find { it.hash == bestDish.detailHash } != null)
+                                }
+                            )
+                        }
+                    }.getOrThrow()
+            }
         }.catch {
             emit(Result.failure(it))
         }.flowOn(coroutineDispatcher)
     }
 
     override fun getDishes(source: Source): Flow<Result<List<Dish>>> {
-        return cartDataSource.getItems().map { cartDtoList ->
-            when (source) {
-                Source.MAIN -> mainDishDataSource.getMainDishes()
-                Source.SIDE -> sideDishDataSource.getSideDishes()
-                Source.SOUP -> soupDishDataSource.getSoupDishes()
-            }.mapCatching {
-                it.map { dish ->
-                    dish.toEntity(cartDtoList.find { it.hash == dish.detailHash } != null)
-                }
+        return cartDataSource.getItems().map { result ->
+            result.mapCatching { cartDtoList ->
+                when (source) {
+                    Source.MAIN -> mainDishDataSource.getMainDishes()
+                    Source.SIDE -> sideDishDataSource.getSideDishes()
+                    Source.SOUP -> soupDishDataSource.getSoupDishes()
+                }.mapCatching {
+                    it.map { dish ->
+                        dish.toEntity(cartDtoList.find { it.hash == dish.detailHash } != null)
+                    }
+                }.getOrThrow()
             }
-        }.catch {
-            emit(Result.failure(it))
         }.flowOn(coroutineDispatcher)
     }
 }
