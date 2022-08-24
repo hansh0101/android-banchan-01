@@ -2,6 +2,9 @@ package co.kr.woowahan_banchan.data.repository
 
 import co.kr.woowahan_banchan.data.model.local.OrderDto
 import co.kr.woowahan_banchan.data.model.local.OrderItemDto
+import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
+import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderHistory
+import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderItem
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -64,6 +67,9 @@ class OrderHistoryRepositoryImplTest {
     private lateinit var orderDataSource: FakeOrderDataSource
     private lateinit var orderItemDataSource: FakeOrderItemDataSource
     private lateinit var orderHistoryRepository: OrderHistoryRepositoryImpl
+    private lateinit var orderDataSourceWithError: FakeOrderDataSourceWithError
+    private lateinit var orderItemDataSourceWithError: FakeOrderItemDataSourceWithError
+    private lateinit var orderHistoryRepositoryWithError: OrderHistoryRepositoryImpl
 
     @Before
     fun setUp() {
@@ -71,12 +77,18 @@ class OrderHistoryRepositoryImplTest {
             FakeOrderDataSource(listOf(orderDto1, orderDto2))
         orderItemDataSource =
             FakeOrderItemDataSource(listOf(orderItemDto1, orderItemDto2, orderItemDto3))
-        orderHistoryRepository =
-            OrderHistoryRepositoryImpl(
-                orderDataSource,
-                orderItemDataSource,
-                UnconfinedTestDispatcher()
-            )
+        orderHistoryRepository = OrderHistoryRepositoryImpl(
+            orderDataSource,
+            orderItemDataSource,
+            UnconfinedTestDispatcher()
+        )
+        orderDataSourceWithError = FakeOrderDataSourceWithError()
+        orderItemDataSourceWithError = FakeOrderItemDataSourceWithError()
+        orderHistoryRepositoryWithError = OrderHistoryRepositoryImpl(
+            orderDataSourceWithError,
+            orderItemDataSourceWithError,
+            UnconfinedTestDispatcher()
+        )
     }
 
     @Test
@@ -88,6 +100,13 @@ class OrderHistoryRepositoryImplTest {
             )
         )
         val actual = orderHistoryRepository.getOrderHistories()
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun getOrderHistoriesWithError() = runTest {
+        val expected = Result.failure<List<OrderHistory>>(ErrorEntity.RetryableError)
+        val actual = orderHistoryRepositoryWithError.getOrderHistories()
         assertEquals(expected, actual)
     }
 
@@ -105,9 +124,27 @@ class OrderHistoryRepositoryImplTest {
     }
 
     @Test
+    fun getLatestOrderTimeWithError() = runTest {
+        val expected = Result.failure<Long>(ErrorEntity.ConditionalError)
+        var actual: Result<Long>? = null
+        val collectJob = launch(UnconfinedTestDispatcher()) {
+            orderHistoryRepositoryWithError.getLatestOrderTime().collect { actual = it }
+        }
+        assertEquals(expected, actual)
+        collectJob.cancel()
+    }
+
+    @Test
     fun getOrderTime() = runTest {
         val expected = Result.success(orderDto1.time)
         val actual = orderHistoryRepository.getOrderTime(1)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun getOrderTimeWithError() = runTest {
+        val expected = Result.failure<Long>(ErrorEntity.UnknownError)
+        val actual = orderHistoryRepositoryWithError.getOrderTime(1)
         assertEquals(expected, actual)
     }
 
@@ -119,9 +156,23 @@ class OrderHistoryRepositoryImplTest {
     }
 
     @Test
+    fun getOrderReceiptWithError() = runTest {
+        val expected = Result.failure<List<OrderItem>>(ErrorEntity.ConditionalError)
+        val actual = orderHistoryRepositoryWithError.getOrderReceipt(1)
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun insertOrderItems() = runTest {
         val expected = Result.success((orderDataSource.orderDtos.size + 1).toLong())
         val actual = orderHistoryRepository.insertOrderItems(listOf())
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun insertOrderItemsWithError() = runTest {
+        val expected = Result.failure<Long>(ErrorEntity.RetryableError)
+        val actual = orderHistoryRepositoryWithError.insertOrderItems(listOf())
         assertEquals(expected, actual)
     }
 }
