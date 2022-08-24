@@ -6,13 +6,14 @@ import co.kr.woowahan_banchan.data.model.remote.response.DetailDataResponse
 import co.kr.woowahan_banchan.data.model.remote.response.DetailResponse
 import co.kr.woowahan_banchan.data.repository.fakedatasource.local.cart.FakeCartDataSource
 import co.kr.woowahan_banchan.data.repository.fakedatasource.local.cart.FakeCartDataSourceWithError
-import co.kr.woowahan_banchan.data.repository.fakedatasource.remote.detail.FakeDetailDataSource
-import co.kr.woowahan_banchan.data.repository.fakedatasource.remote.detail.FakeDetailDataSourceWithError
 import co.kr.woowahan_banchan.data.repository.fakedatasource.local.history.FakeHistoryDataSource
 import co.kr.woowahan_banchan.data.repository.fakedatasource.local.history.FakeHistoryDataSourceWithError
+import co.kr.woowahan_banchan.data.repository.fakedatasource.remote.detail.FakeDetailDataSource
+import co.kr.woowahan_banchan.data.repository.fakedatasource.remote.detail.FakeDetailDataSourceWithError
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -56,7 +57,7 @@ class HistoryRepositoryImplTest {
     private lateinit var cartDataSourceWithError: FakeCartDataSourceWithError
     private lateinit var detailDataSourceWithError: FakeDetailDataSourceWithError
     private lateinit var historyRepositoryWithError: HistoryRepositoryImpl
-    private val coroutineDispatcher = UnconfinedTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setUp() {
@@ -67,7 +68,7 @@ class HistoryRepositoryImplTest {
             historyDataSource,
             cartDataSource,
             detailDataSource,
-            coroutineDispatcher
+            testDispatcher
         )
         historyDataSourceWithError = FakeHistoryDataSourceWithError()
         cartDataSourceWithError = FakeCartDataSourceWithError()
@@ -76,7 +77,7 @@ class HistoryRepositoryImplTest {
             historyDataSourceWithError,
             cartDataSourceWithError,
             detailDataSourceWithError,
-            coroutineDispatcher
+            testDispatcher
         )
     }
 
@@ -95,7 +96,7 @@ class HistoryRepositoryImplTest {
     }
 
     @Test
-    fun getHistories() = runTest(coroutineDispatcher) {
+    fun getHistories() = runTest(testDispatcher) {
         val expected = Result.success(
             listOf(
                 HistoryItem(
@@ -110,23 +111,32 @@ class HistoryRepositoryImplTest {
             )
         )
         var actual: Result<List<HistoryItem>>? = null
-        historyRepository.getHistories(true).collect { actual = it }
+        val collectJob = launch(testDispatcher) {
+            historyRepository.getHistories(true).collect { actual = it }
+        }
         assertEquals(expected, actual)
+        collectJob.cancel()
     }
 
     @Test
-    fun getHistoriesWithError() = runTest(coroutineDispatcher) {
+    fun getHistoriesWithError() = runTest(testDispatcher) {
         val expected = Result.failure<List<HistoryItem>>(ErrorEntity.RetryableError)
         var actual: Result<List<HistoryItem>>? = null
-        historyRepositoryWithError.getHistories(false).collect { actual = it }
+        val collectJob = launch(testDispatcher) {
+            historyRepositoryWithError.getHistories(false).collect { actual = it }
+        }
         assertEquals(expected, actual)
+        collectJob.cancel()
     }
 
     @Test
-    fun getHistoriesPreviewWithError() = runTest(coroutineDispatcher) {
+    fun getHistoriesPreviewWithError() = runTest(testDispatcher) {
         val expected = Result.failure<List<HistoryItem>>(ErrorEntity.UnknownError)
         var actual: Result<List<HistoryItem>>? = null
-        historyRepositoryWithError.getHistories(true).collect { actual = it }
+        val collectJob = launch(testDispatcher) {
+            historyRepositoryWithError.getHistories(true).collect { actual = it }
+        }
         assertEquals(expected, actual)
+        collectJob.cancel()
     }
 }

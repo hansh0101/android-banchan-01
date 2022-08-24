@@ -74,6 +74,7 @@ class OrderHistoryRepositoryImplTest {
     private lateinit var orderDataSourceWithError: FakeOrderDataSourceWithError
     private lateinit var orderItemDataSourceWithError: FakeOrderItemDataSourceWithError
     private lateinit var orderHistoryRepositoryWithError: OrderHistoryRepositoryImpl
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setUp() {
@@ -84,14 +85,14 @@ class OrderHistoryRepositoryImplTest {
         orderHistoryRepository = OrderHistoryRepositoryImpl(
             orderDataSource,
             orderItemDataSource,
-            UnconfinedTestDispatcher()
+            testDispatcher
         )
         orderDataSourceWithError = FakeOrderDataSourceWithError()
         orderItemDataSourceWithError = FakeOrderItemDataSourceWithError()
         orderHistoryRepositoryWithError = OrderHistoryRepositoryImpl(
             orderDataSourceWithError,
             orderItemDataSourceWithError,
-            UnconfinedTestDispatcher()
+            testDispatcher
         )
     }
 
@@ -120,7 +121,7 @@ class OrderHistoryRepositoryImplTest {
             Result.success(orderDataSource.orderDtos.apply { sortWith(compareByDescending { it.time }) }
                 .first().time)
         var actual: Result<Long>? = null
-        val collectJob = launch(UnconfinedTestDispatcher()) {
+        val collectJob = launch(testDispatcher) {
             orderHistoryRepository.getLatestOrderTime().collect { actual = it }
         }
         assertEquals(expected, actual)
@@ -131,7 +132,7 @@ class OrderHistoryRepositoryImplTest {
     fun getLatestOrderTimeWithError() = runTest {
         val expected = Result.failure<Long>(ErrorEntity.ConditionalError)
         var actual: Result<Long>? = null
-        val collectJob = launch(UnconfinedTestDispatcher()) {
+        val collectJob = launch(testDispatcher) {
             orderHistoryRepositoryWithError.getLatestOrderTime().collect { actual = it }
         }
         assertEquals(expected, actual)
