@@ -13,7 +13,7 @@ import co.kr.woowahan_banchan.data.model.local.OrderItemDto
 
 @Database(
     entities = [CartDto::class, HistoryDto::class, OrderDto::class, OrderItemDto::class],
-    version = 1
+    version = 2
 )
 abstract class BanchanDatabase : RoomDatabase() {
     abstract fun cartDao(): CartDao
