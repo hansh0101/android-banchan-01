@@ -1,4 +1,4 @@
-package co.kr.woowahan_banchan.data.repository.fakedatasource
+package co.kr.woowahan_banchan.data.repository.fakedatasource.local.orderitem
 
 import co.kr.woowahan_banchan.data.datasource.local.orderitem.OrderItemDataSource
 import co.kr.woowahan_banchan.data.model.local.OrderItemDto

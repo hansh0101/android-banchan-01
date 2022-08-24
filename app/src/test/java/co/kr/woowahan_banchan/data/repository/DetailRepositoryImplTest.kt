@@ -3,8 +3,8 @@ package co.kr.woowahan_banchan.data.repository
 import co.kr.woowahan_banchan.data.datasource.remote.detail.DetailDataSource
 import co.kr.woowahan_banchan.data.model.remote.response.DetailDataResponse
 import co.kr.woowahan_banchan.data.model.remote.response.DetailResponse
-import co.kr.woowahan_banchan.data.repository.fakedatasource.FakeDetailDataSource
-import co.kr.woowahan_banchan.data.repository.fakedatasource.FakeDetailDataSourceWithError
+import co.kr.woowahan_banchan.data.repository.fakedatasource.remote.detail.FakeDetailDataSource
+import co.kr.woowahan_banchan.data.repository.fakedatasource.remote.detail.FakeDetailDataSourceWithError
 import co.kr.woowahan_banchan.domain.entity.detail.DishInfo
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.repository.DetailRepository

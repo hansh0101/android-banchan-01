@@ -4,7 +4,12 @@ import co.kr.woowahan_banchan.data.model.local.CartDto
 import co.kr.woowahan_banchan.data.model.local.HistoryDto
 import co.kr.woowahan_banchan.data.model.remote.response.DetailDataResponse
 import co.kr.woowahan_banchan.data.model.remote.response.DetailResponse
-import co.kr.woowahan_banchan.data.repository.fakedatasource.*
+import co.kr.woowahan_banchan.data.repository.fakedatasource.local.cart.FakeCartDataSource
+import co.kr.woowahan_banchan.data.repository.fakedatasource.local.cart.FakeCartDataSourceWithError
+import co.kr.woowahan_banchan.data.repository.fakedatasource.remote.detail.FakeDetailDataSource
+import co.kr.woowahan_banchan.data.repository.fakedatasource.remote.detail.FakeDetailDataSourceWithError
+import co.kr.woowahan_banchan.data.repository.fakedatasource.local.history.FakeHistoryDataSource
+import co.kr.woowahan_banchan.data.repository.fakedatasource.local.history.FakeHistoryDataSourceWithError
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi

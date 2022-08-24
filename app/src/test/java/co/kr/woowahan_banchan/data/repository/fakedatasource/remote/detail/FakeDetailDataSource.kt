@@ -1,4 +1,4 @@
-package co.kr.woowahan_banchan.data.repository.fakedatasource
+package co.kr.woowahan_banchan.data.repository.fakedatasource.remote.detail
 
 import co.kr.woowahan_banchan.data.datasource.remote.detail.DetailDataSource
 import co.kr.woowahan_banchan.data.model.remote.response.DetailDataResponse
