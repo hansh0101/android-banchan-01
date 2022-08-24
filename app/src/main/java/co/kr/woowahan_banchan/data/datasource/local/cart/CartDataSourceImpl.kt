@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -15,10 +16,12 @@ class CartDataSourceImpl @Inject constructor(
     private val cartDao: CartDao,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : CartDataSource {
-    override fun getItems(): Flow<List<CartDto>> =
+    override fun getItems(): Flow<Result<List<CartDto>>> =
         cartDao.getItems()
-            .catch { exception ->
-                throw exception.toErrorEntity()
+            .map {
+                Result.success(it)
+            }.catch { exception ->
+                emit(Result.failure(exception.toErrorEntity()))
             }.flowOn(coroutineDispatcher)
 
     override suspend fun insertOrUpdateItems(items: List<CartDto>): Result<Unit> =
