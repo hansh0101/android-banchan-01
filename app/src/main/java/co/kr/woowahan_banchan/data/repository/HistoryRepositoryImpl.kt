@@ -24,7 +24,7 @@ class HistoryRepositoryImpl @Inject constructor(
             if (previewMode) historyDataSource.getPreviewItems() else historyDataSource.getItems(),
             cartDataSource.getItems()
         ) { historyDtoList, cartDtoList ->
-            Pair(historyDtoList, cartDtoList.getOrThrow())
+            Pair(historyDtoList.getOrThrow(), cartDtoList.getOrThrow())
         }.map { pair ->
             val historyDtoList = pair.first
             val cartDtoList = pair.second
