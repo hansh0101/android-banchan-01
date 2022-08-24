@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
@@ -16,17 +17,17 @@ class HistoryDataSourceImpl @Inject constructor(
     private val historyDao: HistoryDao,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : HistoryDataSource {
-    override fun getItems(): Flow<List<HistoryDto>> =
+    override fun getItems(): Flow<Result<List<HistoryDto>>> =
         historyDao.getItems()
-            .catch { exception ->
-                throw exception.toErrorEntity()
-            }.flowOn(coroutineDispatcher)
+            .map { Result.success(it) }
+            .catch { exception -> emit(Result.failure(exception.toErrorEntity())) }
+            .flowOn(coroutineDispatcher)
 
-    override fun getPreviewItems(): Flow<List<HistoryDto>> =
+    override fun getPreviewItems(): Flow<Result<List<HistoryDto>>> =
         historyDao.getPreviewItems()
-            .catch { exception ->
-                throw exception.toErrorEntity()
-            }.flowOn(coroutineDispatcher)
+            .map { Result.success(it) }
+            .catch { exception -> emit(Result.failure(exception.toErrorEntity())) }
+            .flowOn(coroutineDispatcher)
 
     override suspend fun insertItem(hash: String, name: String): Result<Unit> {
         return withContext(coroutineDispatcher) {
