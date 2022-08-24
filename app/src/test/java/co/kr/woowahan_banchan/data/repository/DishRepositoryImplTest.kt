@@ -11,6 +11,7 @@ import co.kr.woowahan_banchan.data.model.remote.response.DishResponse
 import co.kr.woowahan_banchan.data.repository.fakedatasource.*
 import co.kr.woowahan_banchan.domain.entity.dish.BestItem
 import co.kr.woowahan_banchan.domain.entity.dish.Dish
+import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.repository.DishRepository
 import co.kr.woowahan_banchan.domain.repository.Source
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -113,7 +114,14 @@ class DishRepositoryImplTest {
     private lateinit var soupDishDataSource: SoupDishDataSource
     private lateinit var sideDishDataSource: SideDishDataSource
 
+    private lateinit var cartDataSourceWithError: CartDataSource
+    private lateinit var bestDataSourceWithError: BestDataSource
+    private lateinit var mainDishDataSourceWithError: MainDishDataSource
+    private lateinit var soupDishDataSourceWithError: SoupDishDataSource
+    private lateinit var sideDishDataSourceWithError: SideDishDataSource
+
     private lateinit var dishRepository: DishRepository
+    private lateinit var dishRepositoryWithError: DishRepository
 
     private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -131,6 +139,21 @@ class DishRepositoryImplTest {
             mainDishDataSource,
             sideDishDataSource,
             soupDishDataSource,
+            testDispatcher
+        )
+
+        cartDataSourceWithError = FakeCartDataSourceWithError()
+        bestDataSourceWithError = FakeBestDataSourceWithError()
+        mainDishDataSourceWithError = FakeMainDishDataSourceWithError()
+        soupDishDataSourceWithError = FakeSoupDishDataSourceWithError()
+        sideDishDataSourceWithError = FakeSideDishDataSourceWithError()
+
+        dishRepositoryWithError = DishRepositoryImpl(
+            cartDataSourceWithError,
+            bestDataSourceWithError,
+            mainDishDataSourceWithError,
+            sideDishDataSourceWithError,
+            soupDishDataSourceWithError,
             testDispatcher
         )
     }
@@ -284,20 +307,66 @@ class DishRepositoryImplTest {
 
 
             val collectJob = launch(testDispatcher) {
-                dishRepository.getDishes(Source.MAIN).collect{
+                dishRepository.getDishes(Source.MAIN).collect {
                     mainDishActual = it
                 }
-                dishRepository.getDishes(Source.SOUP).collect{
+                dishRepository.getDishes(Source.SOUP).collect {
                     soupDishActual = it
                 }
-                dishRepository.getDishes(Source.SIDE).collect{
+                dishRepository.getDishes(Source.SIDE).collect {
                     sideDishActual = it
                 }
             }
 
-            assertEquals(mainDishExpected,mainDishActual)
-            assertEquals(soupDishExpected,soupDishActual)
-            assertEquals(sideDishExpected,sideDishActual)
+            assertEquals(mainDishExpected, mainDishActual)
+            assertEquals(soupDishExpected, soupDishActual)
+            assertEquals(sideDishExpected, sideDishActual)
+
+            collectJob.cancel()
+        }
+    }
+
+    @Test
+    fun getBestsErrorTest(){
+        runTest {
+            val expected = Result.failure<List<BestItem>>(ErrorEntity.UnknownError)
+            var actual: Result<List<BestItem>>? = null
+            val collectJob = launch(testDispatcher) {
+                dishRepositoryWithError.getBestDishes().collect {
+                    actual = it
+                }
+            }
+            assertEquals(expected,actual)
+            collectJob.cancel()
+        }
+    }
+
+    @Test
+    fun getDishesErrorTest(){
+        runTest {
+            val mainDishExpected = Result.failure<List<Dish>>(ErrorEntity.UnknownError)
+            val soupDishExpected = Result.failure<List<Dish>>(ErrorEntity.UnknownError)
+            val sideDishExpected = Result.failure<List<Dish>>(ErrorEntity.UnknownError)
+
+            var mainDishActual: Result<List<Dish>>? = null
+            var soupDishActual: Result<List<Dish>>? = null
+            var sideDishActual: Result<List<Dish>>? = null
+
+            val collectJob = launch(testDispatcher) {
+                dishRepositoryWithError.getDishes(Source.MAIN).collect {
+                    mainDishActual = it
+                }
+                dishRepositoryWithError.getDishes(Source.SOUP).collect {
+                    soupDishActual = it
+                }
+                dishRepositoryWithError.getDishes(Source.SIDE).collect {
+                    sideDishActual = it
+                }
+            }
+
+            assertEquals(mainDishExpected, mainDishActual)
+            assertEquals(soupDishExpected, soupDishActual)
+            assertEquals(sideDishExpected, sideDishActual)
 
             collectJob.cancel()
         }
