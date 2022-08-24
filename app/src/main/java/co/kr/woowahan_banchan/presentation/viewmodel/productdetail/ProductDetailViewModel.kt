@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.kr.woowahan_banchan.domain.entity.detail.DishInfo
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.usecase.*
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
 import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
 import co.kr.woowahan_banchan.util.calculateDiffToMinute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,12 +30,12 @@ class ProductDetailViewModel @Inject constructor(
     val amount: StateFlow<Int> get() = _amount
     private val _cartCount = MutableStateFlow(0)
     val cartCount: StateFlow<Int> get() = _cartCount
+    private val _deliveryState = MutableStateFlow<UiStates<Boolean>>(UiStates.Init)
+    val deliveryState: StateFlow<UiStates<Boolean>> get() = _deliveryState
 
     // Event
-    private val _isAddSuccess = MutableSharedFlow<Boolean>()
-    val isAddSuccess: SharedFlow<Boolean> get() = _isAddSuccess
-    private val _isOrderCompleted = MutableStateFlow<Boolean>(true)
-    val isOrderCompleted: StateFlow<Boolean> get() = _isOrderCompleted
+    private val _cartAddEvent = MutableSharedFlow<UiEvents<Unit>>()
+    val cartAddEvent: SharedFlow<UiEvents<Unit>> get() = _cartAddEvent
 
     fun fetchUiState(hash: String) {
         viewModelScope.launch {
@@ -60,8 +61,8 @@ class ProductDetailViewModel @Inject constructor(
     fun addToCart(hash: String, name: String) {
         viewModelScope.launch {
             cartAddUseCase(hash, amount.value, name)
-                .onSuccess { _isAddSuccess.emit(true) }
-                .onFailure { _isAddSuccess.emit(false) }
+                .onSuccess { _cartAddEvent.emit(UiEvents.Success(Unit)) }
+                .onFailure { _cartAddEvent.emit(UiEvents.Error(it as ErrorEntity)) }
         }
     }
 
@@ -91,7 +92,10 @@ class ProductDetailViewModel @Inject constructor(
         viewModelScope.launch {
             latestOrderTimeUseCase().collect { result ->
                 result.onSuccess {
-                    _isOrderCompleted.value = Date().time.calculateDiffToMinute(it) >= 20
+                    _deliveryState.value =
+                        UiStates.Success(Date().time.calculateDiffToMinute(it) < 20)
+                }.onFailure {
+                    _deliveryState.value = UiStates.Error("배송 정보를 받아오지 못했어요!")
                 }
             }
         }

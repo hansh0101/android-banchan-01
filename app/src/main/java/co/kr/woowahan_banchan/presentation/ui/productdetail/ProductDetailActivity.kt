@@ -20,6 +20,8 @@ import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
 import co.kr.woowahan_banchan.presentation.ui.cart.CartActivity
 import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddDialog
+import co.kr.woowahan_banchan.presentation.ui.widget.ErrorDialog
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
 import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
 import co.kr.woowahan_banchan.presentation.viewmodel.productdetail.ProductDetailViewModel
 import co.kr.woowahan_banchan.util.ImageLoader
@@ -121,27 +123,38 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
                 }
             }.launchIn(lifecycleScope)
 
-        viewModel.isAddSuccess
+        viewModel.cartAddEvent
             .flowWithLifecycle(lifecycle)
-            .onEach { success ->
-                when (success) {
-                    true -> {
+            .onEach {
+                when (it) {
+                    is UiEvents.Success -> {
                         CartAddDialog(this).show()
                     }
-                    false -> shortToast("실패")
+                    is UiEvents.Error -> {
+                        ErrorDialog(
+                            this,
+                            it.error,
+                            { binding.btnOrder.performClick() }
+                        ).show()
+                    }
                 }
             }.launchIn(lifecycleScope)
 
-        viewModel.cartCount.flowWithLifecycle(this.lifecycle)
+        viewModel.cartCount
+            .flowWithLifecycle(this.lifecycle)
             .onEach {
                 badge.number = it
                 badge.isVisible = it > 0
             }.launchIn(lifecycleScope)
 
-        viewModel.isOrderCompleted
+        viewModel.deliveryState
             .flowWithLifecycle(this.lifecycle)
             .onEach {
-                invalidateOptionsMenu()
+                when(it) {
+                    is UiStates.Init -> {}
+                    is UiStates.Success -> invalidateOptionsMenu()
+                    is UiStates.Error -> shortToast(it.message)
+                }
             }.launchIn(lifecycleScope)
     }
 
@@ -215,13 +228,13 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        if (viewModel.isOrderCompleted.value) {
+        if ((viewModel.deliveryState.value as? UiStates.Success)?.data == true) {
             menu?.let {
-                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user)
+                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user_badge)
             }
         } else {
             menu?.let {
-                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user_badge)
+                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user)
             }
         }
         return super.onPrepareOptionsMenu(menu)
