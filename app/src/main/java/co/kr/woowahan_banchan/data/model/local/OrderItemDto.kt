@@ -1,22 +1,19 @@
 package co.kr.woowahan_banchan.data.model.local
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
+import androidx.room.*
 import androidx.room.ForeignKey.CASCADE
-import androidx.room.PrimaryKey
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderItem
 
 @Entity(
     tableName = "ORDER_ITEM",
-    foreignKeys = arrayOf(
+    foreignKeys = [
         ForeignKey(
             entity = OrderDto::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("order_id"),
             onDelete = CASCADE
         )
-    )
+    ]
 )
 data class OrderItemDto(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
