@@ -190,7 +190,7 @@ class CartRepositoryImplTest {
     @Test
     fun getCartItemsErrorTest() {
         runTest {
-            val expected = Result.failure<Unit>(ErrorEntity.UnknownError)
+            val expected = Result.failure<List<CartItem>>(ErrorEntity.UnknownError)
             var actual: Result<List<CartItem>>? = null
             val collectJob = launch(testDispatcher) {
                 cartRepositoryWithError.getCartItems().collect {
