@@ -38,7 +38,7 @@ class CartRepositoryImpl @Inject constructor(
     override fun getCartItemCount(): Flow<Result<Int>> {
         return cartDataSource.getItems()
             .map { Result.success(it.size) }
-            .catch { Result.failure<Throwable>(it) }
+            .catch { emit(Result.failure(it)) }
     }
 
     override fun getCartItems(): Flow<Result<List<CartItem>>> {
