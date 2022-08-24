@@ -54,8 +54,8 @@ class HistoryDataSourceImplTest {
 
     @Test
     fun getItems() = runTest {
-        val expected = historyDao.historyDtos
-        var actual: List<HistoryDto>? = null
+        val expected = Result.success(historyDao.historyDtos)
+        var actual: Result<List<HistoryDto>>? = null
         val collectJob = launch(UnconfinedTestDispatcher()) {
             historyDataSource.getItems().collect { actual = it }
         }
@@ -78,8 +78,8 @@ class HistoryDataSourceImplTest {
 
     @Test
     fun getPreviewItems() = runTest {
-        val expected = historyDao.historyDtos.take(7)
-        var actual: List<HistoryDto>? = null
+        val expected = Result.success(historyDao.historyDtos.take(7))
+        var actual: Result<List<HistoryDto>>? = null
         val collectJob = launch(UnconfinedTestDispatcher()) {
             historyDataSource.getPreviewItems().collect { actual = it }
         }
@@ -92,9 +92,7 @@ class HistoryDataSourceImplTest {
         val expected = Result.failure<List<HistoryDto>>(ErrorEntity.RetryableError)
         var actual: Result<List<HistoryDto>>? = null
         val collectJob = launch(UnconfinedTestDispatcher()) {
-            historyDataSourceWithError.getPreviewItems()
-                .catch { actual = Result.failure(it) }
-                .collect {}
+            historyDataSourceWithError.getPreviewItems().collect { actual = it }
         }
         assertEquals(expected, actual)
         collectJob.cancel()
