@@ -20,7 +20,9 @@ import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
 import co.kr.woowahan_banchan.presentation.ui.cart.CartActivity
 import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddDialog
-import co.kr.woowahan_banchan.presentation.viewmodel.UiState
+import co.kr.woowahan_banchan.presentation.ui.widget.ErrorDialog
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
+import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
 import co.kr.woowahan_banchan.presentation.viewmodel.productdetail.ProductDetailViewModel
 import co.kr.woowahan_banchan.util.ImageLoader
 import co.kr.woowahan_banchan.util.dpToPx
@@ -33,7 +35,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import timber.log.Timber
 
 @AndroidEntryPoint
 class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
@@ -96,15 +97,14 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
             .flowWithLifecycle(lifecycle)
             .onEach {
                 when (it) {
-                    is UiState.Init -> {
+                    is UiStates.Init -> {
                         showProgressBar()
                     }
-                    is UiState.Success -> {
-                        Timber.tag("dishInfo").i(it.toString())
+                    is UiStates.Success -> {
                         hideProgressBar()
                         showUi(it.data)
                     }
-                    is UiState.Error -> {
+                    is UiStates.Error -> {
                         hideProgressBar()
                         shortToast(it.message)
                         finish()
@@ -116,34 +116,45 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
             .flowWithLifecycle(lifecycle)
             .onEach {
                 binding.tvAmountValue.text = it.toPriceFormat()
-                if (viewModel.dishInfo.value is UiState.Success) {
+                if (viewModel.dishInfo.value is UiStates.Success) {
                     val price =
-                        (viewModel.dishInfo.value as UiState.Success).data.prices.last()
+                        (viewModel.dishInfo.value as UiStates.Success).data.prices.last()
                     showTotalPrice(it, price)
                 }
             }.launchIn(lifecycleScope)
 
-        viewModel.isAddSuccess
+        viewModel.cartAddEvent
             .flowWithLifecycle(lifecycle)
-            .onEach { success ->
-                when (success) {
-                    true -> {
+            .onEach {
+                when (it) {
+                    is UiEvents.Success -> {
                         CartAddDialog(this).show()
                     }
-                    false -> shortToast("실패")
+                    is UiEvents.Error -> {
+                        ErrorDialog(
+                            this,
+                            it.error,
+                            { binding.btnOrder.performClick() }
+                        ).show()
+                    }
                 }
             }.launchIn(lifecycleScope)
 
-        viewModel.cartCount.flowWithLifecycle(this.lifecycle)
+        viewModel.cartCount
+            .flowWithLifecycle(this.lifecycle)
             .onEach {
                 badge.number = it
                 badge.isVisible = it > 0
             }.launchIn(lifecycleScope)
 
-        viewModel.isOrderCompleted
+        viewModel.deliveryState
             .flowWithLifecycle(this.lifecycle)
             .onEach {
-                invalidateOptionsMenu()
+                when(it) {
+                    is UiStates.Init -> {}
+                    is UiStates.Success -> invalidateOptionsMenu()
+                    is UiStates.Error -> shortToast(it.message)
+                }
             }.launchIn(lifecycleScope)
     }
 
@@ -217,13 +228,13 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        if (viewModel.isOrderCompleted.value) {
+        if ((viewModel.deliveryState.value as? UiStates.Success)?.data == true) {
             menu?.let {
-                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user)
+                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user_badge)
             }
         } else {
             menu?.let {
-                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user_badge)
+                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user)
             }
         }
         return super.onPrepareOptionsMenu(menu)
