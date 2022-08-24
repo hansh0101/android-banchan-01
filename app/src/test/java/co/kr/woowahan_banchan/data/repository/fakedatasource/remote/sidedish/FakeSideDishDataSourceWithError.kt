@@ -1,4 +1,4 @@
-package co.kr.woowahan_banchan.data.repository.fakedatasource
+package co.kr.woowahan_banchan.data.repository.fakedatasource.remote.sidedish
 
 import co.kr.woowahan_banchan.data.datasource.remote.sidedish.SideDishDataSource
 import co.kr.woowahan_banchan.data.extension.toErrorEntity

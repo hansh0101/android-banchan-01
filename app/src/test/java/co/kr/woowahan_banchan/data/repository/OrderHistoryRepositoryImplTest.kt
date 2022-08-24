@@ -2,18 +2,18 @@ package co.kr.woowahan_banchan.data.repository
 
 import co.kr.woowahan_banchan.data.model.local.OrderDto
 import co.kr.woowahan_banchan.data.model.local.OrderItemDto
-import co.kr.woowahan_banchan.data.repository.fakedatasource.FakeOrderDataSource
-import co.kr.woowahan_banchan.data.repository.fakedatasource.FakeOrderDataSourceWithError
-import co.kr.woowahan_banchan.data.repository.fakedatasource.FakeOrderItemDataSource
-import co.kr.woowahan_banchan.data.repository.fakedatasource.FakeOrderItemDataSourceWithError
+import co.kr.woowahan_banchan.data.repository.fakedatasource.local.order.FakeOrderDataSource
+import co.kr.woowahan_banchan.data.repository.fakedatasource.local.order.FakeOrderDataSourceWithError
+import co.kr.woowahan_banchan.data.repository.fakedatasource.local.orderitem.FakeOrderItemDataSource
+import co.kr.woowahan_banchan.data.repository.fakedatasource.local.orderitem.FakeOrderItemDataSourceWithError
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderHistory
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderItem
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 

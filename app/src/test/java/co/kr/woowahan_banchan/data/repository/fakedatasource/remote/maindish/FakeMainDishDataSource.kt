@@ -1,4 +1,4 @@
-package co.kr.woowahan_banchan.data.repository.fakedatasource
+package co.kr.woowahan_banchan.data.repository.fakedatasource.remote.maindish
 
 import co.kr.woowahan_banchan.data.datasource.remote.maindish.MainDishDataSource
 import co.kr.woowahan_banchan.data.model.remote.response.DishResponse
