@@ -5,20 +5,13 @@ import co.kr.woowahan_banchan.data.model.local.CartDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class FakeCartDataSource : CartDataSource {
-    private val cartItems = mutableListOf(
-        CartDto(
-            hash = "HF778",
-            amount = 1,
-            isSelected = true,
-            time = 111111,
-            name = "소갈비찜"
-        )
-    )
+class FakeCartDataSource(
+    private val cartDtos : MutableList<CartDto>
+) : CartDataSource {
 
     override fun getItems(): Flow<List<CartDto>> {
         return flow {
-            emit(cartItems)
+            emit(cartDtos)
         }
     }
 
@@ -31,7 +24,7 @@ class FakeCartDataSource : CartDataSource {
     }
 
     override suspend fun getAmount(hash: String): Result<Int> {
-        val temp = cartItems.find { it.hash == hash }
+        val temp = cartDtos.find { it.hash == hash }
         return if (temp != null) {
             Result.success(temp.amount)
         } else {
