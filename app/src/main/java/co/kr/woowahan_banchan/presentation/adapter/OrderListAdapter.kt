@@ -27,7 +27,11 @@ class OrderListAdapter(private val itemClick: (OrderHistory) -> Unit) :
                         binding.ivThumbnail.setImageBitmap(it)
                     }
                 }
-                binding.tvTitle.text = this.title
+                binding.tvTitle.text = if (this.count > 1) {
+                    this.title + " 외 ${this.count - 1}개"
+                } else {
+                    this.title
+                }
                 binding.tvPrice.text = this.totalPrice.toPriceFormat() + "원"
                 setDeliveryInfo(time)
             }
