@@ -6,6 +6,7 @@ import co.kr.woowahan_banchan.data.model.remote.response.DetailResponse
 import co.kr.woowahan_banchan.data.repository.fakedatasource.FakeDetailDataSource
 import co.kr.woowahan_banchan.data.repository.fakedatasource.FakeDetailDataSourceWithError
 import co.kr.woowahan_banchan.domain.entity.detail.DishInfo
+import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.repository.DetailRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -53,7 +54,7 @@ class DetailRepositoryImplTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    fun getDishInfo() {
+    fun getDishInfoTest() {
         runTest {
             val expected = Result.success(
                 DishInfo(
@@ -76,6 +77,16 @@ class DetailRepositoryImplTest {
                 )
             )
             val actual = detailRepository.getDishInfo("HF778")
+            assertEquals(expected, actual)
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun getDishInfoErrorTest() {
+        runTest {
+            val expected = Result.failure<DishInfo>(ErrorEntity.ConditionalError)
+            val actual = detailRepositoryWithError.getDishInfo("HF778")
             assertEquals(expected, actual)
         }
     }
