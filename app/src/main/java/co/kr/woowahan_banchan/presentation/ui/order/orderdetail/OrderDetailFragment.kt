@@ -187,7 +187,9 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
     }
 
     companion object {
+        var selectedOrderId : Long? = null
         fun newInstance(orderId: Long): OrderDetailFragment {
+            selectedOrderId = orderId
             return OrderDetailFragment().apply {
                 arguments = Bundle().apply {
                     putLong("orderId", orderId)
