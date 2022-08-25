@@ -31,7 +31,7 @@ class OrderDataSourceImplTest {
     fun setUp() {
         orderDao = FakeOrderDao(originalOrderDtos)
         orderDataSource = OrderDataSourceImpl(orderDao, UnconfinedTestDispatcher())
-        orderDaoWithError = FakeOrderDaoWithError(originalOrderDtos)
+        orderDaoWithError = FakeOrderDaoWithError()
         orderDataSourceWithError =
             OrderDataSourceImpl(orderDaoWithError, UnconfinedTestDispatcher())
     }
@@ -131,11 +131,10 @@ class FakeOrderDao(initOrderDtos: List<OrderDto>) : OrderDao {
         }
     }
 
-    override suspend fun updateItem(item: OrderDto) { }
+    override suspend fun updateItem(id: Long) { }
 }
 
-class FakeOrderDaoWithError(initOrderDtos: List<OrderDto>) : OrderDao {
-    val orderDtos = initOrderDtos.toMutableList()
+class FakeOrderDaoWithError : OrderDao {
 
     override suspend fun getItems(): List<OrderDto> {
         throw IllegalStateException()
@@ -157,7 +156,7 @@ class FakeOrderDaoWithError(initOrderDtos: List<OrderDto>) : OrderDao {
         throw EOFException()
     }
 
-    override suspend fun updateItem(item: OrderDto) {
+    override suspend fun updateItem(id: Long) {
         throw NullPointerException()
     }
 }
