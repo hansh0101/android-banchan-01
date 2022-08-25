@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import okio.EOFException
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -123,6 +124,14 @@ class FakeOrderDao(initOrderDtos: List<OrderDto>) : OrderDao {
     override suspend fun insertItem(item: OrderDto): Long {
         return (orderDtos.size + 1).toLong()
     }
+
+    override fun getIncompleteItems(): Flow<List<OrderDto>> {
+        return flow {
+            emit(orderDtos.filter { !it.isCompleted })
+        }
+    }
+
+    override suspend fun updateItem(item: OrderDto) { }
 }
 
 class FakeOrderDaoWithError(initOrderDtos: List<OrderDto>) : OrderDao {
@@ -141,6 +150,14 @@ class FakeOrderDaoWithError(initOrderDtos: List<OrderDto>) : OrderDao {
     }
 
     override suspend fun insertItem(item: OrderDto): Long {
+        throw NullPointerException()
+    }
+
+    override fun getIncompleteItems(): Flow<List<OrderDto>> {
+        throw EOFException()
+    }
+
+    override suspend fun updateItem(item: OrderDto) {
         throw NullPointerException()
     }
 }

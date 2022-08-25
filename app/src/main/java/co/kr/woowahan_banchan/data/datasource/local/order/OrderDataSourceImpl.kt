@@ -41,4 +41,19 @@ class OrderDataSourceImpl @Inject constructor(
                 orderDao.insertItem(item)
             }
         }
+
+    override fun getOrderIsCompleted(): Flow<Result<Boolean>> =
+        orderDao.getIncompleteItems()
+            .filterNotNull()
+            .map { Result.success(it.isEmpty()) }
+            .catch {
+                emit(Result.failure(it.toErrorEntity()))
+            }.flowOn(coroutineDispatcher)
+
+    override suspend fun updateItem(item: OrderDto): Result<Unit> =
+        withContext(coroutineDispatcher) {
+            runCatchingErrorEntity {
+                orderDao.updateItem(item)
+            }
+        }
 }

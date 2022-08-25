@@ -19,11 +19,21 @@ class FakeOrderDataSource(initOrderDtos: List<OrderDto>) : OrderDataSource {
         }
     }
 
+    override fun getOrderIsCompleted(): Flow<Result<Boolean>> {
+        return flow {
+            emit(Result.success(orderDtos.isEmpty()))
+        }
+    }
+
     override suspend fun getTime(orderId: Long): Result<Long> {
         return Result.success(orderDtos.find { it.id == orderId }!!.time)
     }
 
     override suspend fun insertItem(item: OrderDto): Result<Long> {
         return Result.success((orderDtos.apply { add(item) }.size).toLong())
+    }
+
+    override suspend fun updateItem(item: OrderDto): Result<Unit> {
+        return Result.success(Unit)
     }
 }

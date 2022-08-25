@@ -10,8 +10,6 @@ import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderItem
 import co.kr.woowahan_banchan.domain.repository.OrderHistoryRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
@@ -80,5 +78,20 @@ class OrderHistoryRepositoryImpl @Inject constructor(
             ).getOrThrow()
             orderId
         }
+    }
+
+    override suspend fun updateOrderItems(orderHistory: OrderHistory): Result<Unit> {
+        return orderDataSource.updateItem(
+            OrderDto(
+                id = orderHistory.orderId,
+                totalPrice = orderHistory.totalPrice,
+                time = orderHistory.time,
+                isCompleted = orderHistory.isCompleted
+            )
+        )
+    }
+
+    override fun getOrderIsCompleted(): Flow<Result<Boolean>> {
+        return orderDataSource.getOrderIsCompleted()
     }
 }

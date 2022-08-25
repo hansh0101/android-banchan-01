@@ -7,8 +7,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface OrderHistoryRepository {
     suspend fun getOrderHistories(): Result<List<OrderHistory>>
-    fun getLatestOrderTime(): Flow<Result<Long>>
     suspend fun getOrderTime(orderId: Long): Result<Long>
     suspend fun getOrderReceipt(orderId: Long): Result<List<OrderItem>>
     suspend fun insertOrderItems(orderItems: List<CartItem>): Result<Long>
+    suspend fun updateOrderItems(orderHistory: OrderHistory): Result<Unit>
+    fun getLatestOrderTime(): Flow<Result<Long>>
+    fun getOrderIsCompleted(): Flow<Result<Boolean>>
 }
