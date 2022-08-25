@@ -26,7 +26,13 @@ class OrderListAdapter(private val itemClick: (OrderHistory) -> Unit) :
                     .setPlaceHolder(R.mipmap.ic_launcher)
                     .setErrorImage(R.mipmap.ic_launcher)
                     .loadImage(this.thumbnailUrl)
-                binding.tvTitle.text = this.title
+                    
+                binding.tvTitle.text = if (this.count > 1) {
+                    this.title + " 외 ${this.count - 1}개"
+                } else {
+                    this.title
+                }
+                
                 binding.tvPrice.text = this.totalPrice.toPriceFormat() + "원"
                 setDeliveryInfo(time)
             }
