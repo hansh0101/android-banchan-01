@@ -6,5 +6,6 @@ data class OrderHistory(
     val title: String,
     val count: Int,
     val totalPrice: Int,
-    val time: Long
+    val time: Long,
+    var isCompleted: Boolean = false
 )
