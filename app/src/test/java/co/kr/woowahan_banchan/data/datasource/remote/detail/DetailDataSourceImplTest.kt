@@ -4,25 +4,26 @@ import co.kr.woowahan_banchan.data.api.DetailService
 import co.kr.woowahan_banchan.data.model.remote.response.DetailDataResponse
 import co.kr.woowahan_banchan.data.model.remote.response.DetailResponse
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class DetailDataSourceImplTest {
 
     private lateinit var detailService: DetailService
     private lateinit var detailDataSource: DetailDataSource
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setUp() {
         detailService = FakeDetailService()
-        detailDataSource = DetailDataSourceImpl(detailService, Dispatchers.IO)
+        detailDataSource = DetailDataSourceImpl(detailService, testDispatcher)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
     fun getDetailTest() {
         runTest {

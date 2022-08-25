@@ -3,25 +3,26 @@ package co.kr.woowahan_banchan.data.datasource.remote.soupdish
 import co.kr.woowahan_banchan.data.api.SoupDishService
 import co.kr.woowahan_banchan.data.model.remote.response.ApiResponse
 import co.kr.woowahan_banchan.data.model.remote.response.DishResponse
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class SoupDishDataSourceImplTest {
 
     private lateinit var soupDishService: SoupDishService
     private lateinit var soupDishDataSource: SoupDishDataSource
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setUp() {
         soupDishService = FakeSoupDishService()
-        soupDishDataSource = SoupDishDataSourceImpl(soupDishService, Dispatchers.IO)
+        soupDishDataSource = SoupDishDataSourceImpl(soupDishService, testDispatcher)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
     fun getSoupDishes() {
         runTest {
