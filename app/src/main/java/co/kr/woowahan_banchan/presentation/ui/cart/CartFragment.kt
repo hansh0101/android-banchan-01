@@ -124,7 +124,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
                     is UiState.Success -> {
                         val alarmManager =
                             requireContext().getSystemService(ALARM_SERVICE) as AlarmManager
-                        val intent = Intent(AlarmReceiver.getIntent(requireContext()))
+                        val intent = Intent(AlarmReceiver.getIntent(requireContext(),it.data))
                         val pendingIntent = PendingIntent.getBroadcast(
                             requireContext(),
                             AlarmReceiver.NOTIFICATION_ID,

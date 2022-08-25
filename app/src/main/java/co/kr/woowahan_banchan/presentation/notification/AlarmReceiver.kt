@@ -8,16 +8,26 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import androidx.core.app.NotificationCompat
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
+import co.kr.woowahan_banchan.presentation.worker.OrderUpdateWorker
 
 class AlarmReceiver : BroadcastReceiver() {
+
     override fun onReceive(context: Context, intent: Intent?) {
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         createNotificationChannel(notificationManager)
         deliverNotification(notificationManager, context)
+
+        val workManager = WorkManager.getInstance(context)
+
+        val orderId = intent?.extras?.getLong("orderId") ?: -1
+        orderUpdate(orderId,workManager)
     }
 
     private fun createNotificationChannel(notificationManager: NotificationManager) {
@@ -32,8 +42,6 @@ class AlarmReceiver : BroadcastReceiver() {
             enableVibration(true)
             description = "ALARM_DELIVERY"
             notificationManager.createNotificationChannel(this)
-
-
         }
     }
 
@@ -57,11 +65,20 @@ class AlarmReceiver : BroadcastReceiver() {
         notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
+    private fun orderUpdate(orderId: Long, workManager: WorkManager) {
+        val inputData = Data.Builder().putLong(OrderUpdateWorker.ORDER_ID, orderId).build()
+        val orderUpdateRequest = OneTimeWorkRequestBuilder<OrderUpdateWorker>()
+            .setInputData(inputData).build()
+        workManager.enqueue(orderUpdateRequest)
+    }
+
     companion object {
         const val NOTIFICATION_ID = 0
         const val PRIMARY_CHANNEL_ID = "primary_notification_channel"
 
-        fun getIntent(context: Context): Intent =
-            Intent(context, AlarmReceiver::class.java)
+        fun getIntent(context: Context, orderId: Long): Intent =
+            Intent(context, AlarmReceiver::class.java).apply {
+                putExtra("orderId", orderId)
+            }
     }
 }
