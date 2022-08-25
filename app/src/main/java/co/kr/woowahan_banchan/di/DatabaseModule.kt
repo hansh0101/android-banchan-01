@@ -2,8 +2,8 @@ package co.kr.woowahan_banchan.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import co.kr.woowahan_banchan.data.database.BanchanDatabase
+import co.kr.woowahan_banchan.data.database.Migration
 import co.kr.woowahan_banchan.data.database.dao.CartDao
 import co.kr.woowahan_banchan.data.database.dao.HistoryDao
 import co.kr.woowahan_banchan.data.database.dao.OrderDao
@@ -22,6 +22,7 @@ object DatabaseModule {
     @Singleton
     fun provideBanchanDatabase(@ApplicationContext context: Context): BanchanDatabase =
         Room.databaseBuilder(context, BanchanDatabase::class.java, "banchan.db")
+            .addMigrations(Migration.migration_1_2)
             .build()
 
     @Provides
