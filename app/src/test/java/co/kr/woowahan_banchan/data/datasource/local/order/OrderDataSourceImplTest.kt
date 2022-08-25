@@ -27,13 +27,14 @@ class OrderDataSourceImplTest {
     private lateinit var orderDaoWithError: FakeOrderDaoWithError
     private lateinit var orderDataSourceWithError: OrderDataSource
 
+    private val testDispatcher = UnconfinedTestDispatcher()
+
     @Before
     fun setUp() {
         orderDao = FakeOrderDao(originalOrderDtos)
-        orderDataSource = OrderDataSourceImpl(orderDao, UnconfinedTestDispatcher())
-        orderDaoWithError = FakeOrderDaoWithError(originalOrderDtos)
-        orderDataSourceWithError =
-            OrderDataSourceImpl(orderDaoWithError, UnconfinedTestDispatcher())
+        orderDataSource = OrderDataSourceImpl(orderDao, testDispatcher)
+        orderDaoWithError = FakeOrderDaoWithError()
+        orderDataSourceWithError = OrderDataSourceImpl(orderDaoWithError, testDispatcher)
     }
 
     @Test
@@ -56,7 +57,7 @@ class OrderDataSourceImplTest {
             Result.success(orderDao.orderDtos.apply { sortWith(compareByDescending { it.time }) }
                 .first().time)
         var actual: Result<Long>? = null
-        val collectJob = launch(UnconfinedTestDispatcher()) {
+        val collectJob = launch(testDispatcher) {
             orderDataSource.getLatestOrderTime().collect { actual = it }
         }
         assertEquals(expected, actual)
@@ -67,7 +68,7 @@ class OrderDataSourceImplTest {
     fun getLatestOrderTimeWithError() = runTest {
         val expected = Result.failure<Long>(ErrorEntity.UnknownError)
         var actual: Result<Long>? = null
-        val collectJob = launch(UnconfinedTestDispatcher()) {
+        val collectJob = launch(testDispatcher) {
             orderDataSourceWithError.getLatestOrderTime()
                 .collect { actual = it }
         }
@@ -102,6 +103,42 @@ class OrderDataSourceImplTest {
         val actual = orderDataSourceWithError.insertItem(orderDto3)
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun getOrderIsCompleted() = runTest {
+        val expected = Result.success(false)
+        var actual: Result<Boolean>? = null
+        val collectJob = launch(testDispatcher) {
+            orderDataSource.getOrderIsCompleted().collect { actual = it }
+        }
+        assertEquals(expected, actual)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun getOrderIsCompletedWithError() = runTest {
+        val expected = Result.failure<Boolean>(ErrorEntity.UnknownError)
+        var actual: Result<Boolean>? = null
+        val collectJob = launch(testDispatcher) {
+            orderDataSourceWithError.getOrderIsCompleted().collect { actual = it }
+        }
+        assertEquals(expected, actual)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun updateItem() = runTest {
+        val expected = Result.success(Unit)
+        val actual = orderDataSource.updateItem(1)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun updateItemWithError() = runTest {
+        val expected = Result.failure<Unit>(ErrorEntity.UnknownError)
+        val actual = orderDataSourceWithError.updateItem(1)
+        assertEquals(expected, actual)
+    }
 }
 
 class FakeOrderDao(initOrderDtos: List<OrderDto>) : OrderDao {
@@ -131,11 +168,10 @@ class FakeOrderDao(initOrderDtos: List<OrderDto>) : OrderDao {
         }
     }
 
-    override suspend fun updateItem(item: OrderDto) { }
+    override suspend fun updateItem(id: Long) {}
 }
 
-class FakeOrderDaoWithError(initOrderDtos: List<OrderDto>) : OrderDao {
-    val orderDtos = initOrderDtos.toMutableList()
+class FakeOrderDaoWithError : OrderDao {
 
     override suspend fun getItems(): List<OrderDto> {
         throw IllegalStateException()
@@ -154,10 +190,10 @@ class FakeOrderDaoWithError(initOrderDtos: List<OrderDto>) : OrderDao {
     }
 
     override fun getIncompleteItems(): Flow<List<OrderDto>> {
-        throw EOFException()
+        return flow { throw EOFException() }
     }
 
-    override suspend fun updateItem(item: OrderDto) {
+    override suspend fun updateItem(id: Long) {
         throw NullPointerException()
     }
 }

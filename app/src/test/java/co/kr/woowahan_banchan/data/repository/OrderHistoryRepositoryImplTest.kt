@@ -180,4 +180,40 @@ class OrderHistoryRepositoryImplTest {
         val actual = orderHistoryRepositoryWithError.insertOrderItems(listOf())
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun updateOrderHistory() = runTest {
+        val expected = Result.success(Unit)
+        val actual = orderHistoryRepository.updateOrderHistory(1)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun updateOrderHistoryWithError() = runTest {
+        val expected = Result.failure<Unit>(ErrorEntity.RetryableError)
+        val actual = orderHistoryRepositoryWithError.updateOrderHistory(1)
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun getOrderIsCompleted() = runTest {
+        val expected = Result.success(false)
+        var actual: Result<Boolean>? = null
+        val collectJob = launch(testDispatcher) {
+            orderHistoryRepository.getOrderIsCompleted().collect { actual = it }
+        }
+        assertEquals(expected, actual)
+        collectJob.cancel()
+    }
+
+    @Test
+    fun getOrderIsCompletedWithError() = runTest {
+        val expected = Result.failure<Boolean>(ErrorEntity.ConditionalError)
+        var actual: Result<Boolean>? = null
+        val collectJob = launch(testDispatcher) {
+            orderHistoryRepositoryWithError.getOrderIsCompleted().collect { actual = it }
+        }
+        assertEquals(expected, actual)
+        collectJob.cancel()
+    }
 }
