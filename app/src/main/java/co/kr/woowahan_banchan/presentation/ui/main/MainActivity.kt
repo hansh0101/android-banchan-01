@@ -21,7 +21,7 @@ import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
 import co.kr.woowahan_banchan.presentation.ui.cart.CartActivity
 import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.MainViewModel
-import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.util.dpToPx
 import co.kr.woowahan_banchan.util.shortToast
 import com.google.android.material.badge.BadgeDrawable
@@ -118,9 +118,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             .flowWithLifecycle(this.lifecycle)
             .onEach {
                 when(it){
-                    is UiStates.Init -> {}
-                    is UiStates.Success -> invalidateOptionsMenu()
-                    is UiStates.Error -> shortToast(it.message)
+                    is UiState.Init -> {}
+                    is UiState.Success -> invalidateOptionsMenu()
+                    is UiState.Error -> shortToast(it.message)
                 }
             }.launchIn(lifecycleScope)
     }
@@ -145,7 +145,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        if ((viewModel.isOrderCompleted.value as? UiStates.Success)?.data == false) {
+        if ((viewModel.isOrderCompleted.value as? UiState.Success)?.data == false) {
             menu?.let {
                 it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user_badge)
             }

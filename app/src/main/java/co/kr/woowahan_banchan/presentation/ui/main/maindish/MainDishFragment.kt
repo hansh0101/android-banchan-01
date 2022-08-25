@@ -20,8 +20,8 @@ import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddBottomSheet
 import co.kr.woowahan_banchan.presentation.ui.widget.ErrorDialog
-import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
-import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvent
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.main.MainDishViewModel
 import co.kr.woowahan_banchan.util.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,20 +81,20 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
         viewModel.mainDishes
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
-                binding.pbLoading.isVisible = it is UiStates.Init
+                binding.pbLoading.isVisible = it is UiState.Init
                 when (it) {
-                    is UiStates.Init -> {}
-                    is UiStates.Success -> {
+                    is UiState.Init -> {}
+                    is UiState.Success -> {
                         viewModel.setSortedDishes(binding.spFilter.selectedItemPosition)
                     }
-                    is UiStates.Error -> {}
+                    is UiState.Error -> {}
                 }
             }.launchIn(lifecycleScope)
 
         viewModel.mainDishesEvent
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
-                if (it is UiEvents.Error) {
+                if (it is UiEvent.Error) {
                     showErrorDialog(it)
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -162,7 +162,7 @@ class MainDishFragment : BaseFragment<FragmentMainDishBinding>() {
         })
     }
 
-    private fun showErrorDialog(event: UiEvents.Error) {
+    private fun showErrorDialog(event: UiEvent.Error) {
         ErrorDialog(requireContext(), event.error, { viewModel.reFetchDishes() }).show()
     }
 

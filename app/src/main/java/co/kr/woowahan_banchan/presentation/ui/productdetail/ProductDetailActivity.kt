@@ -21,8 +21,8 @@ import co.kr.woowahan_banchan.presentation.ui.cart.CartActivity
 import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddDialog
 import co.kr.woowahan_banchan.presentation.ui.widget.ErrorDialog
-import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
-import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvent
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.productdetail.ProductDetailViewModel
 import co.kr.woowahan_banchan.util.ImageLoader
 import co.kr.woowahan_banchan.util.dpToPx
@@ -96,14 +96,14 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
             .flowWithLifecycle(lifecycle)
             .onEach {
                 when (it) {
-                    is UiStates.Init -> {
+                    is UiState.Init -> {
                         showProgressBar()
                     }
-                    is UiStates.Success -> {
+                    is UiState.Success -> {
                         hideProgressBar()
                         showUi(it.data)
                     }
-                    is UiStates.Error -> {
+                    is UiState.Error -> {
                         hideProgressBar()
                         shortToast(it.message)
                         finish()
@@ -115,9 +115,9 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
             .flowWithLifecycle(lifecycle)
             .onEach {
                 binding.tvAmountValue.text = it.toPriceFormat()
-                if (viewModel.dishInfo.value is UiStates.Success) {
+                if (viewModel.dishInfo.value is UiState.Success) {
                     val price =
-                        (viewModel.dishInfo.value as UiStates.Success).data.prices.last()
+                        (viewModel.dishInfo.value as UiState.Success).data.prices.last()
                     showTotalPrice(it, price)
                 }
             }.launchIn(lifecycleScope)
@@ -126,10 +126,10 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
             .flowWithLifecycle(lifecycle)
             .onEach {
                 when (it) {
-                    is UiEvents.Success -> {
+                    is UiEvent.Success -> {
                         CartAddDialog(this).show()
                     }
-                    is UiEvents.Error -> {
+                    is UiEvent.Error -> {
                         ErrorDialog(
                             this,
                             it.error,
@@ -150,9 +150,9 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
             .flowWithLifecycle(this.lifecycle)
             .onEach {
                 when(it) {
-                    is UiStates.Init -> {}
-                    is UiStates.Success -> invalidateOptionsMenu()
-                    is UiStates.Error -> shortToast(it.message)
+                    is UiState.Init -> {}
+                    is UiState.Success -> invalidateOptionsMenu()
+                    is UiState.Error -> shortToast(it.message)
                 }
             }.launchIn(lifecycleScope)
     }
@@ -226,7 +226,7 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        if ((viewModel.isOrderCompleted.value as? UiStates.Success)?.data == false) {
+        if ((viewModel.isOrderCompleted.value as? UiState.Success)?.data == false) {
             menu?.let {
                 it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user_badge)
             }

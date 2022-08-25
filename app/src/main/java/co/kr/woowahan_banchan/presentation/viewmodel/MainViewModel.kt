@@ -20,8 +20,8 @@ class MainViewModel @Inject constructor(
     private val _cartCount = MutableStateFlow(0)
     val cartCount: StateFlow<Int> get() = _cartCount
 
-    private val _isOrderCompleted = MutableStateFlow<UiStates<Boolean>>(UiStates.Init)
-    val isOrderCompleted: StateFlow<UiStates<Boolean>> get() = _isOrderCompleted
+    private val _isOrderCompleted = MutableStateFlow<UiState<Boolean>>(UiState.Init)
+    val isOrderCompleted: StateFlow<UiState<Boolean>> get() = _isOrderCompleted
 
     init {
         getCartItemCount()
@@ -42,9 +42,9 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             checkOrderCompleteUseCase().collect { result ->
                 result.onSuccess {
-                    _isOrderCompleted.value = UiStates.Success(it)
+                    _isOrderCompleted.value = UiState.Success(it)
                 }.onFailure {
-                    _isOrderCompleted.value = UiStates.Error("배송 정보를 받아오지 못했어요!")
+                    _isOrderCompleted.value = UiState.Error("배송 정보를 받아오지 못했어요!")
                 }
             }
         }
