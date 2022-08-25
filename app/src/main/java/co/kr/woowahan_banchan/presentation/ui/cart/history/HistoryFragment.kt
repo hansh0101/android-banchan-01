@@ -7,7 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import co.kr.woowahan_banchan.R
-import co.kr.woowahan_banchan.databinding.FragmentRecentlyViewedBinding
+import co.kr.woowahan_banchan.databinding.FragmentHistoryBinding
 import co.kr.woowahan_banchan.presentation.adapter.RecentlyViewedAdapter
 import co.kr.woowahan_banchan.presentation.decoration.GridItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class HistoryFragment : BaseFragment<FragmentRecentlyViewedBinding>() {
+class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
     override val layoutRes: Int
         get() = R.layout.fragment_history
 
