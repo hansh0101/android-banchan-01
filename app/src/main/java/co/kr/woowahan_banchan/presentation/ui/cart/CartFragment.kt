@@ -144,7 +144,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
                         )
                         alarmManager.set(
                             AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                            SystemClock.elapsedRealtime() + 1000 * 60 * 20,
+                            SystemClock.elapsedRealtime() + 1000 * 10,
                             pendingIntent
                         )
 
