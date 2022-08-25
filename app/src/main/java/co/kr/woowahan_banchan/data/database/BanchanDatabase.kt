@@ -2,6 +2,8 @@ package co.kr.woowahan_banchan.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import co.kr.woowahan_banchan.data.database.dao.CartDao
 import co.kr.woowahan_banchan.data.database.dao.HistoryDao
 import co.kr.woowahan_banchan.data.database.dao.OrderDao
@@ -20,4 +22,12 @@ abstract class BanchanDatabase : RoomDatabase() {
     abstract fun historyDao(): HistoryDao
     abstract fun orderDao(): OrderDao
     abstract fun orderItemDao(): OrderItemDao
+
+    companion object {
+        val migration_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE 'ORDER' ADD COLUMN is_completed INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+    }
 }
