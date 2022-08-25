@@ -8,8 +8,8 @@ import androidx.work.WorkManager
 import co.kr.woowahan_banchan.domain.entity.cart.CartItem
 import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import co.kr.woowahan_banchan.domain.usecase.GetCartItemsUseCase
+import co.kr.woowahan_banchan.domain.usecase.HistoryUseCase
 import co.kr.woowahan_banchan.domain.usecase.OrderUseCase
-import co.kr.woowahan_banchan.domain.usecase.RecentlyViewedUseCase
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.worker.CartUpdateWorker
 import co.kr.woowahan_banchan.util.listToString
@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val getCartItemsUseCase: GetCartItemsUseCase,
-    private val recentlyViewedUseCase: RecentlyViewedUseCase,
+    private val historyUseCase: HistoryUseCase,
     private val orderUseCase: OrderUseCase
 ) : ViewModel() {
 
@@ -59,7 +59,7 @@ class CartViewModel @Inject constructor(
 
     fun getRecentlyViewed() {
         viewModelScope.launch {
-            recentlyViewedUseCase(true)
+            historyUseCase(true)
                 .catch { _historyItems.value = UiState.Error("최근 방문 내역을 불러오지 못함") }
                 .collect { result ->
                     result.onSuccess { _historyItems.value = UiState.Success(it) }
