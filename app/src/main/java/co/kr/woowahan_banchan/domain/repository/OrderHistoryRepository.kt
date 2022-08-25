@@ -12,5 +12,5 @@ interface OrderHistoryRepository {
     suspend fun insertOrderItems(orderItems: List<CartItem>): Result<Long>
     suspend fun updateOrderItems(orderHistory: OrderHistory): Result<Unit>
     fun getLatestOrderTime(): Flow<Result<Long>>
-    fun getIncompleteItemCount(): Flow<Result<Int>>
+    fun getOrderIsCompleted(): Flow<Result<Boolean>>
 }

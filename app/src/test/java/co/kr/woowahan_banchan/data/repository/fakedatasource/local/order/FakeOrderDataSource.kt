@@ -19,9 +19,9 @@ class FakeOrderDataSource(initOrderDtos: List<OrderDto>) : OrderDataSource {
         }
     }
 
-    override fun getIncompleteItemCount(): Flow<Result<Int>> {
+    override fun getOrderIsCompleted(): Flow<Result<Boolean>> {
         return flow {
-            emit(Result.success(orderDtos.size))
+            emit(Result.success(orderDtos.isEmpty()))
         }
     }
 

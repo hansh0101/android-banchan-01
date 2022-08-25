@@ -21,7 +21,7 @@ interface OrderDao {
     @Insert
     suspend fun insertItem(item: OrderDto): Long
 
-    @Query("SELECT * FROM `ORDER` WHERE is_completed == '0' ORDER BY id DESC")
+    @Query("SELECT * FROM `ORDER` WHERE is_completed LIKE '0' ORDER BY id DESC")
     fun getIncompleteItems(): Flow<List<OrderDto>>
 
     @Update

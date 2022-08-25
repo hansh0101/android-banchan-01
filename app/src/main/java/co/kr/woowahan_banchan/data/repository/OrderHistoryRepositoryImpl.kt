@@ -91,7 +91,7 @@ class OrderHistoryRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun getIncompleteItemCount(): Flow<Result<Int>> {
-        return orderDataSource.getIncompleteItemCount()
+    override fun getOrderIsCompleted(): Flow<Result<Boolean>> {
+        return orderDataSource.getOrderIsCompleted()
     }
 }

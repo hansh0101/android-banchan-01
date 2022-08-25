@@ -15,7 +15,7 @@ class FakeOrderDataSourceWithError: OrderDataSource {
         return flow { emit(Result.failure(ErrorEntity.ConditionalError)) }
     }
 
-    override fun getIncompleteItemCount(): Flow<Result<Int>> {
+    override fun getOrderIsCompleted(): Flow<Result<Boolean>> {
         return flow { emit(Result.failure(ErrorEntity.ConditionalError)) }
     }
 

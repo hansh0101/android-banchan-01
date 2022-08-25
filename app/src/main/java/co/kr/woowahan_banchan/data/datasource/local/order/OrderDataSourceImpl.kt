@@ -42,12 +42,12 @@ class OrderDataSourceImpl @Inject constructor(
             }
         }
 
-    override fun getIncompleteItemCount(): Flow<Result<Int>> =
+    override fun getOrderIsCompleted(): Flow<Result<Boolean>> =
         orderDao.getIncompleteItems()
             .filterNotNull()
-            .map { Result.success(it.size) }
+            .map { Result.success(it.isEmpty()) }
             .catch {
-                emit(Result.failure(it))
+                emit(Result.failure(it.toErrorEntity()))
             }.flowOn(coroutineDispatcher)
 
     override suspend fun updateItem(item: OrderDto): Result<Unit> =
