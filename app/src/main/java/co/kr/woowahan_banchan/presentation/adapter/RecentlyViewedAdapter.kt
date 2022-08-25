@@ -29,11 +29,10 @@ class RecentlyViewedAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(historyItem: HistoryItem) {
             with(historyItem) {
-                ImageLoader.loadImage(historyItem.imageUrl) {
-                    if (it != null) {
-                        binding.ivImage.setImageBitmap(it)
-                    }
-                }
+                ImageLoader(binding.ivImage,itemView.context)
+                    .setPlaceHolder(R.mipmap.ic_launcher)
+                    .setErrorImage(R.mipmap.ic_launcher)
+                    .loadImage(historyItem.imageUrl)
 
                 binding.ibAddBtn.isVisible = !isPreview
 

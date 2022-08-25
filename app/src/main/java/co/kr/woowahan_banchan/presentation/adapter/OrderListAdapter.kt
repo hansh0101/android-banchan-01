@@ -22,11 +22,10 @@ class OrderListAdapter(private val itemClick: (OrderHistory) -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(orderHistory: OrderHistory) {
             with(orderHistory) {
-                ImageLoader.loadImage(this.thumbnailUrl) {
-                    if (it != null) {
-                        binding.ivThumbnail.setImageBitmap(it)
-                    }
-                }
+                ImageLoader(binding.ivThumbnail, itemView.context)
+                    .setPlaceHolder(R.mipmap.ic_launcher)
+                    .setErrorImage(R.mipmap.ic_launcher)
+                    .loadImage(this.thumbnailUrl)
                 binding.tvTitle.text = this.title
                 binding.tvPrice.text = this.totalPrice.toPriceFormat() + "원"
                 setDeliveryInfo(time)

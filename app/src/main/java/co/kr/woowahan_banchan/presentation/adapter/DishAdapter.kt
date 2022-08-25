@@ -28,16 +28,18 @@ class DishAdapter(
         private val openBottomSheet: (Dish) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Dish) {
-            ImageLoader.loadImage(item.imageUrl) {
-                binding.ivImage.setImageBitmap(it)
-                binding.dish = item
+            ImageLoader(binding.ivImage, itemView.context)
+                .setPlaceHolder(R.mipmap.ic_launcher)
+                .setErrorImage(R.mipmap.ic_launcher)
+                .loadImage(item.imageUrl)
 
-                binding.root.setOnClickListener {
-                    moveToDetail(item.title, item.detailHash)
-                }
-                binding.ibAddBtn.setOnClickListener {
-                    openBottomSheet(item)
-                }
+            binding.dish = item
+
+            binding.root.setOnClickListener {
+                moveToDetail(item.title, item.detailHash)
+            }
+            binding.ibAddBtn.setOnClickListener {
+                openBottomSheet(item)
             }
         }
 
@@ -60,13 +62,14 @@ class DishAdapter(
         private val moveToDetail: (String, String) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Dish) {
-            ImageLoader.loadImage(item.imageUrl) {
-                binding.ivImage.setImageBitmap(it)
-                binding.dish = item
+            ImageLoader(binding.ivImage,itemView.context)
+                .setPlaceHolder(R.mipmap.ic_launcher)
+                .setErrorImage(R.mipmap.ic_launcher)
+                .loadImage(item.imageUrl)
 
-                binding.root.setOnClickListener {
-                    moveToDetail(item.title, item.detailHash)
-                }
+            binding.dish = item
+            binding.root.setOnClickListener {
+                moveToDetail(item.title, item.detailHash)
             }
         }
 
