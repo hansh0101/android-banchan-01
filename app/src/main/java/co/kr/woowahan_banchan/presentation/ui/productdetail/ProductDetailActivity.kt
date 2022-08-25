@@ -60,10 +60,9 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
         super.onCreate(savedInstanceState)
         hash = intent.getStringExtra("HASH") ?: error("Hash not delivered")
         title = intent.getStringExtra("TITLE") ?: error("Title not delivered")
+
         viewModel.fetchUiState(hash)
         viewModel.addToHistory(hash, title)
-        viewModel.getCartItemCount()
-        viewModel.fetchLatestOrderTime()
 
         initToolbar()
         initView()
@@ -147,7 +146,7 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
                 badge.isVisible = it > 0
             }.launchIn(lifecycleScope)
 
-        viewModel.deliveryState
+        viewModel.isOrderCompleted
             .flowWithLifecycle(this.lifecycle)
             .onEach {
                 when(it) {
@@ -227,7 +226,7 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        if ((viewModel.deliveryState.value as? UiStates.Success)?.data == true) {
+        if ((viewModel.isOrderCompleted.value as? UiStates.Success)?.data == false) {
             menu?.let {
                 it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user_badge)
             }
