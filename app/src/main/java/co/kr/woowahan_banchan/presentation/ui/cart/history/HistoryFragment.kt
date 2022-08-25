@@ -1,4 +1,4 @@
-package co.kr.woowahan_banchan.presentation.ui.cart.recentlyviewed
+package co.kr.woowahan_banchan.presentation.ui.cart.history
 
 import android.os.Bundle
 import android.view.View
@@ -13,20 +13,21 @@ import co.kr.woowahan_banchan.presentation.decoration.GridItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddBottomSheet
-import co.kr.woowahan_banchan.presentation.viewmodel.UiState
-import co.kr.woowahan_banchan.presentation.viewmodel.cart.RecentlyViewedViewModel
+import co.kr.woowahan_banchan.presentation.ui.widget.ErrorDialog
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
+import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
+import co.kr.woowahan_banchan.presentation.viewmodel.cart.HistoryViewModel
 import co.kr.woowahan_banchan.util.dpToPx
-import co.kr.woowahan_banchan.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class RecentlyViewedFragment : BaseFragment<FragmentRecentlyViewedBinding>() {
+class HistoryFragment : BaseFragment<FragmentRecentlyViewedBinding>() {
     override val layoutRes: Int
         get() = R.layout.fragment_recently_viewed
 
-    private val viewModel by viewModels<RecentlyViewedViewModel>()
+    private val viewModel by viewModels<HistoryViewModel>()
     private val recentlyViewedAdapter by lazy {
         RecentlyViewedAdapter({
             startActivity(
@@ -69,18 +70,24 @@ class RecentlyViewedFragment : BaseFragment<FragmentRecentlyViewedBinding>() {
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 when (it) {
-                    is UiState.Init -> {
+                    is UiStates.Init -> {
                         showProgressBar()
                     }
-                    is UiState.Success -> {
+                    is UiStates.Success -> {
                         hideProgressBar()
                         recentlyViewedAdapter.submitList(it.data)
                     }
-                    is UiState.Error -> {
+                    is UiStates.Error -> {
                         hideProgressBar()
-                        requireContext().shortToast(it.message)
-                        parentFragmentManager.popBackStack()
                     }
+                }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.historyItemsEvent
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach {
+                if (it is UiEvents.Error) {
+                    showErrorDialog(it)
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -97,5 +104,14 @@ class RecentlyViewedFragment : BaseFragment<FragmentRecentlyViewedBinding>() {
     private fun hideProgressBar() {
         binding.rvRecentlyViewed.isVisible = true
         binding.progressBar.isVisible = false
+    }
+
+    private fun showErrorDialog(event: UiEvents.Error) {
+        ErrorDialog(
+            requireContext(),
+            event.error,
+            { viewModel.reFetchHistoryItems() },
+            { parentFragmentManager.popBackStack() }
+        ).show()
     }
 }
