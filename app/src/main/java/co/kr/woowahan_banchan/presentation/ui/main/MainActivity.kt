@@ -21,7 +21,9 @@ import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
 import co.kr.woowahan_banchan.presentation.ui.cart.CartActivity
 import co.kr.woowahan_banchan.presentation.ui.order.OrderActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.MainViewModel
+import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
 import co.kr.woowahan_banchan.util.dpToPx
+import co.kr.woowahan_banchan.util.shortToast
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.badge.ExperimentalBadgeUtils
@@ -64,9 +66,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         initToolbar()
         initView()
         observeData()
-
-        viewModel.getCartItemCount()
-        viewModel.fetchLatestOrderTime()
     }
 
     private fun exitSplashScreen() {
@@ -118,7 +117,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         viewModel.isOrderCompleted
             .flowWithLifecycle(this.lifecycle)
             .onEach {
-                invalidateOptionsMenu()
+                when(it){
+                    is UiStates.Init -> {}
+                    is UiStates.Success -> invalidateOptionsMenu()
+                    is UiStates.Error -> shortToast(it.message)
+                }
             }.launchIn(lifecycleScope)
     }
 
@@ -142,13 +145,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        if (viewModel.isOrderCompleted.value) {
+        if ((viewModel.isOrderCompleted.value as? UiStates.Success)?.data == false) {
             menu?.let {
-                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user)
+                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user_badge)
             }
         } else {
             menu?.let {
-                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user_badge)
+                it.getItem(1).icon = ContextCompat.getDrawable(this, R.drawable.ic_user)
             }
         }
         return super.onPrepareOptionsMenu(menu)

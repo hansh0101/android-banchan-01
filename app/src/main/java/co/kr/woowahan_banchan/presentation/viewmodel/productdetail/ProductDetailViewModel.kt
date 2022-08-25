@@ -24,7 +24,7 @@ class ProductDetailViewModel @Inject constructor(
     private val cartAddUseCase: CartAddUseCase,
     private val historyAddUseCase: HistoryAddUseCase,
     private val getCartItemCountUseCase: GetCartItemCountUseCase,
-    private val latestOrderTimeUseCase: LatestOrderTimeUseCase
+    private val checkOrderCompleteUseCase: CheckOrderCompleteUseCase
 ) : ViewModel() {
     // State
     private val _dishInfo = MutableStateFlow<UiStates<DishInfo>>(UiStates.Init)
@@ -33,12 +33,17 @@ class ProductDetailViewModel @Inject constructor(
     val amount: StateFlow<Int> get() = _amount
     private val _cartCount = MutableStateFlow(0)
     val cartCount: StateFlow<Int> get() = _cartCount
-    private val _deliveryState = MutableStateFlow<UiStates<Boolean>>(UiStates.Init)
-    val deliveryState: StateFlow<UiStates<Boolean>> get() = _deliveryState
+    private val _isOrderCompleted = MutableStateFlow<UiStates<Boolean>>(UiStates.Init)
+    val isOrderCompleted: StateFlow<UiStates<Boolean>> get() = _isOrderCompleted
 
     // Event
     private val _cartAddEvent = MutableSharedFlow<UiEvents<Unit>>()
     val cartAddEvent: SharedFlow<UiEvents<Unit>> get() = _cartAddEvent
+
+    init {
+        getCartItemCount()
+        checkOrderComplete()
+    }
 
     fun fetchUiState(hash: String) {
         viewModelScope.launch {
@@ -79,7 +84,7 @@ class ProductDetailViewModel @Inject constructor(
         }
     }
 
-    fun getCartItemCount() {
+    private fun getCartItemCount() {
         viewModelScope.launch {
             getCartItemCountUseCase()
                 .collect { result ->
@@ -92,14 +97,13 @@ class ProductDetailViewModel @Inject constructor(
         }
     }
 
-    fun fetchLatestOrderTime() {
+    private fun checkOrderComplete() {
         viewModelScope.launch {
-            latestOrderTimeUseCase().collect { result ->
+            checkOrderCompleteUseCase().collect { result ->
                 result.onSuccess {
-                    _deliveryState.value =
-                        UiStates.Success(Date().time.calculateDiffToMinute(it) < 20)
+                    _isOrderCompleted.value = UiStates.Success(it)
                 }.onFailure {
-                    _deliveryState.value = UiStates.Error("배송 정보를 받아오지 못했어요!")
+                    _isOrderCompleted.value = UiStates.Error("배송 정보를 받아오지 못했어요!")
                 }
             }
         }
