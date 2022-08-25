@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class CartAddBottomSheet : BottomSheetDialogFragment() {
-
     private var _binding: DialogCartAddBottomBinding? = null
     private val binding get() = _binding ?: error("binding not initialized")
 
@@ -66,7 +65,7 @@ class CartAddBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun observeData() {
-        viewModel.isAddSuccess.flowWithLifecycle(viewLifecycleOwner.lifecycle)
+        viewModel.cartAddEvent.flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 when (it) {
                     is UiEvents.Success -> {
