@@ -28,7 +28,7 @@ class ErrorDialog(
         when (errorType) {
             is ErrorEntity.RetryableError -> {
                 binding.tvTitle.text = "엥?"
-                binding.tvSubtitle.text = "진행 중 문제가 발생했어요!"
+                binding.tvSubtitle.text = "통신 중 문제가 발생했어요!"
                 binding.btnRetry.isVisible = true
             }
             is ErrorEntity.ConditionalError -> {
