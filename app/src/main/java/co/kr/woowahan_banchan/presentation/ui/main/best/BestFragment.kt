@@ -2,6 +2,7 @@ package co.kr.woowahan_banchan.presentation.ui.main.best
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -13,17 +14,17 @@ import co.kr.woowahan_banchan.presentation.decoration.VerticalItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddBottomSheet
-import co.kr.woowahan_banchan.presentation.viewmodel.UiState
+import co.kr.woowahan_banchan.presentation.ui.widget.ErrorDialog
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
+import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
 import co.kr.woowahan_banchan.presentation.viewmodel.main.BestViewModel
 import co.kr.woowahan_banchan.util.dpToPx
-import co.kr.woowahan_banchan.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class BestFragment : BaseFragment<FragmentBestBinding>() {
-
     override val layoutRes: Int
         get() = R.layout.fragment_best
 
@@ -39,11 +40,8 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initView()
         observeData()
-
-        viewModel.getBests()
     }
 
     private fun initView() {
@@ -57,23 +55,30 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
         viewModel.bestItems
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
+                binding.pbLoading.isVisible = it is UiStates.Init
                 when (it) {
-                    is UiState.Init -> {
-                        binding.pbLoading.visibility = View.VISIBLE
-                    }
-                    is UiState.Success -> {
+                    is UiStates.Init -> {}
+                    is UiStates.Success -> {
                         bestAdapter.submitList(it.data.toMutableList())
-                        binding.pbLoading.visibility = View.GONE
                     }
-                    is UiState.Error -> {
-                        binding.pbLoading.visibility = View.GONE
-                        requireContext().shortToast(it.message)
-                    }
+                    is UiStates.Error -> {}
                 }
             }.launchIn(lifecycleScope)
+
+        viewModel.bestItemsEvent
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach {
+                if (it is UiEvents.Error) {
+                    showErrorDialog(it)
+                }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun startDetailActivity(title: String, hash: String) {
         startActivity(ProductDetailActivity.getIntent(requireContext(), title, hash))
+    }
+
+    private fun showErrorDialog(event: UiEvents.Error) {
+        ErrorDialog(requireContext(), event.error, { viewModel.reFetchBests() }).show()
     }
 }

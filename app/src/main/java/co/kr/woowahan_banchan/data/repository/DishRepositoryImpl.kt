@@ -28,12 +28,24 @@ class DishRepositoryImpl @Inject constructor(
         return cartDataSource.getItems().map { result ->
             result.mapCatching { cartDtoList ->
                 bestDataSource.getBests()
+                    .mapCatching { list ->
+                        list.map { bestDishes ->
+                            BestItem(
+                                bestDishes.name,
+                                bestDishes.items.map { bestDish ->
+                                    bestDish.toEntity(cartDtoList.find { it.hash == bestDish.detailHash } != null)
+                                }
+                            )
+                        }
+                    }.getOrThrow()
+            }.recoverCatching {
+                bestDataSource.getBests()
                     .mapCatching {
                         it.map { bestDishes ->
                             BestItem(
                                 bestDishes.name,
                                 bestDishes.items.map { bestDish ->
-                                    bestDish.toEntity(cartDtoList.find { it.hash == bestDish.detailHash } != null)
+                                    bestDish.toEntity(false)
                                 }
                             )
                         }
