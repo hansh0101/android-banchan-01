@@ -15,11 +15,19 @@ class FakeOrderDataSourceWithError: OrderDataSource {
         return flow { emit(Result.failure(ErrorEntity.ConditionalError)) }
     }
 
+    override fun getIncompleteItemCount(): Flow<Result<Int>> {
+        return flow { emit(Result.failure(ErrorEntity.ConditionalError)) }
+    }
+
     override suspend fun getTime(orderId: Long): Result<Long> {
         return Result.failure(ErrorEntity.UnknownError)
     }
 
     override suspend fun insertItem(item: OrderDto): Result<Long> {
         return Result.failure(ErrorEntity.RetryableError)
+    }
+
+    override suspend fun updateItem(item: OrderDto): Result<Unit> {
+        return Result.failure(ErrorEntity.UnknownError)
     }
 }
