@@ -16,9 +16,14 @@ import co.kr.woowahan_banchan.databinding.ItemOrderDetailBinding
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderItem
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
-import co.kr.woowahan_banchan.presentation.viewmodel.UiState
+import co.kr.woowahan_banchan.presentation.ui.widget.ErrorDialog
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
+import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
 import co.kr.woowahan_banchan.presentation.viewmodel.order.OrderDetailViewModel
-import co.kr.woowahan_banchan.util.*
+import co.kr.woowahan_banchan.util.ImageLoader
+import co.kr.woowahan_banchan.util.calculateDiffToMinute
+import co.kr.woowahan_banchan.util.longArgs
+import co.kr.woowahan_banchan.util.toPriceFormat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -39,8 +44,8 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
             return when (menuItem.itemId) {
                 R.id.menu_refresh -> {
-                    if (viewModel.time != 0L) {
-                        showDeliveryInfo(viewModel.time)
+                    if (viewModel.orderTime.value is UiStates.Success<Long>) {
+                        showDeliveryInfo((viewModel.orderTime.value as UiStates.Success<Long>).data)
                     }
                     true
                 }
@@ -72,30 +77,44 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 when (it) {
-                    is UiState.Init -> {
+                    is UiStates.Init -> {
                         showProgressBar()
                     }
-                    is UiState.Success -> {
+                    is UiStates.Success -> {
                         hideProgressBar()
                         showUi(it.data)
                     }
-                    is UiState.Error -> {
+                    is UiStates.Error -> {
                         hideProgressBar()
-                        requireContext().shortToast(it.message)
                     }
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         viewModel.orderTime
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 when (it) {
-                    is UiState.Init -> {}
-                    is UiState.Success -> {
+                    is UiStates.Init -> {}
+                    is UiStates.Success -> {
                         showDeliveryInfo(it.data)
                     }
-                    is UiState.Error -> {
-                        requireContext().shortToast(it.message)
-                    }
+                    is UiStates.Error -> {}
+                }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.orderItemsEvent
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach {
+                if (it is UiEvents.Error) {
+                    showErrorDialog(it)
+                }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.orderTimeEvent
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach {
+                if (it is UiEvents.Error) {
+                    showErrorDialog(it)
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -157,6 +176,14 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
     private fun hideProgressBar() {
         binding.svOrderDetail.isVisible = true
         binding.progressBar.isVisible = false
+    }
+
+    private fun showErrorDialog(event: UiEvents.Error) {
+        ErrorDialog(
+            requireContext(),
+            event.error,
+            { viewModel.fetchOrderItems(orderId) }
+        )
     }
 
     companion object {

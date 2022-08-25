@@ -9,7 +9,10 @@ import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
 import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
 import co.kr.woowahan_banchan.util.calculateDiffToMinute
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
@@ -79,10 +82,11 @@ class ProductDetailViewModel @Inject constructor(
     fun getCartItemCount() {
         viewModelScope.launch {
             getCartItemCountUseCase()
-                .catch { _cartCount.value = 0 }
                 .collect { result ->
                     result.onSuccess {
                         _cartCount.value = it
+                    }.onFailure {
+                        _cartCount.value = 0
                     }
                 }
         }
