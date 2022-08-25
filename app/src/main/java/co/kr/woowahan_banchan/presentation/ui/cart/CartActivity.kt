@@ -4,14 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ActivityCartBinding
 import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
-import co.kr.woowahan_banchan.presentation.ui.cart.recentlyviewed.RecentlyViewedFragment
+import co.kr.woowahan_banchan.presentation.ui.cart.history.HistoryFragment
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class CartActivity : BaseActivity<ActivityCartBinding>() {
@@ -31,7 +29,7 @@ class CartActivity : BaseActivity<ActivityCartBinding>() {
         supportFragmentManager.commit {
             replace(R.id.fcv_cart,CartFragment())
             if (backStackCount != 0 && backStackCount != null){
-                replace(R.id.fcv_cart,RecentlyViewedFragment())
+                replace(R.id.fcv_cart,HistoryFragment())
                 addToBackStack("cart")
             }
         }
