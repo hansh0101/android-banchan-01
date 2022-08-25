@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.onEach
 @AndroidEntryPoint
 class HistoryFragment : BaseFragment<FragmentRecentlyViewedBinding>() {
     override val layoutRes: Int
-        get() = R.layout.fragment_recently_viewed
+        get() = R.layout.fragment_history
 
     private val viewModel by viewModels<HistoryViewModel>()
     private val recentlyViewedAdapter by lazy {
