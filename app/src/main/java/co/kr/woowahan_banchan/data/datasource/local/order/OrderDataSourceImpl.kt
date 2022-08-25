@@ -50,10 +50,10 @@ class OrderDataSourceImpl @Inject constructor(
                 emit(Result.failure(it.toErrorEntity()))
             }.flowOn(coroutineDispatcher)
 
-    override suspend fun updateItem(item: OrderDto): Result<Unit> =
+    override suspend fun updateItem(orderId : Long): Result<Unit> =
         withContext(coroutineDispatcher) {
             runCatchingErrorEntity {
-                orderDao.updateItem(item)
+                orderDao.updateItem(orderId)
             }
         }
 }

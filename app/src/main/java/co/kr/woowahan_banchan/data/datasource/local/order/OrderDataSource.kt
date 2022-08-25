@@ -7,7 +7,7 @@ interface OrderDataSource {
     suspend fun getItems(): Result<List<OrderDto>>
     suspend fun getTime(orderId: Long): Result<Long>
     suspend fun insertItem(item: OrderDto): Result<Long>
-    suspend fun updateItem(item: OrderDto): Result<Unit>
+    suspend fun updateItem(orderId: Long): Result<Unit>
     fun getLatestOrderTime(): Flow<Result<Long>>
     fun getOrderIsCompleted(): Flow<Result<Boolean>>
 }

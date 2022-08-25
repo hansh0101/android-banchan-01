@@ -24,6 +24,6 @@ interface OrderDao {
     @Query("SELECT * FROM `ORDER` WHERE is_completed LIKE '0' ORDER BY id DESC")
     fun getIncompleteItems(): Flow<List<OrderDto>>
 
-    @Update
-    suspend fun updateItem(item: OrderDto)
+    @Query("UPDATE `ORDER` SET is_completed = 1 WHERE id LIKE (:id)")
+    suspend fun updateItem(id: Long)
 }
