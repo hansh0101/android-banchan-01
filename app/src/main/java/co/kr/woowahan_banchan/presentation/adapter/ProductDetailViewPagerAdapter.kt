@@ -2,8 +2,8 @@ package co.kr.woowahan_banchan.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ItemProductDetailBinding
 import co.kr.woowahan_banchan.util.ImageLoader
 
@@ -14,15 +14,10 @@ class ProductDetailViewPagerAdapter :
     class ImageViewHolder(private val binding: ItemProductDetailBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun onBind(imageUrl: String) {
-            ImageLoader.loadImage(imageUrl) {
-                if (it == null) {
-                    binding.progressBar.isVisible = true
-                    binding.ivProductDetail.isVisible = false
-                } else {
-                    binding.progressBar.isVisible = false
-                    binding.ivProductDetail.setImageBitmap(it)
-                }
-            }
+            ImageLoader(binding.ivProductDetail,itemView.context)
+                .setPlaceHolder(R.mipmap.ic_launcher)
+                .setErrorImage(R.mipmap.ic_launcher)
+                .loadImage(imageUrl)
         }
 
         companion object {

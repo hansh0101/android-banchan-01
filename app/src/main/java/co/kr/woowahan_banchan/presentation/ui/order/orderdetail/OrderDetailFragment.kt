@@ -127,11 +127,11 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
     private fun addMenuItemView(orderItems: List<OrderItem>) {
         orderItems.forEach { orderItem ->
             val itemBinding = ItemOrderDetailBinding.inflate(layoutInflater, null, false)
-            ImageLoader.loadImage(orderItem.thumbnailUrl) {
-                if (it != null) {
-                    itemBinding.ivImage.setImageBitmap(it)
-                }
-            }
+            ImageLoader(itemBinding.ivImage, requireContext())
+                .setPlaceHolder(R.mipmap.ic_launcher)
+                .setErrorImage(R.mipmap.ic_launcher)
+                .loadImage(orderItem.thumbnailUrl)
+
             itemBinding.tvTitle.text = orderItem.title
             itemBinding.tvAmount.text = "${orderItem.amount}개"
             itemBinding.tvPrice.text = (orderItem.price * orderItem.amount).toPriceFormat() + "원"

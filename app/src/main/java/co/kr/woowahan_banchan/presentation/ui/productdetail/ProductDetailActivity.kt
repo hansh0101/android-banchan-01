@@ -189,11 +189,10 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding>() {
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
                 this.adjustViewBounds = true
-                ImageLoader.loadImage(imageUrl) {
-                    if (it != null) {
-                        this.setImageBitmap(it)
-                    }
-                }
+                ImageLoader(this,context)
+                    .setPlaceHolder(R.mipmap.ic_launcher)
+                    .setErrorImage(R.mipmap.ic_launcher)
+                    .loadImage(imageUrl)
             }
         }
     }

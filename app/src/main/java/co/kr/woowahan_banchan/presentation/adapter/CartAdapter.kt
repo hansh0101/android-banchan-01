@@ -92,9 +92,10 @@ class CartAdapter(
 
         fun bind(item: CartItem) {
             binding.cartItem = item
-            ImageLoader.loadImage(item.imageUrl) { bitmap ->
-                bitmap?.let { binding.ivImage.setImageBitmap(it) }
-            }
+            ImageLoader(binding.ivImage, itemView.context)
+                .setPlaceHolder(R.mipmap.ic_launcher)
+                .setErrorImage(R.mipmap.ic_launcher)
+                .loadImage(item.imageUrl)
             binding.ivCheck.setOnClickListener {
                 item.isSelected = !item.isSelected
                 adapter.notifyItemChanged(adapterPosition)

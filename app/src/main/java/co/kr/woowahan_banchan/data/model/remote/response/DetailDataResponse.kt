@@ -19,7 +19,7 @@ data class DetailDataResponse(
     fun toHistoryItem(hash: String, title: String, time: Long, isAdded: Boolean): HistoryItem {
         return HistoryItem(
             hash,
-            this.thumbnailUrls.first(),
+            topImageUrl,
             title,
             if (prices.size == 1) null else prices.first().toPriceInt(),
             if (prices.size == 1) prices.first().toPriceInt() else prices.last().toPriceInt(),
@@ -50,7 +50,7 @@ data class DetailDataResponse(
             name,
             isSelected,
             amount,
-            this.thumbnailUrls.first(),
+            topImageUrl,
             prices.last().toPriceInt()
         )
     }

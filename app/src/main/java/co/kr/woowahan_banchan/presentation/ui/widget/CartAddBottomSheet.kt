@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.DialogCartAddBottomBinding
 import co.kr.woowahan_banchan.domain.entity.dish.SelectedDish
 import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
@@ -49,9 +50,11 @@ class CartAddBottomSheet : BottomSheetDialogFragment() {
 
     private fun initViewData() {
         selectedDish?.let {
-            ImageLoader.loadImage(it.imageUrl) { bitmap ->
-                binding.ivImage.setImageBitmap(bitmap)
-            }
+            ImageLoader(binding.ivImage, requireContext())
+                .setPlaceHolder(R.mipmap.ic_launcher)
+                .setErrorImage(R.mipmap.ic_launcher)
+                .loadImage(it.imageUrl)
+
             viewModel.setCurrentDish(it)
         }
     }
