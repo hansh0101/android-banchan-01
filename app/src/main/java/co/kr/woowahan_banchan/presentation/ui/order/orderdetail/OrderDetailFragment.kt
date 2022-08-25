@@ -183,7 +183,7 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
             requireContext(),
             event.error,
             { viewModel.fetchOrderItems(orderId) }
-        )
+        ).show()
     }
 
     companion object {
