@@ -80,15 +80,8 @@ class OrderHistoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateOrderItems(orderHistory: OrderHistory): Result<Unit> {
-        return orderDataSource.updateItem(
-            OrderDto(
-                id = orderHistory.orderId,
-                totalPrice = orderHistory.totalPrice,
-                time = orderHistory.time,
-                isCompleted = orderHistory.isCompleted
-            )
-        )
+    override suspend fun updateOrderHistory(orderId: Long): Result<Unit> {
+        return orderDataSource.updateItem(orderId)
     }
 
     override fun getOrderIsCompleted(): Flow<Result<Boolean>> {

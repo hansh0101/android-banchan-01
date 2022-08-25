@@ -10,7 +10,7 @@ interface OrderHistoryRepository {
     suspend fun getOrderTime(orderId: Long): Result<Long>
     suspend fun getOrderReceipt(orderId: Long): Result<List<OrderItem>>
     suspend fun insertOrderItems(orderItems: List<CartItem>): Result<Long>
-    suspend fun updateOrderItems(orderHistory: OrderHistory): Result<Unit>
+    suspend fun updateOrderHistory(orderId: Long): Result<Unit>
     fun getLatestOrderTime(): Flow<Result<Long>>
     fun getOrderIsCompleted(): Flow<Result<Boolean>>
 }
