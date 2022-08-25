@@ -9,7 +9,7 @@ import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ItemOrderListBinding
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderHistory
 import co.kr.woowahan_banchan.util.ImageLoader
-import co.kr.woowahan_banchan.util.calculateDiffToMinute
+import co.kr.woowahan_banchan.util.calculateDiffToSecond
 import co.kr.woowahan_banchan.util.toPriceFormat
 import java.util.*
 
@@ -40,7 +40,7 @@ class OrderListAdapter(private val itemClick: (OrderHistory) -> Unit) :
         }
 
         private fun setDeliveryInfo(time: Long) {
-            if (Date().time.calculateDiffToMinute(time) >= 20) {
+            if (Date().time.calculateDiffToSecond(time) >= 10) {
                 with(binding.tvDeliveryInfo) {
                     this.text = "배송완료"
                     this.setTextColor(resources.getColor(R.color.grayscale_000000, null))

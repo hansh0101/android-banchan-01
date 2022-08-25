@@ -7,7 +7,6 @@ import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.usecase.*
 import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
 import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
-import co.kr.woowahan_banchan.util.calculateDiffToMinute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
