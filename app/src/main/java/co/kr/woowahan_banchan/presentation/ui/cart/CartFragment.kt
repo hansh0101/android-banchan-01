@@ -19,7 +19,7 @@ import co.kr.woowahan_banchan.presentation.adapter.CartAdapter
 import co.kr.woowahan_banchan.presentation.decoration.VerticalItemDecoration
 import co.kr.woowahan_banchan.presentation.notification.AlarmReceiver
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
-import co.kr.woowahan_banchan.presentation.ui.cart.recentlyviewed.RecentlyViewedFragment
+import co.kr.woowahan_banchan.presentation.ui.cart.history.HistoryFragment
 import co.kr.woowahan_banchan.presentation.ui.order.orderdetail.OrderDetailFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
@@ -50,7 +50,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
             },
             onFullRecentlyBtnClick = {
                 parentFragmentManager.commit {
-                    replace(R.id.fcv_cart, RecentlyViewedFragment())
+                    replace(R.id.fcv_cart, HistoryFragment())
                     addToBackStack("cart")
                 }
             }

@@ -1,17 +1,19 @@
 package co.kr.woowahan_banchan.presentation.viewmodel.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.kr.woowahan_banchan.domain.entity.dish.Dish
+import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.repository.Source
 import co.kr.woowahan_banchan.domain.usecase.GetDishesUseCase
-import co.kr.woowahan_banchan.presentation.viewmodel.UiState
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
+import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,23 +21,34 @@ import javax.inject.Inject
 class MainDishViewModel @Inject constructor(
     private val getDishesUseCase: GetDishesUseCase
 ) : ViewModel() {
-    private val _mainDishes = MutableStateFlow<UiState<List<Dish>>>(UiState.Init)
-    val mainDishes: StateFlow<UiState<List<Dish>>> get() = _mainDishes
+    private val _mainDishes = MutableStateFlow<UiStates<List<Dish>>>(UiStates.Init)
+    val mainDishes: StateFlow<UiStates<List<Dish>>> get() = _mainDishes
+    private val _isGridMode = MutableStateFlow<Boolean>(true)
+    val isGridMode: StateFlow<Boolean> get() = _isGridMode
+    private val _sortedDishes = MutableStateFlow<List<Dish>>(listOf())
+    val sortedDishes: StateFlow<List<Dish>> get() = _sortedDishes
 
-    private val _isGridMode = MutableLiveData(true)
-    val isGridMode: LiveData<Boolean> get() = _isGridMode
+    private val _mainDishesEvent = MutableSharedFlow<UiEvents<Unit>>()
+    val mainDishesEvent: SharedFlow<UiEvents<Unit>> get() = _mainDishesEvent
 
     private var defaultMainDishes = listOf<Dish>()
+    private var collectJob: Job? = null
 
-    private val _sortedDishes = MutableLiveData<List<Dish>>(listOf())
-    val sortedDishes: LiveData<List<Dish>> get() = _sortedDishes
+    init {
+        getDishes()
+    }
 
-    fun getDishes() {
-        viewModelScope.launch {
+    private fun getDishes() {
+        collectJob = viewModelScope.launch {
             getDishesUseCase(Source.MAIN)
-                .catch { _mainDishes.value = UiState.Error("상품을 불러오는 것에 실패하였습니다.") }
                 .collect { result ->
-                    result.onSuccess { _mainDishes.value = UiState.Success(it) }
+                    result.onSuccess {
+                        defaultMainDishes = it
+                        _mainDishes.value = UiStates.Success(it)
+                    }.onFailure {
+                        _mainDishes.value = UiStates.Error(it.message)
+                        _mainDishesEvent.emit(UiEvents.Error(it as ErrorEntity))
+                    }
                 }
         }
     }
@@ -55,11 +68,12 @@ class MainDishViewModel @Inject constructor(
         }
     }
 
-    fun setDefaultMainDishes(list: List<Dish>) {
-        defaultMainDishes = list
-    }
-
     fun setGridMode(isGrid: Boolean) {
         _isGridMode.value = isGrid
+    }
+
+    fun reFetchDishes() {
+        collectJob?.cancel()
+        getDishes()
     }
 }
