@@ -68,6 +68,16 @@ class DishRepositoryImpl @Inject constructor(
                         dish.toEntity(cartDtoList.find { it.hash == dish.detailHash } != null)
                     }
                 }.getOrThrow()
+            }.recoverCatching {
+                when (source) {
+                    Source.MAIN -> mainDishDataSource.getMainDishes()
+                    Source.SIDE -> sideDishDataSource.getSideDishes()
+                    Source.SOUP -> soupDishDataSource.getSoupDishes()
+                }.mapCatching {
+                    it.map { dish ->
+                        dish.toEntity(false)
+                    }
+                }.getOrThrow()
             }
         }.flowOn(coroutineDispatcher)
     }

@@ -3,6 +3,7 @@ package co.kr.woowahan_banchan.presentation.ui.main.otherdish
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,11 +17,12 @@ import co.kr.woowahan_banchan.presentation.decoration.GridItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddBottomSheet
-import co.kr.woowahan_banchan.presentation.viewmodel.UiState
+import co.kr.woowahan_banchan.presentation.ui.widget.ErrorDialog
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
+import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
 import co.kr.woowahan_banchan.presentation.viewmodel.main.DishType
 import co.kr.woowahan_banchan.presentation.viewmodel.main.OtherDishViewModel
 import co.kr.woowahan_banchan.util.dpToPx
-import co.kr.woowahan_banchan.util.shortToast
 import co.kr.woowahan_banchan.util.stringArgs
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -28,7 +30,6 @@ import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
-
     override val layoutRes: Int
         get() = R.layout.fragment_other_dish
 
@@ -55,22 +56,20 @@ class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.viewModel = viewModel
         initView()
         observeData()
         setListener()
         initData()
-
-        binding.viewModel = viewModel
     }
 
     private fun initData() {
         when (dishType) {
             DishType.SOUP.name -> {
-                viewModel.setTitle("정성이 담긴\n뜨끈뜨끈 국물 요리")
+                binding.tvTitle.text = "정성이 담긴\n뜨끈뜨끈 국물 요리"
             }
             DishType.SIDE.name -> {
-                viewModel.setTitle("식탁을 풍성하게 하는\n정갈한 밑반찬")
+                binding.tvTitle.text = "식탁을 풍성하게 하는\n정갈한 밑반찬"
             }
         }
         viewModel.getDishes(dishType)
@@ -92,28 +91,33 @@ class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
     }
 
     private fun observeData() {
-        viewModel.otherDishes.flowWithLifecycle(viewLifecycleOwner.lifecycle)
+        viewModel.otherDishes
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
+                binding.pbLoading.isVisible = it is UiStates.Init
                 when (it) {
-                    is UiState.Init -> {
-                        binding.pbLoading.visibility = View.VISIBLE
-                    }
-                    is UiState.Success -> {
-                        viewModel.setDefaultMainDishes(it.data)
+                    is UiStates.Init -> {}
+                    is UiStates.Success -> {
                         viewModel.setSortedDishes(binding.spFilter.selectedItemPosition)
-                        binding.pbLoading.visibility = View.GONE
                     }
-                    is UiState.Error -> {
-                        binding.pbLoading.visibility = View.GONE
-                        requireContext().shortToast(it.message)
-                    }
+                    is UiStates.Error -> {}
                 }
             }.launchIn(lifecycleScope)
 
-        viewModel.sortedDishes.observe(viewLifecycleOwner) {
-            dishAdapter.submitList(it.toMutableList())
-            setAdapterDataObserver()
-        }
+        viewModel.otherDishesEvent
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach {
+                if (it is UiEvents.Error) {
+                    showErrorDialog(it)
+                }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.sortedDishes
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach {
+                dishAdapter.submitList(it.toMutableList())
+                setAdapterDataObserver()
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun setAdapterDataObserver() {
@@ -152,6 +156,10 @@ class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
 
             }
         }
+    }
+
+    private fun showErrorDialog(event: UiEvents.Error) {
+        ErrorDialog(requireContext(), event.error, { viewModel.reFetchDishes(dishType) }).show()
     }
 
     private fun startDetailActivity(title: String, hash: String) {
