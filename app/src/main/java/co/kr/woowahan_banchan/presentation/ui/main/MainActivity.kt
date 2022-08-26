@@ -53,7 +53,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             bd.backgroundColor = resources.getColor(R.color.grayscale_000000, theme)
             bd.horizontalOffset = 5.dpToPx()
             bd.verticalOffset = 5.dpToPx()
-            bd.maxCharacterCount = 3
+            bd.maxCharacterCount = 2
         }
     }
 
