@@ -351,9 +351,9 @@ class DishRepositoryImplTest {
     @Test
     fun getDishesErrorTest(){
         runTest {
-            val mainDishExpected = Result.failure<List<Dish>>(ErrorEntity.UnknownError)
-            val soupDishExpected = Result.failure<List<Dish>>(ErrorEntity.UnknownError)
-            val sideDishExpected = Result.failure<List<Dish>>(ErrorEntity.UnknownError)
+            val mainDishExpected = Result.failure<List<Dish>>(ErrorEntity.RetryableError)
+            val soupDishExpected = Result.failure<List<Dish>>(ErrorEntity.ConditionalError)
+            val sideDishExpected = Result.failure<List<Dish>>(ErrorEntity.RetryableError)
 
             var mainDishActual: Result<List<Dish>>? = null
             var soupDishActual: Result<List<Dish>>? = null
