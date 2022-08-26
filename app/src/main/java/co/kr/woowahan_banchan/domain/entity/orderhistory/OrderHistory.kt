@@ -7,5 +7,5 @@ data class OrderHistory(
     val count: Int,
     val totalPrice: Int,
     val time: Long,
-    var isCompleted: Boolean = false
+    val isCompleted: Boolean
 )

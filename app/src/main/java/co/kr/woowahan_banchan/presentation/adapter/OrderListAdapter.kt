@@ -9,9 +9,7 @@ import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ItemOrderListBinding
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderHistory
 import co.kr.woowahan_banchan.util.ImageLoader
-import co.kr.woowahan_banchan.util.calculateDiffToSecond
 import co.kr.woowahan_banchan.util.toPriceFormat
-import java.util.*
 
 class OrderListAdapter(private val itemClick: (OrderHistory) -> Unit) :
     ListAdapter<OrderHistory, OrderListAdapter.OrderListViewHolder>(diffCallback) {
@@ -26,21 +24,21 @@ class OrderListAdapter(private val itemClick: (OrderHistory) -> Unit) :
                     .setPlaceHolder(R.mipmap.ic_launcher)
                     .setErrorImage(R.mipmap.ic_launcher)
                     .loadImage(this.thumbnailUrl)
-                    
+
                 binding.tvTitle.text = if (this.count > 1) {
                     this.title + " 외 ${this.count - 1}개"
                 } else {
                     this.title
                 }
-                
+
                 binding.tvPrice.text = this.totalPrice.toPriceFormat() + "원"
-                setDeliveryInfo(time)
+                setDeliveryInfo(orderHistory.isCompleted)
             }
             binding.root.setOnClickListener { itemClick(orderHistory) }
         }
 
-        private fun setDeliveryInfo(time: Long) {
-            if (Date().time.calculateDiffToSecond(time) >= 10) {
+        private fun setDeliveryInfo(isCompleted: Boolean) {
+            if (isCompleted) {
                 with(binding.tvDeliveryInfo) {
                     this.text = "배송완료"
                     this.setTextColor(resources.getColor(R.color.grayscale_000000, null))

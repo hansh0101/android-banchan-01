@@ -19,7 +19,8 @@ data class OrderDto(
             title,
             count,
             this.totalPrice,
-            this.time
+            this.time,
+            this.isCompleted
         )
     }
 }
