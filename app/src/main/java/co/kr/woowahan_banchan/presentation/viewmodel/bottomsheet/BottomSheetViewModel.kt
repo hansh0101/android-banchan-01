@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.kr.woowahan_banchan.domain.entity.dish.SelectedDish
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.usecase.CartAddUseCase
-import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvent
 import co.kr.woowahan_banchan.util.toPriceFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,8 +28,8 @@ class BottomSheetViewModel @Inject constructor(
     private val _totalPriceText = MutableStateFlow("0원")
     val totalPriceText: StateFlow<String> get() = _totalPriceText
 
-    private val _cartAddEvent = MutableSharedFlow<UiEvents<Unit>>()
-    val cartAddEvent: SharedFlow<UiEvents<Unit>> get() = _cartAddEvent
+    private val _cartAddEvent = MutableSharedFlow<UiEvent<Unit>>()
+    val cartAddEvent: SharedFlow<UiEvent<Unit>> get() = _cartAddEvent
 
     fun setCurrentDish(dish: SelectedDish) {
         _currentDish.value = dish
@@ -54,9 +54,9 @@ class BottomSheetViewModel @Inject constructor(
         val currentAmount = amount.value ?: return
         viewModelScope.launch {
             cartAddUseCase(dish.hash, currentAmount, dish.title)
-                .onSuccess { _cartAddEvent.emit(UiEvents.Success(it)) }
+                .onSuccess { _cartAddEvent.emit(UiEvent.Success(it)) }
                 .onFailure {
-                    _cartAddEvent.emit(UiEvents.Error(it as ErrorEntity))
+                    _cartAddEvent.emit(UiEvent.Error(it as ErrorEntity))
                 }
         }
     }

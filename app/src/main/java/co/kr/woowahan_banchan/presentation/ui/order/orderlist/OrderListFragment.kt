@@ -15,8 +15,8 @@ import co.kr.woowahan_banchan.presentation.decoration.OrderListItemDecoration
 import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.order.orderdetail.OrderDetailFragment
 import co.kr.woowahan_banchan.presentation.ui.widget.ErrorDialog
-import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
-import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvent
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.order.OrderListViewModel
 import co.kr.woowahan_banchan.util.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,14 +67,14 @@ class OrderListFragment : BaseFragment<FragmentOrderListBinding>() {
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 when (it) {
-                    is UiStates.Init -> {
+                    is UiState.Init -> {
                         showProgressBar()
                     }
-                    is UiStates.Success -> {
+                    is UiState.Success -> {
                         hideProgressBar()
                         showUi(it.data)
                     }
-                    is UiStates.Error -> {
+                    is UiState.Error -> {
                         hideProgressBar()
                     }
                 }
@@ -83,7 +83,7 @@ class OrderListFragment : BaseFragment<FragmentOrderListBinding>() {
         viewModel.orderHistoriesEvents
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
-                if (it is UiEvents.Error) {
+                if (it is UiEvent.Error) {
                     ErrorDialog(
                         requireContext(),
                         it.error,

@@ -6,8 +6,8 @@ import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.repository.Source
 import co.kr.woowahan_banchan.domain.usecase.GetDishesUseCase
-import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
-import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvent
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,8 +21,8 @@ import javax.inject.Inject
 class OtherDishViewModel @Inject constructor(
     private val getDishesUseCase: GetDishesUseCase
 ) : ViewModel() {
-    private val _otherDishes = MutableStateFlow<UiStates<List<Dish>>>(UiStates.Init)
-    val otherDishes: StateFlow<UiStates<List<Dish>>> get() = _otherDishes
+    private val _otherDishes = MutableStateFlow<UiState<List<Dish>>>(UiState.Init)
+    val otherDishes: StateFlow<UiState<List<Dish>>> get() = _otherDishes
     private val _sortedDishes = MutableStateFlow<List<Dish>>(listOf())
     val sortedDishes: StateFlow<List<Dish>> get() = _sortedDishes
     private val _dishAmount = MutableStateFlow(0)
@@ -30,8 +30,8 @@ class OtherDishViewModel @Inject constructor(
     private var defaultMainDishes = listOf<Dish>()
     private var collectJob: Job? = null
 
-    private val _otherDishesEvent = MutableSharedFlow<UiEvents<Unit>>()
-    val otherDishesEvent: SharedFlow<UiEvents<Unit>> get() = _otherDishesEvent
+    private val _otherDishesEvent = MutableSharedFlow<UiEvent<Unit>>()
+    val otherDishesEvent: SharedFlow<UiEvent<Unit>> get() = _otherDishesEvent
 
     fun getDishes(dishType: String) {
         val source = if (dishType == DishType.SOUP.name) Source.SOUP else Source.SIDE
@@ -41,10 +41,10 @@ class OtherDishViewModel @Inject constructor(
                     result.onSuccess {
                         defaultMainDishes = it
                         _dishAmount.value = it.size
-                        _otherDishes.value = UiStates.Success(it)
+                        _otherDishes.value = UiState.Success(it)
                     }.onFailure {
-                        _otherDishes.value = UiStates.Error(it.message)
-                        _otherDishesEvent.emit(UiEvents.Error(it as ErrorEntity))
+                        _otherDishes.value = UiState.Error(it.message)
+                        _otherDishesEvent.emit(UiEvent.Error(it as ErrorEntity))
                     }
                 }
         }
