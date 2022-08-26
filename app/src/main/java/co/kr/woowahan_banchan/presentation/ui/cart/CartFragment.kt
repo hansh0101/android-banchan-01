@@ -150,7 +150,11 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
                         )
 
                         parentFragmentManager.commit {
-                            replace(R.id.fcv_cart, OrderDetailFragment.newInstance(it.data))
+                            replace(
+                                R.id.fcv_cart,
+                                OrderDetailFragment.newInstance(it.data),
+                                OrderDetailFragment::class.java.simpleName
+                            )
                         }
                     }
                     is UiState.Error -> {}
