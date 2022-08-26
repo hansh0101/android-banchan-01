@@ -38,19 +38,26 @@ class MainDishViewModel @Inject constructor(
         getDishes()
     }
 
-    private fun getDishes() {
-        collectJob = viewModelScope.launch {
-            getDishesUseCase(Source.MAIN)
-                .collect { result ->
-                    result.onSuccess {
-                        defaultMainDishes = it
-                        _mainDishes.value = UiState.Success(it)
-                    }.onFailure {
-                        _mainDishes.value = UiState.Error(it.message)
-                        _mainDishesEvent.emit(UiEvent.Error(it as ErrorEntity))
+    fun getDishes() {
+        if (collectJob == null) {
+            collectJob = viewModelScope.launch {
+                getDishesUseCase(Source.MAIN)
+                    .collect { result ->
+                        result.onSuccess {
+                            defaultMainDishes = it
+                            _mainDishes.value = UiState.Success(it)
+                        }.onFailure {
+                            _mainDishes.value = UiState.Error(it.message)
+                            _mainDishesEvent.emit(UiEvent.Error(it as ErrorEntity))
+                        }
                     }
-                }
+            }
         }
+    }
+
+    fun cancelCollectJob() {
+        collectJob?.cancel()
+        collectJob = null
     }
 
     fun setSortedDishes(sortType: Int) {
@@ -73,7 +80,7 @@ class MainDishViewModel @Inject constructor(
     }
 
     fun reFetchDishes() {
-        collectJob?.cancel()
+        cancelCollectJob()
         getDishes()
     }
 }

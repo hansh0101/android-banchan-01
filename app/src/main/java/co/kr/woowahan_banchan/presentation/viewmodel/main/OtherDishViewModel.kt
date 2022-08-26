@@ -34,20 +34,27 @@ class OtherDishViewModel @Inject constructor(
     val otherDishesEvent: SharedFlow<UiEvent<Unit>> get() = _otherDishesEvent
 
     fun getDishes(dishType: String) {
-        val source = if (dishType == DishType.SOUP.name) Source.SOUP else Source.SIDE
-        collectJob = viewModelScope.launch {
-            getDishesUseCase(source)
-                .collect { result ->
-                    result.onSuccess {
-                        defaultMainDishes = it
-                        _dishAmount.value = it.size
-                        _otherDishes.value = UiState.Success(it)
-                    }.onFailure {
-                        _otherDishes.value = UiState.Error(it.message)
-                        _otherDishesEvent.emit(UiEvent.Error(it as ErrorEntity))
+        if (collectJob == null) {
+            val source = if (dishType == DishType.SOUP.name) Source.SOUP else Source.SIDE
+            collectJob = viewModelScope.launch {
+                getDishesUseCase(source)
+                    .collect { result ->
+                        result.onSuccess {
+                            defaultMainDishes = it
+                            _dishAmount.value = it.size
+                            _otherDishes.value = UiState.Success(it)
+                        }.onFailure {
+                            _otherDishes.value = UiState.Error(it.message)
+                            _otherDishesEvent.emit(UiEvent.Error(it as ErrorEntity))
+                        }
                     }
-                }
+            }
         }
+    }
+
+    fun cancelCollectJob() {
+        collectJob?.cancel()
+        collectJob = null
     }
 
     fun setSortedDishes(sortType: Int) {
@@ -66,7 +73,7 @@ class OtherDishViewModel @Inject constructor(
     }
 
     fun reFetchDishes(dishType: String) {
-        collectJob?.cancel()
+        cancelCollectJob()
         getDishes(dishType)
     }
 }

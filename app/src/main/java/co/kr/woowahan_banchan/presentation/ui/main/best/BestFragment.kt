@@ -22,6 +22,7 @@ import co.kr.woowahan_banchan.util.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 
 @AndroidEntryPoint
 class BestFragment : BaseFragment<FragmentBestBinding>() {
@@ -42,6 +43,16 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
         super.onViewCreated(view, savedInstanceState)
         initView()
         observeData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getBests()
+    }
+
+    override fun onPause() {
+        viewModel.cancelCollectJob()
+        super.onPause()
     }
 
     private fun initView() {
@@ -69,6 +80,7 @@ class BestFragment : BaseFragment<FragmentBestBinding>() {
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 if (it is UiEvent.Error) {
+                    Timber.e(it.error)
                     showErrorDialog(it)
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)

@@ -30,21 +30,28 @@ class BestViewModel @Inject constructor(
         getBests()
     }
 
-    private fun getBests() {
-        collectJob = viewModelScope.launch {
-            getBestsUseCase()
-                .collect { result ->
-                    result.onSuccess { _bestItems.value = UiState.Success(it) }
-                        .onFailure {
-                            _bestItems.value = UiState.Error(it.message)
-                            _bestItemsEvent.emit(UiEvent.Error(it as ErrorEntity))
-                        }
-                }
+    fun getBests() {
+        if (collectJob == null) {
+            collectJob = viewModelScope.launch {
+                getBestsUseCase()
+                    .collect { result ->
+                        result.onSuccess { _bestItems.value = UiState.Success(it) }
+                            .onFailure {
+                                _bestItems.value = UiState.Error(it.message)
+                                _bestItemsEvent.emit(UiEvent.Error(it as ErrorEntity))
+                            }
+                    }
+            }
         }
     }
 
-    fun reFetchBests() {
+    fun cancelCollectJob() {
         collectJob?.cancel()
+        collectJob = null
+    }
+
+    fun reFetchBests() {
+        cancelCollectJob()
         getBests()
     }
 }

@@ -46,7 +46,7 @@ class ImageLoader(
                 urlConnection = getUrlConnection(url)
                 val stream = urlConnection?.inputStream
                 BitmapFactory.decodeStream(stream)
-            }.onSuccess {
+            }.mapCatching {
                 cache[url] = it
                 withContext(Dispatchers.Main) { setImage(it) }
             }.onFailure {
