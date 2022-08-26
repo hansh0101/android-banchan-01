@@ -4,6 +4,7 @@ import co.kr.woowahan_banchan.data.database.dao.OrderDao
 import co.kr.woowahan_banchan.data.extension.runCatchingErrorEntity
 import co.kr.woowahan_banchan.data.extension.toErrorEntity
 import co.kr.woowahan_banchan.data.model.local.OrderDto
+import co.kr.woowahan_banchan.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
@@ -11,7 +12,7 @@ import javax.inject.Inject
 
 class OrderDataSourceImpl @Inject constructor(
     private val orderDao: OrderDao,
-    private val coroutineDispatcher: CoroutineDispatcher
+    @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher
 ) : OrderDataSource {
     override suspend fun getItems(): Result<List<OrderDto>> =
         withContext(coroutineDispatcher) {

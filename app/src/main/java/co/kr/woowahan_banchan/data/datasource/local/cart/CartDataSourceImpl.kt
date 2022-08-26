@@ -4,6 +4,7 @@ import co.kr.woowahan_banchan.data.database.dao.CartDao
 import co.kr.woowahan_banchan.data.extension.runCatchingErrorEntity
 import co.kr.woowahan_banchan.data.extension.toErrorEntity
 import co.kr.woowahan_banchan.data.model.local.CartDto
+import co.kr.woowahan_banchan.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 class CartDataSourceImpl @Inject constructor(
     private val cartDao: CartDao,
-    private val coroutineDispatcher: CoroutineDispatcher
+    @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher
 ) : CartDataSource {
     override fun getItems(): Flow<Result<List<CartDto>>> =
         cartDao.getItems()
