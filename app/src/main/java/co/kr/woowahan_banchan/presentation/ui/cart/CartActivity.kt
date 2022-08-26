@@ -9,6 +9,7 @@ import co.kr.woowahan_banchan.R
 import co.kr.woowahan_banchan.databinding.ActivityCartBinding
 import co.kr.woowahan_banchan.presentation.ui.base.BaseActivity
 import co.kr.woowahan_banchan.presentation.ui.cart.history.HistoryFragment
+import co.kr.woowahan_banchan.presentation.ui.order.orderdetail.OrderDetailFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,26 +19,41 @@ class CartActivity : BaseActivity<ActivityCartBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initView(savedInstanceState?.getInt("backStackCount"))
+        initView(
+            savedInstanceState?.getInt("backStackCount"),
+            savedInstanceState?.getBoolean("orderDetail") ?: false
+        )
     }
 
-    private fun initView(backStackCount : Int?) {
+    private fun initView(backStackCount: Int?, orderDetail: Boolean) {
         initToolbar()
-        while (supportFragmentManager.backStackEntryCount > 0){
+        while (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStackImmediate()
         }
         supportFragmentManager.commit {
-            replace(R.id.fcv_cart,CartFragment())
-            if (backStackCount != 0 && backStackCount != null){
-                replace(R.id.fcv_cart,HistoryFragment())
-                addToBackStack("cart")
+            if (orderDetail) {
+                replace(
+                    R.id.fcv_cart,
+                    OrderDetailFragment.newInstance(OrderDetailFragment.selectedOrderId!!),
+                    OrderDetailFragment::class.java.simpleName
+                )
+            } else {
+                replace(R.id.fcv_cart, CartFragment())
+                if (backStackCount != 0 && backStackCount != null) {
+                    replace(R.id.fcv_cart, HistoryFragment())
+                    addToBackStack("cart")
+                }
             }
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt("backStackCount",supportFragmentManager.backStackEntryCount)
+        outState.putInt("backStackCount", supportFragmentManager.backStackEntryCount)
+        outState.putBoolean(
+            "orderDetail",
+            supportFragmentManager.findFragmentByTag(OrderDetailFragment::class.java.simpleName) != null
+        )
     }
 
     private fun initToolbar() {
@@ -47,7 +63,7 @@ class CartActivity : BaseActivity<ActivityCartBinding>() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home){
+        if (item.itemId == android.R.id.home) {
             if (supportFragmentManager.backStackEntryCount == 0) {
                 finish()
             } else {
