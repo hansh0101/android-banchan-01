@@ -60,6 +60,7 @@ class DishAdapter(
     class DishLinearViewHolder(
         private val binding: ItemDishLinearBinding,
         private val moveToDetail: (String, String) -> Unit,
+        private val openBottomSheet: (Dish) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Dish) {
             ImageLoader(binding.ivImage,itemView.context)
@@ -71,17 +72,21 @@ class DishAdapter(
             binding.root.setOnClickListener {
                 moveToDetail(item.title, item.detailHash)
             }
+            binding.ibAddBtn.setOnClickListener {
+                openBottomSheet(item)
+            }
         }
 
         companion object {
             fun create(
                 parent: ViewGroup,
                 moveToDetail: (String, String) -> Unit,
+                openBottomSheet: (Dish) -> Unit
             ): DishLinearViewHolder {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_dish_linear, parent, false)
                 val binding = ItemDishLinearBinding.bind(view)
-                return DishLinearViewHolder(binding, moveToDetail)
+                return DishLinearViewHolder(binding, moveToDetail, openBottomSheet)
             }
         }
     }
@@ -106,7 +111,7 @@ class DishAdapter(
             moveToDetail,
             openBottomSheet
         )
-        else DishLinearViewHolder.create(parent, moveToDetail)
+        else DishLinearViewHolder.create(parent, moveToDetail, openBottomSheet)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
