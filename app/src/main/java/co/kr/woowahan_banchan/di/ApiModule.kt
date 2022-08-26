@@ -17,71 +17,61 @@ import javax.inject.Singleton
 object ApiModule {
     @Provides
     @Singleton
-    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
+    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor =
+        HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-    }
 
     @Provides
     @Singleton
     fun provideHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor
-    ): OkHttpClient {
-        return OkHttpClient.Builder().apply {
-            addInterceptor(httpLoggingInterceptor)
-        }.build()
-    }
+    ): OkHttpClient = OkHttpClient.Builder().apply {
+        addInterceptor(httpLoggingInterceptor)
+    }.build()
+
+    @Provides
+    @Singleton
+    fun provideGsonConverterFactory(): GsonConverterFactory = GsonConverterFactory.create()
 
     @Provides
     @Singleton
     fun provideRetrofit(
-        httpClient: OkHttpClient
-    ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.apiUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(httpClient)
-            .build()
-    }
+        httpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(BuildConfig.apiUrl)
+        .addConverterFactory(gsonConverterFactory)
+        .client(httpClient)
+        .build()
 
     @Provides
     @Singleton
     fun provideBestService(
         retrofit: Retrofit
-    ): BestService {
-        return retrofit.create(BestService::class.java)
-    }
+    ): BestService = retrofit.create(BestService::class.java)
 
     @Provides
     @Singleton
     fun provideMainDishService(
         retrofit: Retrofit
-    ): MainDishService {
-        return retrofit.create(MainDishService::class.java)
-    }
+    ): MainDishService = retrofit.create(MainDishService::class.java)
 
     @Provides
     @Singleton
     fun provideSideDishService(
         retrofit: Retrofit
-    ): SideDishService {
-        return retrofit.create(SideDishService::class.java)
-    }
+    ): SideDishService = retrofit.create(SideDishService::class.java)
 
     @Provides
     @Singleton
     fun provideSoupDishService(
         retrofit: Retrofit
-    ): SoupDishService {
-        return retrofit.create(SoupDishService::class.java)
-    }
+    ): SoupDishService = retrofit.create(SoupDishService::class.java)
 
     @Provides
     @Singleton
     fun provideDetailService(
         retrofit: Retrofit
-    ): DetailService {
-        return retrofit.create(DetailService::class.java)
-    }
+    ): DetailService = retrofit.create(DetailService::class.java)
 }
