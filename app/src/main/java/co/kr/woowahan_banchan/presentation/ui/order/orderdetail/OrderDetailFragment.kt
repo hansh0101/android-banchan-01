@@ -21,7 +21,7 @@ import co.kr.woowahan_banchan.presentation.viewmodel.UiEvent
 import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.order.OrderDetailViewModel
 import co.kr.woowahan_banchan.util.ImageLoader
-import co.kr.woowahan_banchan.util.calculateDiffToMinute
+import co.kr.woowahan_banchan.util.calculateDiffToSecond
 import co.kr.woowahan_banchan.util.longArgs
 import co.kr.woowahan_banchan.util.toPriceFormat
 import dagger.hilt.android.AndroidEntryPoint
@@ -133,12 +133,12 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
     }
 
     private fun showDeliveryInfo(time: Long) {
-        if (Date().time.calculateDiffToMinute(time) >= 20) {
+        if (Date().time.calculateDiffToSecond(time) >= 20) {
             binding.tvTitleOrderInfo.text = "배송이 완료되었습니다."
             binding.layoutDeliveryWaiting.isVisible = false
         } else {
             binding.tvTitleOrderInfo.text = "주문이 접수되었습니다."
-            binding.tvDeliveryWaitingValue.text = "${20 - Date().time.calculateDiffToMinute(time)}분"
+            binding.tvDeliveryWaitingValue.text = "${10 - Date().time.calculateDiffToSecond(time)}분"
             binding.layoutDeliveryWaiting.isVisible = true
         }
     }

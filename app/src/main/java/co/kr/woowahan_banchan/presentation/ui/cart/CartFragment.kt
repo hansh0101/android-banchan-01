@@ -32,6 +32,7 @@ import co.kr.woowahan_banchan.util.shortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.util.*
 
 @AndroidEntryPoint
 class CartFragment : BaseFragment<FragmentCartBinding>() {
@@ -138,13 +139,13 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
                         val intent = Intent(AlarmReceiver.getIntent(requireContext(), it.data))
                         val pendingIntent = PendingIntent.getBroadcast(
                             requireContext(),
-                            AlarmReceiver.NOTIFICATION_ID,
+                            Date().time.toInt(),
                             intent,
                             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                         )
                         alarmManager.set(
                             AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                            SystemClock.elapsedRealtime() + 1000 * 60 * 20,
+                            SystemClock.elapsedRealtime() + 1000 * 10,
                             pendingIntent
                         )
 
