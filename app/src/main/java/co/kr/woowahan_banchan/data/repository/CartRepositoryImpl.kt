@@ -3,6 +3,7 @@ package co.kr.woowahan_banchan.data.repository
 import co.kr.woowahan_banchan.data.datasource.local.cart.CartDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.detail.DetailDataSource
 import co.kr.woowahan_banchan.data.model.local.CartDto
+import co.kr.woowahan_banchan.di.DefaultDispatcher
 import co.kr.woowahan_banchan.domain.entity.cart.CartItem
 import co.kr.woowahan_banchan.domain.repository.CartRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -15,7 +16,7 @@ import javax.inject.Inject
 class CartRepositoryImpl @Inject constructor(
     private val cartDataSource: CartDataSource,
     private val detailDataSource: DetailDataSource,
-    private val coroutineDispatcher: CoroutineDispatcher
+    @DefaultDispatcher private val coroutineDispatcher: CoroutineDispatcher
 ) : CartRepository {
     override suspend fun addToCart(hash: String, amount: Int, name: String): Result<Unit> {
         val originalAmount = cartDataSource.getAmount(hash).getOrDefault(0)

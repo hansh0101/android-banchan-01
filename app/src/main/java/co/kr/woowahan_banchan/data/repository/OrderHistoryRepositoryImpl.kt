@@ -4,6 +4,7 @@ import co.kr.woowahan_banchan.data.datasource.local.order.OrderDataSource
 import co.kr.woowahan_banchan.data.datasource.local.orderitem.OrderItemDataSource
 import co.kr.woowahan_banchan.data.model.local.OrderDto
 import co.kr.woowahan_banchan.data.model.local.OrderItemDto
+import co.kr.woowahan_banchan.di.DefaultDispatcher
 import co.kr.woowahan_banchan.domain.entity.cart.CartItem
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderHistory
 import co.kr.woowahan_banchan.domain.entity.orderhistory.OrderItem
@@ -17,7 +18,7 @@ import javax.inject.Inject
 class OrderHistoryRepositoryImpl @Inject constructor(
     private val orderDataSource: OrderDataSource,
     private val orderItemDataSource: OrderItemDataSource,
-    private val coroutineDispatcher: CoroutineDispatcher
+    @DefaultDispatcher private val coroutineDispatcher: CoroutineDispatcher
 ) : OrderHistoryRepository {
     override suspend fun getOrderHistories(): Result<List<OrderHistory>> {
         return withContext(coroutineDispatcher) {
