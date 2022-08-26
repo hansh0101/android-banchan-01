@@ -27,7 +27,7 @@ class FakeOrderDataSourceWithError: OrderDataSource {
         return Result.failure(ErrorEntity.RetryableError)
     }
 
-    override suspend fun updateItem(item: OrderDto): Result<Unit> {
-        return Result.failure(ErrorEntity.UnknownError)
+    override suspend fun updateItem(orderId: Long): Result<Unit> {
+        return Result.failure(ErrorEntity.RetryableError)
     }
 }

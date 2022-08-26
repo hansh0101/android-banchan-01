@@ -6,8 +6,8 @@ import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.repository.Source
 import co.kr.woowahan_banchan.domain.usecase.GetDishesUseCase
-import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
-import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvent
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,15 +21,15 @@ import javax.inject.Inject
 class MainDishViewModel @Inject constructor(
     private val getDishesUseCase: GetDishesUseCase
 ) : ViewModel() {
-    private val _mainDishes = MutableStateFlow<UiStates<List<Dish>>>(UiStates.Init)
-    val mainDishes: StateFlow<UiStates<List<Dish>>> get() = _mainDishes
+    private val _mainDishes = MutableStateFlow<UiState<List<Dish>>>(UiState.Init)
+    val mainDishes: StateFlow<UiState<List<Dish>>> get() = _mainDishes
     private val _isGridMode = MutableStateFlow<Boolean>(true)
     val isGridMode: StateFlow<Boolean> get() = _isGridMode
     private val _sortedDishes = MutableStateFlow<List<Dish>>(listOf())
     val sortedDishes: StateFlow<List<Dish>> get() = _sortedDishes
 
-    private val _mainDishesEvent = MutableSharedFlow<UiEvents<Unit>>()
-    val mainDishesEvent: SharedFlow<UiEvents<Unit>> get() = _mainDishesEvent
+    private val _mainDishesEvent = MutableSharedFlow<UiEvent<Unit>>()
+    val mainDishesEvent: SharedFlow<UiEvent<Unit>> get() = _mainDishesEvent
 
     private var defaultMainDishes = listOf<Dish>()
     private var collectJob: Job? = null
@@ -44,10 +44,10 @@ class MainDishViewModel @Inject constructor(
                 .collect { result ->
                     result.onSuccess {
                         defaultMainDishes = it
-                        _mainDishes.value = UiStates.Success(it)
+                        _mainDishes.value = UiState.Success(it)
                     }.onFailure {
-                        _mainDishes.value = UiStates.Error(it.message)
-                        _mainDishesEvent.emit(UiEvents.Error(it as ErrorEntity))
+                        _mainDishes.value = UiState.Error(it.message)
+                        _mainDishesEvent.emit(UiEvent.Error(it as ErrorEntity))
                     }
                 }
         }

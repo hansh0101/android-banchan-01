@@ -24,8 +24,8 @@ import co.kr.woowahan_banchan.presentation.ui.cart.history.HistoryFragment
 import co.kr.woowahan_banchan.presentation.ui.order.orderdetail.OrderDetailFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.ErrorDialog
-import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
-import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvent
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.cart.CartViewModel
 import co.kr.woowahan_banchan.util.dpToPx
 import co.kr.woowahan_banchan.util.shortToast
@@ -97,20 +97,20 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 when (it) {
-                    is UiStates.Init -> {}
-                    is UiStates.Success -> {
+                    is UiState.Init -> {}
+                    is UiState.Success -> {
                         cartAdapter.updateCartItems(it.data)
                         binding.rvCart.scrollToPosition(0)
                         viewModel.setSelectedAll(it.data)
                     }
-                    is UiStates.Error -> {}
+                    is UiState.Error -> {}
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.cartEvent
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
-                if (it is UiEvents.Error) {
+                if (it is UiEvent.Error) {
                     showErrorDialogForCart(it)
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -118,11 +118,11 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
         viewModel.historyItems.flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 when (it) {
-                    is UiStates.Init -> {}
-                    is UiStates.Success -> {
+                    is UiState.Init -> {}
+                    is UiState.Success -> {
                         cartAdapter.updateHistoryItems(it.data)
                     }
-                    is UiStates.Error -> {
+                    is UiState.Error -> {
                         requireContext().shortToast(it.message)
                     }
                 }
@@ -132,8 +132,8 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 when (it) {
-                    is UiStates.Init -> {}
-                    is UiStates.Success -> {
+                    is UiState.Init -> {}
+                    is UiState.Success -> {
                         val alarmManager =
                             requireContext().getSystemService(ALARM_SERVICE) as AlarmManager
                         val intent = Intent(AlarmReceiver.getIntent(requireContext(), it.data))
@@ -153,14 +153,14 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
                             replace(R.id.fcv_cart, OrderDetailFragment.newInstance(it.data))
                         }
                     }
-                    is UiStates.Error -> {}
+                    is UiState.Error -> {}
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.orderEvent
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
-                if (it is UiEvents.Error) {
+                if (it is UiEvent.Error) {
                     showErrorDialogForOrder(it)
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -178,7 +178,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
         }
     }
 
-    private fun showErrorDialogForCart(event: UiEvents.Error) {
+    private fun showErrorDialogForCart(event: UiEvent.Error) {
         ErrorDialog(
             requireContext(),
             event.error,
@@ -191,7 +191,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
         ).show()
     }
 
-    private fun showErrorDialogForOrder(event: UiEvents.Error) {
+    private fun showErrorDialogForOrder(event: UiEvent.Error) {
         ErrorDialog(requireContext(), event.error).show()
     }
 

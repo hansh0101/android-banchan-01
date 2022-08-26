@@ -33,7 +33,7 @@ class FakeOrderDataSource(initOrderDtos: List<OrderDto>) : OrderDataSource {
         return Result.success((orderDtos.apply { add(item) }.size).toLong())
     }
 
-    override suspend fun updateItem(item: OrderDto): Result<Unit> {
+    override suspend fun updateItem(orderId: Long): Result<Unit> {
         return Result.success(Unit)
     }
 }

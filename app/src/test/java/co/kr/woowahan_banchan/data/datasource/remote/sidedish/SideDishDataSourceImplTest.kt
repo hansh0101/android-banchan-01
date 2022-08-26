@@ -3,25 +3,27 @@ package co.kr.woowahan_banchan.data.datasource.remote.sidedish
 import co.kr.woowahan_banchan.data.api.SideDishService
 import co.kr.woowahan_banchan.data.model.remote.response.ApiResponse
 import co.kr.woowahan_banchan.data.model.remote.response.DishResponse
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class SideDishDataSourceImplTest {
 
     private lateinit var sideDishService: SideDishService
     private lateinit var sideDishDataSource: SideDishDataSource
+    private val testDispatcher = UnconfinedTestDispatcher()
+
 
     @Before
     fun setUp() {
         sideDishService = FakeSideDishService()
-        sideDishDataSource = SideDishDataSourceImpl(sideDishService, Dispatchers.IO)
+        sideDishDataSource = SideDishDataSourceImpl(sideDishService, testDispatcher)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
     fun getSideDishesTest() {
         runTest {

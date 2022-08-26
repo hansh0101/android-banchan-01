@@ -14,8 +14,8 @@ import co.kr.woowahan_banchan.presentation.ui.base.BaseFragment
 import co.kr.woowahan_banchan.presentation.ui.productdetail.ProductDetailActivity
 import co.kr.woowahan_banchan.presentation.ui.widget.CartAddBottomSheet
 import co.kr.woowahan_banchan.presentation.ui.widget.ErrorDialog
-import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
-import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvent
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import co.kr.woowahan_banchan.presentation.viewmodel.cart.HistoryViewModel
 import co.kr.woowahan_banchan.util.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,14 +70,14 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
                 when (it) {
-                    is UiStates.Init -> {
+                    is UiState.Init -> {
                         showProgressBar()
                     }
-                    is UiStates.Success -> {
+                    is UiState.Success -> {
                         hideProgressBar()
                         recentlyViewedAdapter.submitList(it.data)
                     }
-                    is UiStates.Error -> {
+                    is UiState.Error -> {
                         hideProgressBar()
                     }
                 }
@@ -86,7 +86,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
         viewModel.historyItemsEvent
             .flowWithLifecycle(viewLifecycleOwner.lifecycle)
             .onEach {
-                if (it is UiEvents.Error) {
+                if (it is UiEvent.Error) {
                     showErrorDialog(it)
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -106,7 +106,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
         binding.progressBar.isVisible = false
     }
 
-    private fun showErrorDialog(event: UiEvents.Error) {
+    private fun showErrorDialog(event: UiEvent.Error) {
         ErrorDialog(
             requireContext(),
             event.error,

@@ -3,25 +3,26 @@ package co.kr.woowahan_banchan.data.datasource.remote.maindish
 import co.kr.woowahan_banchan.data.api.MainDishService
 import co.kr.woowahan_banchan.data.model.remote.response.ApiResponse
 import co.kr.woowahan_banchan.data.model.remote.response.DishResponse
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class MainDishDataSourceImplTest {
 
     private lateinit var mainDishService: MainDishService
     private lateinit var mainDishDataSource: MainDishDataSource
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setUp() {
         mainDishService = FakeMainDishService()
-        mainDishDataSource = MainDishDataSourceImpl(mainDishService, Dispatchers.IO)
+        mainDishDataSource = MainDishDataSourceImpl(mainDishService, testDispatcher)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
     fun getMainDishesTest() {
         runTest {

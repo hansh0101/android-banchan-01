@@ -4,25 +4,26 @@ import co.kr.woowahan_banchan.data.api.BestService
 import co.kr.woowahan_banchan.data.model.remote.response.ApiResponse
 import co.kr.woowahan_banchan.data.model.remote.response.BestResponse
 import co.kr.woowahan_banchan.data.model.remote.response.DishResponse
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class BestDataSourceImplTest {
 
     private lateinit var bestService: BestService
     private lateinit var bestDataSource: BestDataSource
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setUp() {
         bestService = FakeBestService()
-        bestDataSource = BestDataSourceImpl(bestService, Dispatchers.IO)
+        bestDataSource = BestDataSourceImpl(bestService, testDispatcher)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
     fun getBestsTest() {
         runTest {

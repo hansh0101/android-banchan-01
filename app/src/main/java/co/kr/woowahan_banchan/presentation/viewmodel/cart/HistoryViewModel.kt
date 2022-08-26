@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.entity.history.HistoryItem
 import co.kr.woowahan_banchan.domain.usecase.HistoryUseCase
-import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
-import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvent
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,20 +20,20 @@ import javax.inject.Inject
 class HistoryViewModel @Inject constructor(
     private val historyUseCase: HistoryUseCase
 ) : ViewModel() {
-    private val _historyItems = MutableStateFlow<UiStates<List<HistoryItem>>>(UiStates.Init)
-    val historyItems: StateFlow<UiStates<List<HistoryItem>>> get() = _historyItems
-    private val _historyItemsEvent = MutableSharedFlow<UiEvents<Unit>>()
-    val historyItemsEvent: SharedFlow<UiEvents<Unit>> get() = _historyItemsEvent
+    private val _historyItems = MutableStateFlow<UiState<List<HistoryItem>>>(UiState.Init)
+    val historyItems: StateFlow<UiState<List<HistoryItem>>> get() = _historyItems
+    private val _historyItemsEvent = MutableSharedFlow<UiEvent<Unit>>()
+    val historyItemsEvent: SharedFlow<UiEvent<Unit>> get() = _historyItemsEvent
     private var collectJob: Job? = null
 
     fun fetchHistoryItems() {
         collectJob = viewModelScope.launch {
             historyUseCase.invoke(previewMode = false)
                 .collect { result ->
-                    result.onSuccess { _historyItems.value = UiStates.Success(it) }
+                    result.onSuccess { _historyItems.value = UiState.Success(it) }
                         .onFailure {
-                            _historyItems.value = UiStates.Error(it.message)
-                            _historyItemsEvent.emit(UiEvents.Error(it as ErrorEntity))
+                            _historyItems.value = UiState.Error(it.message)
+                            _historyItemsEvent.emit(UiEvent.Error(it as ErrorEntity))
                         }
                 }
         }

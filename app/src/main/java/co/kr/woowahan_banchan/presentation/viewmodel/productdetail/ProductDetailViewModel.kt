@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import co.kr.woowahan_banchan.domain.entity.detail.DishInfo
 import co.kr.woowahan_banchan.domain.entity.error.ErrorEntity
 import co.kr.woowahan_banchan.domain.usecase.*
-import co.kr.woowahan_banchan.presentation.viewmodel.UiEvents
-import co.kr.woowahan_banchan.presentation.viewmodel.UiStates
+import co.kr.woowahan_banchan.presentation.viewmodel.UiEvent
+import co.kr.woowahan_banchan.presentation.viewmodel.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,18 +25,18 @@ class ProductDetailViewModel @Inject constructor(
     private val checkOrderCompleteUseCase: CheckOrderCompleteUseCase
 ) : ViewModel() {
     // State
-    private val _dishInfo = MutableStateFlow<UiStates<DishInfo>>(UiStates.Init)
-    val dishInfo: StateFlow<UiStates<DishInfo>> get() = _dishInfo
+    private val _dishInfo = MutableStateFlow<UiState<DishInfo>>(UiState.Init)
+    val dishInfo: StateFlow<UiState<DishInfo>> get() = _dishInfo
     private val _amount = MutableStateFlow<Int>(1)
     val amount: StateFlow<Int> get() = _amount
     private val _cartCount = MutableStateFlow(0)
     val cartCount: StateFlow<Int> get() = _cartCount
-    private val _isOrderCompleted = MutableStateFlow<UiStates<Boolean>>(UiStates.Init)
-    val isOrderCompleted: StateFlow<UiStates<Boolean>> get() = _isOrderCompleted
+    private val _isOrderCompleted = MutableStateFlow<UiState<Boolean>>(UiState.Init)
+    val isOrderCompleted: StateFlow<UiState<Boolean>> get() = _isOrderCompleted
 
     // Event
-    private val _cartAddEvent = MutableSharedFlow<UiEvents<Unit>>()
-    val cartAddEvent: SharedFlow<UiEvents<Unit>> get() = _cartAddEvent
+    private val _cartAddEvent = MutableSharedFlow<UiEvent<Unit>>()
+    val cartAddEvent: SharedFlow<UiEvent<Unit>> get() = _cartAddEvent
 
     init {
         getCartItemCount()
@@ -46,12 +46,12 @@ class ProductDetailViewModel @Inject constructor(
     fun fetchUiState(hash: String) {
         viewModelScope.launch {
             productDetailUseCase(hash)
-                .onSuccess { _dishInfo.value = UiStates.Success(it) }
+                .onSuccess { _dishInfo.value = UiState.Success(it) }
                 .onFailure {
                     _dishInfo.value = when (it as ErrorEntity) {
-                        is ErrorEntity.RetryableError -> UiStates.Error("문제가 생겼어요! 다시 시도해보시겠어요?")
-                        is ErrorEntity.ConditionalError -> UiStates.Error("인터넷 연결에 문제가 있어요!")
-                        is ErrorEntity.UnknownError -> UiStates.Error("앗! 문제가 발생했어요!")
+                        is ErrorEntity.RetryableError -> UiState.Error("문제가 생겼어요! 다시 시도해보시겠어요?")
+                        is ErrorEntity.ConditionalError -> UiState.Error("인터넷 연결에 문제가 있어요!")
+                        is ErrorEntity.UnknownError -> UiState.Error("앗! 문제가 발생했어요!")
                     }
                 }
         }
@@ -67,8 +67,8 @@ class ProductDetailViewModel @Inject constructor(
     fun addToCart(hash: String, name: String) {
         viewModelScope.launch {
             cartAddUseCase(hash, amount.value, name)
-                .onSuccess { _cartAddEvent.emit(UiEvents.Success(Unit)) }
-                .onFailure { _cartAddEvent.emit(UiEvents.Error(it as ErrorEntity)) }
+                .onSuccess { _cartAddEvent.emit(UiEvent.Success(Unit)) }
+                .onFailure { _cartAddEvent.emit(UiEvent.Error(it as ErrorEntity)) }
         }
     }
 
@@ -99,9 +99,9 @@ class ProductDetailViewModel @Inject constructor(
         viewModelScope.launch {
             checkOrderCompleteUseCase().collect { result ->
                 result.onSuccess {
-                    _isOrderCompleted.value = UiStates.Success(it)
+                    _isOrderCompleted.value = UiState.Success(it)
                 }.onFailure {
-                    _isOrderCompleted.value = UiStates.Error("배송 정보를 받아오지 못했어요!")
+                    _isOrderCompleted.value = UiState.Error("배송 정보를 받아오지 못했어요!")
                 }
             }
         }
