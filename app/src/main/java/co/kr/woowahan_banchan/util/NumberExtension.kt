@@ -5,7 +5,7 @@ import android.content.res.Resources
 fun Int.toPriceFormat(): String = String.format("%,2d", this)
 fun Int.dpToPx(): Int = this * Resources.getSystem().displayMetrics.density.toInt()
 fun Long.calculateDiffToMinute(time: Long): Int = ((this - time) / 60000).toInt()
-fun Long.calculateDiffToSecond(time: Long): Int = ((this - time) / 10000).toInt()
+fun Long.calculateDiffToSecond(time: Long): Int = ((this - time) / 1000).toInt()
 fun Long.calculateDiff(time: Long): String {
     val diffMinute = this.calculateDiffToMinute(time)
     if (diffMinute < 60) {

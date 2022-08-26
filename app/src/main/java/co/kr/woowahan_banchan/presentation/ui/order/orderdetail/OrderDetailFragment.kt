@@ -133,7 +133,7 @@ class OrderDetailFragment : BaseFragment<FragmentOrderDetailBinding>() {
     }
 
     private fun showDeliveryInfo(time: Long) {
-        if (Date().time.calculateDiffToSecond(time) >= 20) {
+        if (Date().time.calculateDiffToSecond(time) >= 10) {
             binding.tvTitleOrderInfo.text = "배송이 완료되었습니다."
             binding.layoutDeliveryWaiting.isVisible = false
         } else {
