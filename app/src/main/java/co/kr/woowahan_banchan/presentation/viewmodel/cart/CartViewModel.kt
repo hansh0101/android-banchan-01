@@ -59,6 +59,8 @@ class CartViewModel @Inject constructor(
                 .collect { result ->
                     result.onSuccess {
                         _cartItems.value = UiState.Success(it)
+
+                        originalCart.clear()
                         it.forEach { item ->
                             originalCart.add(item.copy())
                         }
