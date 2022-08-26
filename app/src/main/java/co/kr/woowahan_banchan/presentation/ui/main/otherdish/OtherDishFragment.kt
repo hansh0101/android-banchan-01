@@ -63,6 +63,16 @@ class OtherDishFragment : BaseFragment<FragmentOtherDishBinding>() {
         initData()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getDishes(dishType)
+    }
+
+    override fun onPause() {
+        viewModel.cancelCollectJob()
+        super.onPause()
+    }
+
     private fun initData() {
         when (dishType) {
             DishType.SOUP.name -> {
