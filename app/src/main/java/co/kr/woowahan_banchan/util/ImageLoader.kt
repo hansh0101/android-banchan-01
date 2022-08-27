@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
+import android.util.LruCache
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.*
@@ -36,8 +37,9 @@ class ImageLoader(
 
     fun loadImage(url: String) {
         if (url.isEmpty()) return
-        if (cache.containsKey(url)) {
-            setImage(cache[url])
+        val cacheImage : Bitmap? = cache[url]
+        if (cacheImage != null) {
+            setImage(cacheImage)
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
@@ -47,7 +49,7 @@ class ImageLoader(
                 val stream = urlConnection?.inputStream
                 BitmapFactory.decodeStream(stream)
             }.mapCatching {
-                cache[url] = it
+                cache.put(url,it)
                 withContext(Dispatchers.Main) { setImage(it) }
             }.onFailure {
                 Timber.e(it)
@@ -77,6 +79,12 @@ class ImageLoader(
     }
 
     companion object {
-        private val cache = HashMap<String, Bitmap>()
+        private val cacheSize = ((Runtime.getRuntime().maxMemory()/1024)/8).toInt()
+        private val cache = object : LruCache<String,Bitmap>(cacheSize){
+            override fun sizeOf(key: String?, value: Bitmap?): Int {
+                val byteCount = value?.byteCount ?: 0
+                return byteCount / 1024
+            }
+        }
     }
 }
