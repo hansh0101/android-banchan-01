@@ -5,6 +5,7 @@ import co.kr.woowahan_banchan.data.datasource.remote.best.BestDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.maindish.MainDishDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.sidedish.SideDishDataSource
 import co.kr.woowahan_banchan.data.datasource.remote.soupdish.SoupDishDataSource
+import co.kr.woowahan_banchan.di.DefaultDispatcher
 import co.kr.woowahan_banchan.domain.entity.dish.BestItem
 import co.kr.woowahan_banchan.domain.entity.dish.Dish
 import co.kr.woowahan_banchan.domain.repository.DishRepository
@@ -22,7 +23,7 @@ class DishRepositoryImpl @Inject constructor(
     private val mainDishDataSource: MainDishDataSource,
     private val sideDishDataSource: SideDishDataSource,
     private val soupDishDataSource: SoupDishDataSource,
-    private val coroutineDispatcher: CoroutineDispatcher
+    @DefaultDispatcher private val coroutineDispatcher: CoroutineDispatcher
 ) : DishRepository {
     override fun getBestDishes(): Flow<Result<List<BestItem>>> {
         return cartDataSource.getItems().map { result ->

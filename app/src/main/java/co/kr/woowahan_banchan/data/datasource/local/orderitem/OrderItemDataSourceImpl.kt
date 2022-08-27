@@ -3,13 +3,14 @@ package co.kr.woowahan_banchan.data.datasource.local.orderitem
 import co.kr.woowahan_banchan.data.database.dao.OrderItemDao
 import co.kr.woowahan_banchan.data.extension.runCatchingErrorEntity
 import co.kr.woowahan_banchan.data.model.local.OrderItemDto
+import co.kr.woowahan_banchan.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class OrderItemDataSourceImpl @Inject constructor(
     private val orderItemDao: OrderItemDao,
-    private val coroutineDispatcher: CoroutineDispatcher
+    @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher
 ) : OrderItemDataSource {
     override suspend fun getItems(orderId: Long): Result<List<OrderItemDto>> =
         withContext(coroutineDispatcher) {

@@ -4,6 +4,7 @@ import co.kr.woowahan_banchan.data.database.dao.HistoryDao
 import co.kr.woowahan_banchan.data.extension.runCatchingErrorEntity
 import co.kr.woowahan_banchan.data.extension.toErrorEntity
 import co.kr.woowahan_banchan.data.model.local.HistoryDto
+import co.kr.woowahan_banchan.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 class HistoryDataSourceImpl @Inject constructor(
     private val historyDao: HistoryDao,
-    private val coroutineDispatcher: CoroutineDispatcher
+    @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher
 ) : HistoryDataSource {
     override fun getItems(): Flow<Result<List<HistoryDto>>> =
         historyDao.getItems()
