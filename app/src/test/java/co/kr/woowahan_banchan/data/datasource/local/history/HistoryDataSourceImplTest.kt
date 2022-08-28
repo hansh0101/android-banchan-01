@@ -68,7 +68,7 @@ class HistoryDataSourceImplTest {
         val expected = Result.failure<List<HistoryDto>>(ErrorEntity.RetryableError)
         var actual: Result<List<HistoryDto>>? = null
         val collectJob = launch(UnconfinedTestDispatcher()) {
-            historyDaoWithError.getItems()
+            historyDataSourceWithError.getItems()
                 .catch { actual = Result.failure(it) }
                 .collect {}
         }
